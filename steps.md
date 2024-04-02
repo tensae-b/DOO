@@ -2,8 +2,9 @@ Step 1
 for front
 
 cd hibret-front-main
-npm install
-npm run dev
+npm install --global yarn
+yarn
+yarn dev
 
 add .env file with the following content
 VITE_API_URL=http://localhost:3000/api
