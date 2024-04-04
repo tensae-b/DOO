@@ -35,3 +35,20 @@ export const createUser = async ({ email, password, role }: { email: string, pas
     const { data } = await axiosInstance.post('/users', { email, password, role });
     return data;
 };
+
+export const allUser= async()=>{
+    const { data }= await axiosInstance.get('/users');
+    return data;
+}
+
+export const verify = async(email : LoginCredentials)=>{
+    try {
+        const { data } = await axiosInstance.post('/users/verify', { email});
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+           
+        }
+        throw new Error("An unexpected error occurred. Please try again later.");
+    }
+}
