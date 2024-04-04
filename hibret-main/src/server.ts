@@ -1,14 +1,15 @@
 import express from "express";
 import payload from "payload";
-const cors = require("cors");
+import nodemailer from 'nodemailer'
+// const cors = require("cors");
 
-const { MongoClient } = require("mongodb");
-const dbName = "HR";
+// const { MongoClient } = require("mongodb");
+// const dbName = "HR";
 
 require("dotenv").config();
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 
 // Redirect root to Admin panel
 app.get("/", (_, res) => {
@@ -16,6 +17,15 @@ app.get("/", (_, res) => {
 });
 
 const start = async () => {
+
+  const transport = await nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    auth: {
+      user: 'tensaeb2016@gmail.com',
+      pass: 'jqbs ibzj xhys ijtc',
+    },
+  })
   // Initialize Payload
   await payload.init({
     secret: process.env.PAYLOAD_SECRET,
@@ -23,34 +33,21 @@ const start = async () => {
     onInit: async () => {
       payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`);
     },
+    email: {
+      fromName: 'Admin',
+      fromAddress: 'admin@example.com',
+      transport,
+    },
   });
 
-  const client = new MongoClient(process.env.DATABASE_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  // Add your own express routes here
+  payload.sendEmail({
+    from: 'sender@example.com',
+    to: 'tensaescholar2018@gmail.com',
+    subject: 'Message subject title',
+    html: '<p>HTML based message</p>',
+  })
+  
 
-  app.get("/invite", async (req, res) => {
-    try {
-      await client.connect();
-      console.log("Connected to MongoDB");
-
-      // Connect to the database
-      const db = client.db(dbName);
-
-      // Fetch data from a collection
-      const collection = db.collection("users");
-      const users = await collection.find({}).toArray();
-      console.log("Fetched documents:", users);
-      res.send(users);
-    } catch (error) {
-      console.error("Error connecting to MongoDB:", error);
-      // Close the connection
-      // await client.close();
-      console.log("Connection closed");
-    }
-  });
   app.listen(3000);
 };
 
