@@ -1,4 +1,9 @@
 import { CollectionConfig } from 'payload/types'
+import userData from '../content/userData'
+
+
+import payload from "payload";
+
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -16,7 +21,53 @@ const Users: CollectionConfig = {
       required: true,
 
     },
+    {
+      name: 'activated',
+      type: 'checkbox',
+      required: true,
+
+    },
   ],
+  endpoints: [
+    {
+      path: '/verify',
+      method: 'post',
+      handler: async (req, res) => {
+        
+          const email = req.body.email;
+         
+          const password= req.body.password;
+          
+          
+          payload.sendEmail({
+            from: 'sender@example.com',
+            to: `${email}`,
+            subject: 'Message subject title',
+            html: `<P> please use the email: ${email} and <p>
+             <p> password: ${password} to login into the system <p>`,
+          })
+         res.send("success")
+      }
+    },
+
+    {
+      path: '/allusers',
+      method: 'get',
+      handler: async (req, res) => {
+      //  console.log(userData)
+       res.send(userData)
+      }
+    },
+    
+    {
+      path: '/activate/:id',
+      method: 'post',
+      handler: async (req, res) => {
+      //  console.log(userData)
+      console.log(req.params)
+      }
+    },
+  ]
 }
 
 export default Users

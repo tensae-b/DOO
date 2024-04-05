@@ -37,13 +37,13 @@ export const createUser = async ({ email, password, role }: { email: string, pas
 };
 
 export const allUser= async()=>{
-    const { data }= await axiosInstance.get('/users');
+    const { data }= await axiosInstance.get('/users/allusers');
     return data;
 }
 
-export const verify = async(email : LoginCredentials)=>{
+export const verify = async({ email, password }: LoginCredentials)=>{
     try {
-        const { data } = await axiosInstance.post('/users/verify', { email});
+        const { data } = await axiosInstance.post('/users/verify', { email, password});
         return data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -51,4 +51,15 @@ export const verify = async(email : LoginCredentials)=>{
         }
         throw new Error("An unexpected error occurred. Please try again later.");
     }
+}
+
+export const getUser= async()=>{
+    const { data }= await axiosInstance.get('/users');
+    return data;
+}
+
+export const activateUser=async (userId :object)=>{
+    console.log(userId.id)
+    const { data }= await axiosInstance.post(`/users/activate/${userId.id}`, );
+    return data;
 }
