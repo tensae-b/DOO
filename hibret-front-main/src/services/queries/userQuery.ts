@@ -1,4 +1,4 @@
-import { allUser, getUserData, verify } from './../api/userApi';
+import { allUser, getUserData, verify, getUser, activateUser} from './../api/userApi';
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { login, createUser } from "../api/userApi"
 //post
@@ -24,9 +24,20 @@ export const getAllUser =()=>{
     return useQuery({queryKey:['all-user'], queryFn: allUser})
 }
 
+export const getUsers =()=>{
+    return useQuery({queryKey:['get-user'], queryFn: getUser})
+}
+
 export const verifyUser = () => {
     return useMutation({
         mutationKey: ['verify'],
         mutationFn: verify,
+    });
+};
+
+export const useActivate = () => {
+    return useMutation({
+        mutationKey: ['activate'],
+        mutationFn: activateUser,
     });
 };

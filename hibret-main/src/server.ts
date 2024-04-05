@@ -40,12 +40,7 @@ const start = async () => {
     },
   });
 
-  payload.sendEmail({
-    from: 'sender@example.com',
-    to: 'tensaescholar2018@gmail.com',
-    subject: 'Message subject title',
-    html: '<p>HTML based message</p>',
-  })
+
   
 
   app.listen(3000);
