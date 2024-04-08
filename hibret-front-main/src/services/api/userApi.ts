@@ -26,10 +26,14 @@ export const login = async ({ email, password }: LoginCredentials) => {
     }
 };
 
+
+
+
 export const getUserData = async () => {
     const { data } = await axiosInstance.get('/users/me');
     return data;
 }
+
 
 export const createUser = async ({ email, password, role }: { email: string, password: string, role: string }) => {
     const { data } = await axiosInstance.post('/users', { email, password, role });
