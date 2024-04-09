@@ -59,7 +59,7 @@ export const getUser= async()=>{
 }
 
 export const activateUser=async (userId :object)=>{
-    console.log(userId.id)
+    
     const { data }= await axiosInstance.post(`/users/activate/${userId.id}`, );
     return data;
 }

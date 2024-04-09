@@ -25,6 +25,7 @@ const Users: CollectionConfig = {
       name: 'activated',
       type: 'checkbox',
       required: true,
+      defaultValue: true
 
     },
   ],
@@ -54,7 +55,6 @@ const Users: CollectionConfig = {
       path: '/allusers',
       method: 'get',
       handler: async (req, res) => {
-      //  console.log(userData)
        res.send(userData)
       }
     },
@@ -63,9 +63,18 @@ const Users: CollectionConfig = {
       path: '/activate/:id',
       method: 'post',
       handler: async (req, res) => {
-      //  console.log(userData)
-      console.log(req.params)
-      }
+        const userId= req.params.id
+        console.log(userId);
+        await payload.update({
+          collection: 'users',
+          id: userId,
+          data: {
+            activated: false
+          }
+        })
+
+      
+      } 
     },
   ]
 }
