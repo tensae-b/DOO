@@ -58,8 +58,8 @@ export const getUser= async()=>{
     return data;
 }
 
-export const activateUser=async (userId :object)=>{
-    
-    const { data }= await axiosInstance.post(`/users/activate/${userId.id}`, );
+export const activateUser=async (userInfo :object)=>{
+      const activate: any=userInfo.activated
+    const { data }= await axiosInstance.post(`/users/activate/${userInfo.id}`,{activate});
     return data;
 }

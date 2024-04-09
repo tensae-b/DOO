@@ -64,12 +64,14 @@ const Users: CollectionConfig = {
       method: 'post',
       handler: async (req, res) => {
         const userId= req.params.id
-        console.log(userId);
+        console.log(req.body.activate)
+        const activate= req.body.activate
+
         await payload.update({
           collection: 'users',
           id: userId,
           data: {
-            activated: false
+            activated: !activate
           }
         })
 
