@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload/types'
-import userData from '../content/userData'
+import userData from '../content/userdata'
 
 
 import payload from "payload";
@@ -34,20 +34,20 @@ const Users: CollectionConfig = {
       path: '/verify',
       method: 'post',
       handler: async (req, res) => {
-        
-          const email = req.body.email;
-         
-          const password= req.body.password;
-          
-          
-          payload.sendEmail({
-            from: 'sender@example.com',
-            to: `${email}`,
-            subject: 'Message subject title',
-            html: `<P> please use the email: ${email} and <p>
+
+        const email = req.body.email;
+
+        const password = req.body.password;
+
+
+        payload.sendEmail({
+          from: 'sender@example.com',
+          to: `${email}`,
+          subject: 'Message subject title',
+          html: `<P> please use the email: ${email} and <p>
              <p> password: ${password} to login into the system <p>`,
-          })
-         res.send("success")
+        })
+        res.send("success")
       }
     },
 
@@ -55,17 +55,17 @@ const Users: CollectionConfig = {
       path: '/allusers',
       method: 'get',
       handler: async (req, res) => {
-       res.send(userData)
+        res.send(userData)
       }
     },
-    
+
     {
       path: '/activate/:id',
       method: 'post',
       handler: async (req, res) => {
-        const userId= req.params.id
+        const userId = req.params.id
         console.log(req.body.activate)
-        const activate= req.body.activate
+        const activate = req.body.activate
 
         await payload.update({
           collection: 'users',
@@ -75,8 +75,8 @@ const Users: CollectionConfig = {
           }
         })
 
-      
-      } 
+
+      }
     },
   ]
 }
