@@ -15,14 +15,24 @@ interface LoginCredentials {
 export const login = async ({ email, password }: LoginCredentials) => {
     try {
         const { data } = await axiosInstance.post('/users/login', { email, password });
+        console.log(data.user.activated)
+
+        if (data.user.activated == false) {
+            throw new Error("your account have been deactivated");
+        }
         return data;
-    } catch (error) {
+    } catch (error: any) {
+        console.log(error)
+
+
         if (axios.isAxiosError(error)) {
             if (error.response?.data.errors && error.response.data.errors.length > 0) {
                 throw new Error("Invalid login attempt. Please check your credentials and try again.");
             }
         }
-        throw new Error("An unexpected error occurred. Please try again later.");
+
+
+        throw new Error(error);
     }
 };
 
@@ -36,30 +46,30 @@ export const createUser = async ({ email, password, role }: { email: string, pas
     return data;
 };
 
-export const allUser= async()=>{
-    const { data }= await axiosInstance.get('/users/allusers');
+export const allUser = async () => {
+    const { data } = await axiosInstance.get('/users/allusers');
     return data;
 }
 
-export const verify = async({ email, password }: LoginCredentials)=>{
+export const verify = async ({ email, password }: LoginCredentials) => {
     try {
-        const { data } = await axiosInstance.post('/users/verify', { email, password});
+        const { data } = await axiosInstance.post('/users/verify', { email, password });
         return data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-           
+
         }
         throw new Error("An unexpected error occurred. Please try again later.");
     }
 }
 
-export const getUser= async()=>{
-    const { data }= await axiosInstance.get('/users');
+export const getUser = async () => {
+    const { data } = await axiosInstance.get('/users');
     return data;
 }
 
-export const activateUser=async (userInfo :object)=>{
-      const activate: any=userInfo.activated
-    const { data }= await axiosInstance.post(`/users/activate/${userInfo.id}`,{activate});
+export const activateUser = async (userInfo: object) => {
+    const activate: any = userInfo.activated
+    const { data } = await axiosInstance.post(`/users/activate/${userInfo.id}`, { activate });
     return data;
 }
