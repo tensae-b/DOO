@@ -12,8 +12,8 @@ interface AuthState {
 const useAuthStore = create<AuthState>((set) => ({
   session: JSON.parse(localStorage.getItem('auth-session') || 'null'),
 
-  getSession: () => {
-    const session = JSON.parse(localStorage.getItem('auth-session') || 'null');
+  getSession: async() => {
+    const session = await axiosInstance.get('/users/setsession');
     return session;
   },
 
@@ -33,11 +33,11 @@ const useAuthStore = create<AuthState>((set) => ({
   },
 
   deleteSession: async () => {
-    // try {
-    //   await axiosInstance.delete('/delete-session'); // Use axiosInstance
-    // } catch (error) {
-    //   console.error('Error deleting session on server:', error);
-    // }
+    try {
+      await axiosInstance.post('/users/deletesession'); // Use axiosInstance
+    } catch (error) {
+      console.error('Error deleting session on server:', error);
+    }
 
     localStorage.removeItem('auth-session');
     set({ session: null });

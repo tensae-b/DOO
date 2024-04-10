@@ -14,7 +14,7 @@ const cookieSecret = process.env.cookiesecret;
 // const cookieParser = require('cookie-parser');
 app.use(cors({
   origin: "http://localhost:5173", // Replace this with your frontend URL
-  method:["GET","POST"],
+  // method:["GET","POST"],
   credentials: true // Allow credentials
 }));
 app.use(bodyParser.urlencoded({extended:true}))
