@@ -78,6 +78,40 @@ const Users: CollectionConfig = {
 
       }
     },
+
+    {
+      path: '/filter',
+      method: 'post',
+      handler: async (req, res) => {
+        console.log(req.body)
+        const category = req.body.category
+        const value = req.body.value
+        if (category == 'role') {
+          const result = await payload.find({
+            collection: 'users',
+            where: {
+
+              role: { equals: value },
+            }
+          })
+          console.log(result)
+          res.send(result)
+        } else {
+          const result = await payload.find({
+            collection: 'users',
+            where: {
+
+              email: { equals: value },
+            }
+          })
+          console.log(result)
+          res.send(result)
+        }
+
+
+
+      }
+    },
   ]
 }
 
