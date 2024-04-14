@@ -73,3 +73,15 @@ export const activateUser = async (userInfo: object) => {
     const { data } = await axiosInstance.post(`/users/activate/${userInfo.id}`, { activate });
     return data;
 }
+
+export const filter = async (filter: object) => {
+    try {
+        const { data } = await axiosInstance.post('/users/filter', filter);
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+
+        }
+        throw new Error("An unexpected error occurred. Please try again later.");
+    }
+}
