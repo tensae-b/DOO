@@ -83,32 +83,52 @@ const Users: CollectionConfig = {
       path: '/filter',
       method: 'post',
       handler: async (req, res) => {
-        console.log(req.body)
+      
+        // console.log(userData)
         const category = req.body.category
         const value = req.body.value
+        let data:any = [];
+
         if (category == 'role') {
-          const result = await payload.find({
-            collection: 'users',
-            where: {
-
-              role: { equals: value },
+          for (let key in userData) {
+          
+            if (userData[key][category] == value) {
+              console.log("chosen",userData[key])
+              data.push(userData[key])
+                
+            
             }
-          })
-          console.log(result)
-          res.send(result)
+        }
+          // const result = await payload.find({
+          //   collection: 'users',
+          //   where: {
+
+          //     role: { equals: value },
+          //   }
+          // })
+          // console.log(result)
+          // res.send(result)
         } else {
-          const result = await payload.find({
-            collection: 'users',
-            where: {
-
-              email: { equals: value },
+          for (let key in userData) {
+       
+            if (userData[key][category] === value) {
+                data.push(userData[key])
+                console.log(userData[key])
+              
             }
-          })
-          console.log(result)
-          res.send(result)
+          }
+          // const result = await payload.find({
+          //   collection: 'users',
+          //   where: {
+
+          //     email: { equals: value },
+          //   }
+          // })
+          // console.log(result)
+          // res.send(result)
         }
 
-
+        res.send(data)
 
       }
     },
