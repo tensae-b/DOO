@@ -20,24 +20,24 @@ function InviteNewUser() {
     category: "",
     value: "",
   });
-  const { data, isLoading } = getAllUser();
+  // const { data, isLoading } = getAllUser();
   const { mutateAsync: verify }: any = verifyUser();
   const { mutateAsync: createUser, isError } = useCreateNewUser();
   const { mutateAsync: filter }: any = filterUsers();
-  function fetchData() {
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error fetching users</div>;
-    console.log(data[0]);
+  // function fetchData() {
+  //   if (isLoading) return <div>Loading...</div>;
+  //   if (isError) return <div>Error fetching users</div>;
+  //   console.log(data[0]);
 
-    for (let i = 0; i < data.length; i++) {
-      userData.push({
-        id: data[i].id,
-        email: data[i].email,
-        role: data[i].role,
-      });
-      setUser(userData);
-    }
-  }
+  //   for (let i = 0; i < data.length; i++) {
+  //     userData.push({
+  //       id: data[i].id,
+  //       email: data[i].email,
+  //       role: data[i].role,
+  //     });
+  //     setUser(userData);
+  //   }
+  // }
 
   async function verifying(email: string, role: string) {
     const random = Math.random() * 100;
@@ -152,10 +152,10 @@ function InviteNewUser() {
               <br />
             </div>
           ))}
-          <button className="bg-black text-white p-5" onClick={fetchData}>
+          {/* <button className="bg-black text-white p-5" onClick={fetchData}>
             {" "}
             fetch
-          </button>
+          </button> */}
         </div>
       )}
     </div>
