@@ -75,8 +75,7 @@ function InviteNewUser() {
       }));
     }
   }
-  function checked(email: string, role: string, event: any) {
-    console.log(event.target.value);
+  function checked(email: string, role: string) {
     emailList.push({
       email: email,
       role: role,
