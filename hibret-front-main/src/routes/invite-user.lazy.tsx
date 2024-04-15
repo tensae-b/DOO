@@ -20,6 +20,8 @@ function InviteNewUser() {
     category: "",
     value: "",
   });
+  const emailList: any = [];
+
   // const { data, isLoading } = getAllUser();
   const { mutateAsync: verify }: any = verifyUser();
   const { mutateAsync: createUser, isError } = useCreateNewUser();
@@ -39,18 +41,23 @@ function InviteNewUser() {
   //   }
   // }
 
-  async function verifying(email: string, role: string) {
-    const random = Math.random() * 100;
-    const password = email.substring(0, 2) + Math.floor(random);
+  async function verifying() {
+    for (let i = 0; i < emailList.length; i++) {
+      let email = emailList[i].email;
+      let role = emailList[i].role;
+      console.log(email, role);
+      const random = Math.random() * 100;
+      const password = email.substring(0, 2) + Math.floor(random);
 
-    const res = await verify({ email, password });
+      const res = await verify({ email, password });
 
-    console.log(res);
-    if (res == "success") {
-      console.log({ email, password, role });
-      const userData = await createUser({ email, password, role });
+      console.log(res);
+      if (res == "success") {
+        console.log({ email, password, role });
+        const userData = await createUser({ email, password, role });
 
-      console.log({ userData });
+        console.log({ userData });
+      }
     }
   }
 
@@ -67,6 +74,14 @@ function InviteNewUser() {
         category: event.target.value,
       }));
     }
+  }
+  function checked(email: string, role: string) {
+    emailList.push({
+      email: email,
+      role: role,
+    });
+
+    console.log(emailList);
   }
 
   async function handelSubmit() {
@@ -112,52 +127,32 @@ function InviteNewUser() {
         </div>
         <button onClick={handelSubmit}> filter</button>
       </div>
-      {useFiltered && (
-        <div className="mt-32 mx-10 flex flex-col gap-10">
-          {user.map((item: any) => (
-            <div className="flex gap-10">
-              <h1>{item.email}</h1>
-              <p>{item.role}</p>
 
-              <button
-                className="bg-black text-white p-5"
-                onClick={() => {
-                  verifying(item.email, item.role);
-                }}
-              >
-                {" "}
-                invite
-              </button>
-              <br />
-            </div>
-          ))}
-        </div>
-      )}
-      {!useFiltered && (
-        <div className="mt-32 mx-10 flex flex-col gap-10">
-          {user.map((item: any) => (
-            <div className="flex gap-10">
-              <h1>{item.email}</h1>
-              <p>{item.role}</p>
+      <div className="mt-32 mx-10 flex flex-col gap-10">
+        {user.map((item: any) => (
+          <div className="flex gap-10">
+            <h1>{item.email}</h1>
+            <p>{item.role}</p>
+            <input
+              type="checkbox"
+              onChange={() => {
+                checked(item.email, item.role);
+              }}
+            />
 
-              <button
-                className="bg-black text-white p-5"
-                onClick={() => {
-                  verifying(item.email, item.role);
-                }}
-              >
-                {" "}
-                invite
-              </button>
-              <br />
-            </div>
-          ))}
-          {/* <button className="bg-black text-white p-5" onClick={fetchData}>
-            {" "}
-            fetch
-          </button> */}
-        </div>
-      )}
+            <br />
+          </div>
+        ))}
+        <button
+          className="bg-black text-white p-5"
+          onClick={() => {
+            verifying();
+          }}
+        >
+          {" "}
+          invite
+        </button>
+      </div>
     </div>
   );
 }
