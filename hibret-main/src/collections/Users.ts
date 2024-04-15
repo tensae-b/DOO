@@ -83,22 +83,22 @@ const Users: CollectionConfig = {
       path: '/filter',
       method: 'post',
       handler: async (req, res) => {
-      
+
         // console.log(userData)
         const category = req.body.category
         const value = req.body.value
-        let data:any = [];
+        let data: any = [];
 
         if (category == 'role') {
           for (let key in userData) {
-          
+
             if (userData[key][category] == value) {
-              console.log("chosen",userData[key])
+              // console.log("chosen",userData[key])
               data.push(userData[key])
-                
-            
+
+
             }
-        }
+          }
           // const result = await payload.find({
           //   collection: 'users',
           //   where: {
@@ -110,11 +110,11 @@ const Users: CollectionConfig = {
           // res.send(result)
         } else {
           for (let key in userData) {
-       
+
             if (userData[key][category] === value) {
-                data.push(userData[key])
-                console.log(userData[key])
-              
+              data.push(userData[key])
+              // console.log(userData[key])
+
             }
           }
           // const result = await payload.find({
