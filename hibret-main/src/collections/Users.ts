@@ -38,7 +38,7 @@ const Users: CollectionConfig = {
         const email = req.body.email;
 
         const password = req.body.password;
-
+    console.log(email)
 
         payload.sendEmail({
           from: 'sender@example.com',
