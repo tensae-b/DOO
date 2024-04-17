@@ -22,7 +22,7 @@ const start = async () => {
     host: 'smtp.gmail.com',
     port: 587,
     auth: {
-      user: 'tensaeb2016@gmail.com',
+      user: '',
       pass: 'jqbs ibzj xhys ijtc',
     },
   })
