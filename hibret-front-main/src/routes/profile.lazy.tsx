@@ -1,5 +1,6 @@
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useSession } from '../hooks/useSession'
+import {getUserData} from '../services/api/userApi'
 
 export const Route = createLazyFileRoute('/profile')({
     component: () => <Profile />
@@ -7,6 +8,7 @@ export const Route = createLazyFileRoute('/profile')({
 
 function Profile() {
     const { session } = useSession();
+    const {data}=getUserData()
 
     return (
         <div>
@@ -16,7 +18,7 @@ function Profile() {
                     <h1 className="text-xl font-semibold leadiCPng-tight">User Profile</h1>
                     <div className="mt-4">
                         <div className="font-bold">Email:</div>
-                        <div className="text-sm text-gray-600">{session?.user.email}</div>
+                        <div className="text-sm text-gray-600">{data?.user.email}</div>
                     </div>
                     <div className="mt-2">
                         <div className="font-bold">Role:</div>

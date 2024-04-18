@@ -31,6 +31,7 @@ export const login = async ({ email, password }: LoginCredentials) => {
 
 export const getUserData = async () => {
     const { data } = await axiosInstance.get('/users/me');
+    console.log(data)
     return data;
 }
 

@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const router = createRouter({ routeTree })
 const queryClient = new QueryClient()

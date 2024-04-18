@@ -6,7 +6,7 @@ export const Route = createLazyFileRoute('/my-documents')({
 })
 
 function MyDocuments() {
-    const { getSession } = useSession();
+    const {  getSession} = useSession();
     const { data, isLoading, isError } = useGetDocumentQuery(getSession()?.user.id!);
     if (isLoading) return <div>Loading...</div>
     if (isError) return <div>Error fetching documents</div>
