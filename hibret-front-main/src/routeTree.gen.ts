@@ -24,6 +24,7 @@ const ManageUserLazyImport = createFileRoute('/manage-user')()
 const LoginLazyImport = createFileRoute('/login')()
 const InviteUserLazyImport = createFileRoute('/invite-user')()
 const DocumentsLazyImport = createFileRoute('/documents')()
+const DocumenterLazyImport = createFileRoute('/documenter')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -70,6 +71,11 @@ const DocumentsLazyRoute = DocumentsLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/documents.lazy').then((d) => d.Route))
 
+const DocumenterLazyRoute = DocumenterLazyImport.update({
+  path: '/documenter',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/documenter.lazy').then((d) => d.Route))
+
 const CreateUserLazyRoute = CreateUserLazyImport.update({
   path: '/create-user',
   getParentRoute: () => rootRoute,
@@ -99,6 +105,10 @@ declare module '@tanstack/react-router' {
     }
     '/create-user': {
       preLoaderRoute: typeof CreateUserLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/documenter': {
+      preLoaderRoute: typeof DocumenterLazyImport
       parentRoute: typeof rootRoute
     }
     '/documents': {
@@ -142,6 +152,7 @@ export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
   CreateUserLazyRoute,
+  DocumenterLazyRoute,
   DocumentsLazyRoute,
   InviteUserLazyRoute,
   LoginLazyRoute,
