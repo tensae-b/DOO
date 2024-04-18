@@ -4,6 +4,9 @@ import cors from "cors";
 import session from 'express-session';
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import formatResponse from "./middleware/format/formatesponse";
+import { validationResult } from 'express-validator'
+// import verifyToken from './middleware/verify'
 
 import { MongoClient } from 'mongodb';
 const dbName = "HR";
@@ -18,6 +21,8 @@ app.use(cors({
   credentials: true // Allow credentials
 }));
 app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json());
+
 app.use(cookieParser(cookieSecret));
 
 // Optionally use a session middleware if you need more complex session management
@@ -27,33 +32,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie:{
-    expires:60*60*24
+    expires:60*60*24*3
   }
 }));
-
-// app.post('/set-session', async (req, res) => {
-//   try {
-//     const newSession = req.body || {};
-
-//     // Validate and sanitize session data (important for security)
-
-//     // Store session data in a cookie
-//     res.cookie('auth-session', JSON.stringify(newSession), {
-//       httpOnly: true, // Prevent client-side JavaScript access
-//       secure: true,   // Only send over HTTPS (if applicable)
-//     });
-
-//     res.json({ message: 'Session stored successfully' });
-//   } catch (error) {
-//     console.error('Error storing session:', error);
-//     res.status(500).json({ message: 'Failed to store session' });
-//   }
-// });
-
-// app.delete('/delete-session', (req, res) => {
-//   res.clearCookie('auth-session');
-//   res.json({ message: 'Session deleted' });
-// });
+// app.use(formatResponse)
 
 // Redirect root to Admin panel
 app.get("/", (_, res) => {
@@ -75,10 +57,43 @@ const start = async () => {
     useUnifiedTopology: true,
   });
   // Add your own express routes here
-  app.get("/protect", async (req, res) => {
-    res.json({message:"work it"})
+  // app.get("/protect", verifyToken,async (req, res) => {
+  //   res.json({message:"work it"})
     
+  // });
+  app.post('/users/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const userData = await login({ email, password });
+      if (userData) {
+        req.session.user = userData; // Store user data in session
+        // localStorage.setItem('userId', userData); // Store a specific key (e.g., userId)
+        res.json(userData);
+      } else {
+        res.status(401).json({ error: 'Invalid login credentials' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  
+      
   });
+  // app.get('/users/profile', (req, res ) => {
+  //   // Check for user data in session after applying sessionMiddleware
+  //    // Store the user data in a variable
+  //    if (req.user){
+  //     res.json({
+  //       message: `This is the user profile for user`,
+        
+  //     });
+  //     else {
+  //       res.status(403).json({ message: 'Unauthorized' });
+  //     }
+
+  //    }
+  
+     
+  //   }
   app.get("/invite", async (req, res) => {
     try {
       await client.connect();
@@ -99,7 +114,7 @@ const start = async () => {
       console.log("Connection closed");
     }
   });
-  app.listen(3000);
+  app.listen(3002);
 };
 
 start();
