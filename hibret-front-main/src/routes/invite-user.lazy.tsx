@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
+import UserTabs from '../components/UserTabs'
 export const Route = createFileRoute("/invite-user")({
   component: () => <InviteNewUser />,
 });
@@ -149,24 +150,7 @@ function InviteNewUser() {
               </button>
             </div>
           </div>
-          <div className="tab flex flex-col mb-10">
-            <div className="tabs flex gap-7">
-              <div className="flex flex-col gap-3 items-center">
-              <Link to="/manage-user" className="[&.active]:font-bold">
-            All
-          </Link>{" "}
-              <hr className=" w-12 text-[#EFEFF4]"/>
-              </div>
-               <div className="flex flex-col gap-3 items-center">
-               <Link to="/invite-user" className="[&.active]:font-bold">
-               Invitation
-          </Link>
-               <hr className=" w-36 bg-[#4A176D]"/>
-               </div>
-             
-            </div>
-            <hr className=" max-w-36 text-[#EFEFF4]"/>
-          </div>
+          <UserTabs/>
           <div className=" h-full w-full mt">
             <DataGrid
               rows={user}
