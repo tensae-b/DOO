@@ -158,8 +158,10 @@ function InviteNewUser() {
               <hr className=" w-12 text-[#EFEFF4]"/>
               </div>
                <div className="flex flex-col gap-3 items-center">
-               <h3>Invitation</h3>
-               <hr className=" w-36 text-[#EFEFF4]"/>
+               <Link to="/invite-user" className="[&.active]:font-bold">
+               Invitation
+          </Link>
+               <hr className=" w-36 bg-[#4A176D]"/>
                </div>
              
             </div>
@@ -231,7 +233,7 @@ function InviteNewUser() {
         ))}
        
       </div> */}
-      <button
+      {/* <button
         className="bg-black text-white p-5 self-end"
         onClick={() => {
           verifying();
@@ -239,7 +241,7 @@ function InviteNewUser() {
       >
         {" "}
         invite
-      </button>
+      </button> */}
     </div>
   );
 }
