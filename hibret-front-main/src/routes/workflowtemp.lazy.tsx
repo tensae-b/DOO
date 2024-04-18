@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-export const Route = createFileRoute("/documenter")({
+export const Route = createFileRoute("/workflowtemp")({
   component: () => <DocumentTemp />,
 });
 import { DataGrid, GridColDef, GridActionsCellParams } from '@mui/x-data-grid';
@@ -120,7 +120,7 @@ function DocumentTemp() {
           <NavBar />
           <div className="flex justify-between">
             <div className="flex flex-col gap-3 my-5">
-              <h2 className="text-[#4A176D] text-3xl font-bold">Document Template</h2>
+              <h2 className="text-[#4A176D] text-3xl font-bold">Workflow Template</h2>
               <Dropdown options={options} onChange={(option) => setSelectedTemplate(option)} value={selectedTemplate} placeholder="Select an option" />
               
             </div>
