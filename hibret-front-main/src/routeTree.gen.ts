@@ -17,6 +17,7 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const WorkflowtempLazyImport = createFileRoute('/workflowtemp')()
+const WorkflowaddLazyImport = createFileRoute('/workflowadd')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const NotificationLazyImport = createFileRoute('/notification')()
@@ -36,6 +37,11 @@ const WorkflowtempLazyRoute = WorkflowtempLazyImport.update({
   path: '/workflowtemp',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/workflowtemp.lazy').then((d) => d.Route))
+
+const WorkflowaddLazyRoute = WorkflowaddLazyImport.update({
+  path: '/workflowadd',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/workflowadd.lazy').then((d) => d.Route))
 
 const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
@@ -149,6 +155,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/workflowadd': {
+      preLoaderRoute: typeof WorkflowaddLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/workflowtemp': {
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
@@ -171,6 +181,7 @@ export const routeTree = rootRoute.addChildren([
   NotificationLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
+  WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
 ])
 
