@@ -26,7 +26,7 @@ const columns: GridColDef[] = [
 function InviteNewUser() {
   const userData: any = [];
   const [user, setUser] = useState([]);
-  // const [selectedOption, setSelectedOption] = useState("role");
+  
   const [filtered, setFilter] = useState({
     category: "",
     value: "",
