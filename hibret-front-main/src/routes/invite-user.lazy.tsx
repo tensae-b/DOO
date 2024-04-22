@@ -14,13 +14,14 @@ import {
   useCreateNewUser,
   filterUsers,
 } from "../services/queries/userQuery";
+import { Box } from "@mui/material";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "name", headerName: "name", width: 230 },
-  { field: "username", headerName: "username", width: 130 },
-  { field: "email", headerName: "email", width: 330 },
-  { field: "role", headerName: "role", width: 230 },
+  { field: "id", headerName:"id", headerClassName: 'super-app-theme--header', width: 70 },
+  { field: "name", headerName: "name", headerClassName: 'super-app-theme--header', width: 230 },
+  { field: "username", headerName: "username", headerClassName: 'super-app-theme--header', width: 130 },
+  { field: "email", headerName: "email", headerClassName: 'super-app-theme--header', width: 330 },
+  { field: "role", headerName: "role", headerClassName: 'super-app-theme--header', width: 230 },
 ];
 
 function InviteNewUser() {
@@ -152,6 +153,18 @@ function InviteNewUser() {
           </div>
           <UserTabs/>
           <div className=" h-full w-full mt">
+          <Box
+      sx={{
+        height: 300,
+        width: '100%',
+       
+        '& .super-app-theme--header': {
+         color: '#667085',
+         fontSize: '14px',
+         fontWeight: 500
+        },
+      }}
+     >
             <DataGrid
               rows={user}
               columns={columns}
@@ -167,6 +180,7 @@ function InviteNewUser() {
                 checked(id);
               }}
             />
+            </Box>
           </div>
         </div>
       </div>
