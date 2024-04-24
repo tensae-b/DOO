@@ -1,3 +1,4 @@
+import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
 const SideBar = () => {
   return (
     <div className="flex flex-col w-72 mx-11 mt-11 h-full">
@@ -19,7 +20,8 @@ const SideBar = () => {
                 className=" max-w-4"
                 src="/asset/icons/user-management.svg"
               />
-              <p className=" text-sm text-[#667085]">User Management</p>
+              <Link to="/manage-user" className=" text-sm text-[#667085] [&.active]:font-bold">User Management</Link>
+              
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/report.svg" />
