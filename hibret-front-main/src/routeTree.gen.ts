@@ -25,6 +25,7 @@ const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
 const LoginLazyImport = createFileRoute('/login')()
 const InviteUserLazyImport = createFileRoute('/invite-user')()
+const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
@@ -78,6 +79,13 @@ const InviteUserLazyRoute = InviteUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/invite-user.lazy').then((d) => d.Route))
 
+const DocumenttempaddLazyRoute = DocumenttempaddLazyImport.update({
+  path: '/documenttempadd',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/documenttempadd.lazy').then((d) => d.Route),
+)
+
 const DocumentsLazyRoute = DocumentsLazyImport.update({
   path: '/documents',
   getParentRoute: () => rootRoute,
@@ -127,6 +135,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsLazyImport
       parentRoute: typeof rootRoute
     }
+    '/documenttempadd': {
+      preLoaderRoute: typeof DocumenttempaddLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/invite-user': {
       preLoaderRoute: typeof InviteUserLazyImport
       parentRoute: typeof rootRoute
@@ -174,6 +186,7 @@ export const routeTree = rootRoute.addChildren([
   CreateUserLazyRoute,
   DocumentempLazyRoute,
   DocumentsLazyRoute,
+  DocumenttempaddLazyRoute,
   InviteUserLazyRoute,
   LoginLazyRoute,
   ManageUserLazyRoute,

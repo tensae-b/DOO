@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useState, lazy } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
@@ -7,6 +7,7 @@ import 'react-dropdown/style.css';
 export const Route = createFileRoute("/documentemp")({
   component: () => <DocumentTemp />,
 });
+const DocumentAddTemp= lazy(() => import("./documenttempadd.lazy"));
 import { DataGrid, GridColDef, GridActionsCellParams } from '@mui/x-data-grid';
 
 // import {
@@ -112,6 +113,15 @@ function DocumentTemp() {
     'Template one', 'Template two', 'Template three'
   ];
   const defaultOption = options[0];
+  const [showAddTemplate, setShowAddTemplate] = useState(false);
+  const openAddTemplate = () => {
+    setShowAddTemplate(true);
+  };
+
+  // Function to close the add template pop-up
+  const closeAddTemplate = () => {
+    setShowAddTemplate(false);
+  };
   return (
     <div className="mx-3">
       <div className="flex">
@@ -125,14 +135,17 @@ function DocumentTemp() {
               
             </div>
             <div className="flex gap-4 justify-center items-center">
-              <button onClick={() => {
-                
-              }} className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white">
-                <img src="/asset/icons/plus3.png" className="w-5"/>
-                Add New
-              </button>
+            <button onClick={openAddTemplate} className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white">
+          <img src="/asset/icons/plus3.png" className="w-5"/>
+          Add New
+        </button>
             </div>
           </div>
+          {showAddTemplate && (
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <DocumentAddTemp onClose={closeAddTemplate} />
+        </React.Suspense>
+      )}
           <div className="h-full w-full mt">
             <DataGrid
               rows={user}
