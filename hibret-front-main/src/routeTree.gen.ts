@@ -28,7 +28,9 @@ const InviteUserLazyImport = createFileRoute('/invite-user')()
 const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
+const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const BlankpageLazyImport = createFileRoute('/blankpage')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -96,10 +98,20 @@ const DocumentempLazyRoute = DocumentempLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/documentemp.lazy').then((d) => d.Route))
 
+const DocumentLazyRoute = DocumentLazyImport.update({
+  path: '/document',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/document.lazy').then((d) => d.Route))
+
 const CreateUserLazyRoute = CreateUserLazyImport.update({
   path: '/create-user',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
+
+const BlankpageLazyRoute = BlankpageLazyImport.update({
+  path: '/blankpage',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/blankpage.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -123,8 +135,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/blankpage': {
+      preLoaderRoute: typeof BlankpageLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/create-user': {
       preLoaderRoute: typeof CreateUserLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/document': {
+      preLoaderRoute: typeof DocumentLazyImport
       parentRoute: typeof rootRoute
     }
     '/documentemp': {
@@ -183,7 +203,9 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
+  BlankpageLazyRoute,
   CreateUserLazyRoute,
+  DocumentLazyRoute,
   DocumentempLazyRoute,
   DocumentsLazyRoute,
   DocumenttempaddLazyRoute,
