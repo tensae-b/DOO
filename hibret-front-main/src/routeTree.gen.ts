@@ -16,6 +16,8 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const WorkflowtempLazyImport = createFileRoute('/workflowtemp')()
+const WorkflowaddLazyImport = createFileRoute('/workflowadd')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const NotificationLazyImport = createFileRoute('/notification')()
@@ -23,12 +25,24 @@ const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
 const LoginLazyImport = createFileRoute('/login')()
 const InviteUserLazyImport = createFileRoute('/invite-user')()
+const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
+const DocumentempLazyImport = createFileRoute('/documentemp')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const WorkflowtempLazyRoute = WorkflowtempLazyImport.update({
+  path: '/workflowtemp',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/workflowtemp.lazy').then((d) => d.Route))
+
+const WorkflowaddLazyRoute = WorkflowaddLazyImport.update({
+  path: '/workflowadd',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/workflowadd.lazy').then((d) => d.Route))
 
 const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
@@ -65,10 +79,22 @@ const InviteUserLazyRoute = InviteUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/invite-user.lazy').then((d) => d.Route))
 
+const DocumenttempaddLazyRoute = DocumenttempaddLazyImport.update({
+  path: '/documenttempadd',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/documenttempadd.lazy').then((d) => d.Route),
+)
+
 const DocumentsLazyRoute = DocumentsLazyImport.update({
   path: '/documents',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/documents.lazy').then((d) => d.Route))
+
+const DocumentempLazyRoute = DocumentempLazyImport.update({
+  path: '/documentemp',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/documentemp.lazy').then((d) => d.Route))
 
 const CreateUserLazyRoute = CreateUserLazyImport.update({
   path: '/create-user',
@@ -101,8 +127,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
     }
+    '/documentemp': {
+      preLoaderRoute: typeof DocumentempLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/documents': {
       preLoaderRoute: typeof DocumentsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/documenttempadd': {
+      preLoaderRoute: typeof DocumenttempaddLazyImport
       parentRoute: typeof rootRoute
     }
     '/invite-user': {
@@ -133,6 +167,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/workflowadd': {
+      preLoaderRoute: typeof WorkflowaddLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/workflowtemp': {
+      preLoaderRoute: typeof WorkflowtempLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -142,7 +184,9 @@ export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
   CreateUserLazyRoute,
+  DocumentempLazyRoute,
   DocumentsLazyRoute,
+  DocumenttempaddLazyRoute,
   InviteUserLazyRoute,
   LoginLazyRoute,
   ManageUserLazyRoute,
@@ -150,6 +194,8 @@ export const routeTree = rootRoute.addChildren([
   NotificationLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
+  WorkflowaddLazyRoute,
+  WorkflowtempLazyRoute,
 ])
 
 /* prettier-ignore-end */
