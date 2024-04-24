@@ -97,7 +97,7 @@ function ManageUser() {
                 }}
               >
                 <img src="/asset/icons/export.svg" className="w-5" />
-                Export
+                Activate/deactivate
               </button>
             </div>
           </div>
