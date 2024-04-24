@@ -1,11 +1,9 @@
-import { Link } from "@tanstack/react-router";
-
 const SideBar = () => {
   return (
-    <div className="flex flex-col w-72 mx-11 mt-11 h-full ">
-      <div className="flex flex-col gap-12">
-        <img src="/asset/hibret-logo.svg" />
-        <hr className="border border-[#EFEFF4]" />
+    <div className="flex flex-col w-72 mx-11 mt-11 h-full fixed bottom-0 left-0">
+      <div className="flex flex-col gap-10 pt-4">
+        <img src="/asset/hibret-logo.svg"  className="w-40 h-12"/>
+        <hr className="border border-[#EFEFF4] w-60" />
       </div>
 
       <div className="flex flex-col mt-6 gap-5">
@@ -21,14 +19,7 @@ const SideBar = () => {
                 className=" max-w-4"
                 src="/asset/icons/user-management.svg"
               />
-              <Link to="/document" className=" text-sm text-[#667085]">Documents</Link>
-            </div>
-            <div className="flex gap-2 ">
-              <img
-                className=" max-w-4"
-                src="/asset/icons/user-management.svg"
-              />
-              <Link to="/manage-user" className=" text-sm text-[#667085]">User Management</Link>
+              <p className=" text-sm text-[#667085]">User Management</p>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/report.svg" />
