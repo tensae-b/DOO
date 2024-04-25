@@ -18,6 +18,8 @@ import { Route as rootRoute } from './routes/__root'
 
 const WorkflowtempLazyImport = createFileRoute('/workflowtemp')()
 const WorkflowaddLazyImport = createFileRoute('/workflowadd')()
+const UserDashboardLazyImport = createFileRoute('/userDashboard')()
+const SetNewPasswordLazyImport = createFileRoute('/setNewPassword')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const NotificationLazyImport = createFileRoute('/notification')()
@@ -31,6 +33,7 @@ const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const BlankpageLazyImport = createFileRoute('/blankpage')()
+const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -45,6 +48,18 @@ const WorkflowaddLazyRoute = WorkflowaddLazyImport.update({
   path: '/workflowadd',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/workflowadd.lazy').then((d) => d.Route))
+
+const UserDashboardLazyRoute = UserDashboardLazyImport.update({
+  path: '/userDashboard',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/userDashboard.lazy').then((d) => d.Route))
+
+const SetNewPasswordLazyRoute = SetNewPasswordLazyImport.update({
+  path: '/setNewPassword',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/setNewPassword.lazy').then((d) => d.Route),
+)
 
 const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
@@ -113,6 +128,13 @@ const BlankpageLazyRoute = BlankpageLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/blankpage.lazy').then((d) => d.Route))
 
+const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
+  path: '/adminDashboard',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/adminDashboard.lazy').then((d) => d.Route),
+)
+
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
@@ -133,6 +155,10 @@ declare module '@tanstack/react-router' {
     }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/adminDashboard': {
+      preLoaderRoute: typeof AdminDashboardLazyImport
       parentRoute: typeof rootRoute
     }
     '/blankpage': {
@@ -187,6 +213,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/setNewPassword': {
+      preLoaderRoute: typeof SetNewPasswordLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/userDashboard': {
+      preLoaderRoute: typeof UserDashboardLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/workflowadd': {
       preLoaderRoute: typeof WorkflowaddLazyImport
       parentRoute: typeof rootRoute
@@ -203,6 +237,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
+  AdminDashboardLazyRoute,
   BlankpageLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
@@ -216,6 +251,8 @@ export const routeTree = rootRoute.addChildren([
   NotificationLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
+  SetNewPasswordLazyRoute,
+  UserDashboardLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
 ])
