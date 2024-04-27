@@ -7,6 +7,7 @@ export const Route = createFileRoute("/invite-user")({
   component: () => <InviteNewUser />,
 });
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+let buttonName="send"
 
 import {
   getAllUser,
@@ -22,6 +23,30 @@ const columns: GridColDef[] = [
   { field: "username", headerName: "username", headerClassName: 'field-header', width: 130 },
   { field: "email", headerName: "email", headerClassName: 'field-header', width: 330 },
   { field: "role", headerName: "role", headerClassName: 'field-header', width: 230 },
+  {
+    field: 'action',
+    headerName: 'Action',
+    width: 1800,
+    sortable: false,
+    
+    renderCell: (params) => {
+        const onClick = (e) => {
+          checked(params.row.id);
+          const currentRow = params.row;
+          console.log(params.row)
+          return alert(JSON.stringify(currentRow, null, 4));
+        };
+        
+        
+
+        
+        return (
+          <div className=''>
+            <button className=' border border-red-500 px-5  rounded-md text-red-500 mr-3' onClick={onClick}>{buttonName}</button>
+            </div>
+        );
+    },
+  }
 ];
 
 function InviteNewUser() {
@@ -33,11 +58,49 @@ function InviteNewUser() {
     value: "",
   });
   const emailList: any = [];
+ 
+  const columns: GridColDef[] = [
+    { field: "id", headerName:"id", headerClassName: 'field-header', width: 70 },
+    { field: "name", headerName: "name", headerClassName: 'field-header',cellClassName: 'field-cell', width: 230 },
+    { field: "username", headerName: "username", headerClassName: 'field-header', width: 130 },
+    { field: "email", headerName: "email", headerClassName: 'field-header', width: 330 },
+    { field: "role", headerName: "role", headerClassName: 'field-header', width: 230 },
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 180,
+      sortable: false,
+      
+      renderCell: (params) => {
+          const onClick = (e) => {
+            console.log("hey")
+            emailList.push({
+              email: params.row.email,
+              role:  params.row.role,
+            });
+            console.log(emailList);
+            verifying();
+          };
+          
+          
+  
+          
+          return (
+            <div className=''>
+              <button className=' border border-red-500 px-5  rounded-md text-red-500 mr-3' onClick={onClick}>{buttonName}</button>
+              </div>
+          );
+      },
+    }
+  ];
 
   const { data, isLoading, isError } = getAllUser();
   console.log(data);
 
   const [fetch, setFetch] = useState(true);
+  const [popup, setPopUp] = useState(false);
+  const [popupMessage, setPopupMessage]= useState("")
+
   const { mutateAsync: verify }: any = verifyUser();
   const { mutateAsync: createUser } = useCreateNewUser();
   const { mutateAsync: filter }: any = filterUsers();
@@ -73,7 +136,15 @@ function InviteNewUser() {
       const res = await verify({ email, password });
 
       console.log(res);
+
       if (res == "success") {
+        setPopUp(true);
+          setPopupMessage(`Email has been sent to ${email} `)
+        setTimeout(()=>{
+          setPopUp(false)
+          setPopupMessage("")
+        },3000)
+        
         console.log({ email, password, role });
         const userData = await createUser({ email, password, role });
 
@@ -129,6 +200,7 @@ function InviteNewUser() {
       <div className="flex">
         <SideBar />
         <div className="w-full flex flex-col">
+          
           <NavBar />
           
 
@@ -137,6 +209,10 @@ function InviteNewUser() {
               <h2 className="text-[#4A176D] text-3xl font-bold">
                 User Management
               </h2>
+              {popup && (<div className=" w-full bg-[#00B0AD] text-white p-3 self-center rounded-md">
+            {popupMessage}
+            </div>
+            )}
               <p className="text-[#667085] text-base"> placeholder</p>
             </div>
             <div className="flex gap-4 justify-center items-center ">
