@@ -13,6 +13,31 @@ const columns: GridColDef[] = [
   { field: "email", headerName: "email", width: 330 },
   { field: "role", headerName: "role", width: 230 },
   { field: "activated", headerName: "activated", width: 230 },
+  {
+    field: 'action',
+    headerName: 'Action',
+    width: 180,
+    sortable: false,
+    
+    renderCell: (params) => {
+        const onClick = (e) => {
+          console.log(params.row)
+          
+        };
+        
+        return (
+          <div className=''>
+ {params.row.activated == true ? (
+  <button className=' border border-[#00B0AD] px-5 rounded-md text-[#00B0AD] ' onClick={onClick}> Deactivate</button>
+ ) : (
+  <button className=' border border-[#00B0AD] px-5  rounded-md text-[#00B0AD] ' onClick={onClick}> activate</button>
+ )
+ }
+            
+            </div>
+        );
+    },
+  }
 ];
 function ManageUser() {
   const { mutateAsync: activate }: any = useActivate();
