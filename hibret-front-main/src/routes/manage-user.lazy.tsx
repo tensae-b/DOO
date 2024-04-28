@@ -3,16 +3,18 @@ export const Route = createLazyFileRoute("/manage-user")({
   component: () => <ManageUser />,
 });
 import { getUsers, useActivate } from "../services/queries/userQuery";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridApi, GridColDef, GridRow, GridRowParams } from "@mui/x-data-grid";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import UserTabs from '../components/UserTabs'
+import { Button, Stack } from "@mui/material";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 230 },
   { field: "email", headerName: "email", width: 330 },
   { field: "role", headerName: "role", width: 230 },
   { field: "activated", headerName: "activated", width: 230 },
+<<<<<<< HEAD
   {
     field: 'action',
     headerName: 'Action',
@@ -38,17 +40,67 @@ const columns: GridColDef[] = [
         );
     },
   }
+=======
+  // {
+  //   field: 'action',
+  //   headerName: 'Action',
+  //   width: 180,
+  //   sortable: false,
+   
+    
+  //   renderCell: (params) => {
+  //       const onClick = (e: any) => {
+  //         const currentRow = params.row;
+  //         return alert(JSON.stringify(currentRow, null, 4));
+  //       };
+        
+  //       return (
+  //         <Stack direction="row" spacing={2}>
+  //           <Button variant="outlined" color="warning" size="small" onClick={onClick}>Edit</Button>
+  //           <Button variant="outlined" color="error" size="small" onClick={onClick}>Delete</Button>
+  //         </Stack>
+  //       );
+  //   },
+  // }
+>>>>>>> fa93c789fe9c131ad8ffc365067fddf62e3d21b3
 ];
 function ManageUser() {
   const { mutateAsync: activate }: any = useActivate();
-  async function deactivate(id: any, activated: any) {
-    const res = await activate({ id, activated });
+  async function deactivate() {
+    let data= removeDuplicates(deactivatedList)
+  
+    for(let i=0 ; i< data.length; i++){
+      let id=  data[i].id;
+      let active= data[i].activated
+       
+      const res = await activate({id, active });
     console.log(res);
-    //  console.log(activated)
+     
+    }
+  
   }
 
+  function removeDuplicates(array:any) {
+   
+    const uniqueMap :any = {};
+
+ 
+    const uniqueArray = array.filter((item: any) => {
+      
+        const serialized = JSON.stringify(item);
+
+        if (!uniqueMap[serialized]) {
+            uniqueMap[serialized] = true;
+            return true;
+        }
+
+        return false;
+    });
+
+    return uniqueArray;
+}
   const { data } = getUsers();
-  
+  let deactivatedList:any= []
 
   return (
     <div className="mx-3">
@@ -67,11 +119,13 @@ function ManageUser() {
             </div>
             <div className="flex gap-4 justify-center items-center ">
               <button
-                
                 className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white"
+                onClick={() => {
+                  deactivate();
+                }}
               >
                 <img src="/asset/icons/export.svg" className="w-5" />
-                Export
+                Activate/deactivate
               </button>
             </div>
           </div>
@@ -87,8 +141,19 @@ function ManageUser() {
             }}
             pageSizeOptions={[5, 10]}
             checkboxSelection
-            onRowSelectionModelChange={(id) => {
-              console.log(id)
+            
+            onRowSelectionModelChange={(ids) => {
+              const selectedIDs = new Set(ids);
+              const selectedRowData = data.docs.filter((row :any) =>
+                selectedIDs.has(row.id.toString())
+              );
+              for(let i=0; i<selectedRowData.length; i++){
+            
+                deactivatedList.push(selectedRowData[i])
+              }
+             
+              
+              
             }}
           />
         </div>}
