@@ -1,9 +1,9 @@
 const NavBar = () => {
   return (
-    <div className="search-bar flex justify-between mt-6 h-12 fixed right-0 left-72 top-0">
-      <div className="flex justify-between items-center border border-[#667085] px-3 py-2 rounded-lg w-80 h-10">
-        <input type="text" placeholder="Search something...." className="w-72 placeholder:text-sm"/>
-        <img src="/asset/icons/search.svg"  className="h-4 w-4"/>
+    <div className="search-bar flex justify-between mt-11 p-3">
+      <div className="flex border border-[#667085] px-3 py-2 rounded-lg ">
+        <input type="text" placeholder="Search something...." />
+        <img src="/asset/icons/search.svg" />
       </div>
 
       <div className="flex gap-6 items-center">
