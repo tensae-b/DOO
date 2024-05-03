@@ -14,7 +14,7 @@ const columns: GridColDef[] = [
   { field: "email", headerName: "email", width: 330 },
   { field: "role", headerName: "role", width: 230 },
   { field: "activated", headerName: "activated", width: 230 },
-<<<<<<< HEAD
+
   {
     field: 'action',
     headerName: 'Action',
@@ -40,29 +40,6 @@ const columns: GridColDef[] = [
         );
     },
   }
-=======
-  // {
-  //   field: 'action',
-  //   headerName: 'Action',
-  //   width: 180,
-  //   sortable: false,
-   
-    
-  //   renderCell: (params) => {
-  //       const onClick = (e: any) => {
-  //         const currentRow = params.row;
-  //         return alert(JSON.stringify(currentRow, null, 4));
-  //       };
-        
-  //       return (
-  //         <Stack direction="row" spacing={2}>
-  //           <Button variant="outlined" color="warning" size="small" onClick={onClick}>Edit</Button>
-  //           <Button variant="outlined" color="error" size="small" onClick={onClick}>Delete</Button>
-  //         </Stack>
-  //       );
-  //   },
-  // }
->>>>>>> fa93c789fe9c131ad8ffc365067fddf62e3d21b3
 ];
 function ManageUser() {
   const { mutateAsync: activate }: any = useActivate();
