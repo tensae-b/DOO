@@ -11,6 +11,7 @@ export const Route = createFileRoute("/workflowtemp")({
 });
 const WorkFlowAddTemp = lazy(() => import("./workflowadd.lazy"));
 import { DataGrid, GridColDef, GridActionsCellParams } from '@mui/x-data-grid';
+import NoData from "../components/NoData";
 
 // import {
 //   getAllUser,
@@ -130,41 +131,46 @@ function DocumentTemp() {
         <SideBar />
         <div className="w-full flex flex-col">
           <NavBar />
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-3 my-5">
-              <h2 className="text-[#4A176D] text-3xl font-bold">Workflow Template</h2>
-              <Dropdown options={options} onChange={(option) => setSelectedTemplate(option)} value={selectedTemplate} placeholder="Select an option" />
-              
-            </div>
-            <div className="flex gap-4 justify-center items-center">
-            <button onClick={openAddTemplate} className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white">
-          <img src="/asset/icons/plus3.png" className="w-5"/>
-          Add New
-        </button>
-            </div>
-          </div>
-          {showAddTemplate && (
+          {user.length == 0 && (
+            <NoData title={"Workflow"} openPopUp={openAddTemplate} />
+          )}
+            {showAddTemplate && (
         <React.Suspense fallback={<div>Loading...</div>}>
           <WorkFlowAddTemp onClose={closeAddTemplate} />
         </React.Suspense>
       )}
-          <div className="h-full w-full mt">
-            <DataGrid
-              rows={user}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: { page: 0, pageSize: 5 },
-                },
-              }}
-              pageSizeOptions={[5, 10]}
-              checkboxSelection
-              onRowSelectionModelChange={(id) => {
-                console.log(id)
-                // checked(id);
-              }}
-            />
-          </div>
+
+{user.length != 0 && (
+            <><div className="flex justify-between">
+              <div className="flex flex-col gap-3 my-5">
+                <h2 className="text-[#4A176D] text-3xl font-bold">Workflow Template</h2>
+                <Dropdown options={options} onChange={(option) => setSelectedTemplate(option)} value={selectedTemplate} placeholder="Select an option" />
+
+              </div>
+              <div className="flex gap-4 justify-center items-center">
+                <button onClick={openAddTemplate} className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white">
+                  <img src="/asset/icons/plus3.png" className="w-5" />
+                  Add New
+                </button>
+              </div>
+            </div><div className="h-full w-full mt">
+                <DataGrid
+                  rows={user}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  checkboxSelection
+                  onRowSelectionModelChange={(id) => {
+                    console.log(id);
+                    // checked(id);
+                  } } />
+              </div></>
+          )}
+          
         </div>
       </div>
       {/* <button
