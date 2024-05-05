@@ -80,28 +80,38 @@ return(
           </div>
 
           <div className='section2 flex flex-col p-6 border border-[#EFEFF4]  gap-4 rounded-lg'>
-           <h3 className='text-[#00B0AD] text-xl font-bold'>Loan Information</h3>
+           <h3 className='text-[#00B0AD] text-xl font-bold'>Bank Information</h3>
            <hr className='bg-[#EFEFF4]'/>
-           <div className='flex gap-6 w-full'>
+           <div className='flex flex-col gap-6 w-full'>
            <div className='flex flex-col gap-6 items-center w-full'>
-            <h3 className='text-lg w-full'>Borrower Name</h3>
-            <input type="text" placeholder='ex. Loan Application' className='w-full border border-[#EFEFF4] p-3 rounded-lg text-base'/>
+            <h3 className='text-lg w-full'>Bank account number</h3>
+            <input type="text" placeholder='bank account' className='w-full border border-[#EFEFF4] p-3 rounded-lg text-base'/>
            </div>
            <div className='flex flex-col gap-6 items-center w-full' >
-            <h3 className='text-lg w-full'>Loan Type</h3>
+            <h3 className='text-lg w-full'>Bank account type</h3>
             <select
-                   id="document-type"
+                   id="bank-account"
                   className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                 
                  
                 >
                   <option>
                     <img src="/icons/select-icon.svg" />
-                    Select Loan Type</option>
-                  <option value="loan">Personal</option>
+                    Select bank account type</option>
+                  <option value="loan">Saving</option>
                  
                 </select>
            </div>
+
+           <div className='flex flex-col gap-6 items-center w-full'>
+            <div className='flex gap-3 w-full'>
+            <h3 className='text-lg '>Add another account</h3>
+            <p className=' text-xs text-[#027A48]'>Optional</p>
+            </div>
+            
+            <input type="text" placeholder='bank account' className='w-full border border-[#EFEFF4] p-3 rounded-lg text-base'/>
+           </div>
+           <a href="LoanDocument" className={` text-base px-6 py-2 self-end ${ null != null ? "bg-[#00B0AD] text-white":"bg-[#F0F3F6] text-[#9EA9C1]"}`}>Continue</a>
            </div>
           </div>
 
