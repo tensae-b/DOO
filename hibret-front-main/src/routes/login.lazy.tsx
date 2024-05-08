@@ -38,111 +38,85 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {isError && (
-            <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-              role="alert"
-            >
-              <strong className="font-bold">Error!</strong>
-              <span className="block sm:inline">{error.message}</span>
-            </div>
-          )}
-          {isSuccess && (
-            <div
-              className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-              role="alert"
-            >
-              <strong className="font-bold">Success!</strong>
-              <span className="block sm:inline">Login successful</span>
-            </div>
-          )}
-
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account :status
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            action="#"
-            method="POST"
-            onSubmit={handleLogin}
+    <div className="flex justify-center items-center h-screen w-screen ">
+      <div className="w-80  h-96 gap-4  flex flex-col">
+        {isError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
           >
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Email address
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline">{error.message}</span>
+          </div>
+        )}
+        {isSuccess && (
+          <div
+            className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <strong className="font-bold">Success!</strong>
+            <span className="block sm:inline">Login successful</span>
+          </div>
+        )}
+
+        <h1 className="w-full h-10 font-ralewa font-bold text-3xl  text-center bg-gradient-to-r text-transparent bg-clip-text from-teal-500 to-purple-900">
+          Login
+        </h1>
+        <h3 className="w-full   text-center font-urbanist font-normal text-base text-gray-400">
+          Sign in to your account.
+        </h3>
+        <form
+          action="#"
+          method="POST"
+          onSubmit={handleLogin}
+          className="gap-4  flex flex-col"
+        >
+          <input
+            id="email"
+            name="email"
+            autoComplete="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            type="email"
+            placeholder="   Enter Your Email"
+            className="w-full h-10 rounded-md border p-2  bg-white border-gray-300 placeholder:text-xs"
+          />
+          <input
+            id="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            type="password"
+            placeholder="Confirm New Password"
+            className="w-full h-10 rounded-md border p-4  bg-white border-gray-300 placeholder:text-xs"
+          />
+          <div className="flex w-full h-4 items-center text-sm px-3 justify-between">
+            <div className="flex gap-1 items-center m-2  ">
+              <input type="checkbox" className="w-4 h-3 text-blue-800 " />
+              <label className="text-sm font-medium text-gray-400">
+                Remember me
               </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
             </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
-            <a
-              href="#"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-              Start a 14 day free trial
+            <a href="" className="text-purple-900">
+              Forgot Password?
             </a>
-          </p>
+          </div>
+          <button
+            type="submit"
+            className="bg-teal-500 text-white h-10   rounded-md"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="text-center text-sm text-gray-400 mt-2">
+          Dont have an account?{" "}
+          <a href="" className="text-purple-900">
+            Register Now{" "}
+          </a>
         </div>
       </div>
     </div>

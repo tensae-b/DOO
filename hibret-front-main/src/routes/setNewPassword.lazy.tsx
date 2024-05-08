@@ -2,7 +2,7 @@ import { createLazyFileRoute } from '@tanstack/react-router'
 
 export const Route = createLazyFileRoute('/setNewPassword')({
 
-  component: () =>  <div className='flex item-center justify-center  fixed top-0 left-0 right-0 bottom-0 bg-white pt-56 z-50'>
+  component: () =>  <div className='flex item-center justify-center   pt-56 '>
   <div className=' w-[400px] h-[320px] flex items-center justify-center flex-col gap-6 p-0'>
      <h1 className='text-3xl font-raleway  bg-gradient-to-r text-transparent bg-clip-text from-teal-500 to-purple-900'>Setup New Password</h1>
      <p className='text-gray-600 text-sm'>Enter a new password for your account</p>
