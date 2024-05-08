@@ -3,16 +3,15 @@ import ReactQuill from "react-quill";
 import "quill/dist/quill.snow.css";
 import clsx from "clsx";
 import { Key } from "react";
+import { useFormContext } from "react-hook-form";
 
 export const FormBuilder = ({
   title,
   type,
-  clearErrors,
-  setError,
   options,
-  register,
-  errors,
-  setValue,
+  fields,
+  remove,
+  index,
 }: any) => {
   var modules = {
     toolbar: [
@@ -89,7 +88,13 @@ export const FormBuilder = ({
     "align",
     "size",
   ];
-
+  const {
+    register,
+    setError,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext();
   const errorClassNames = ["input-error", "textarea-error"];
 
   const validateDocumentImage = (title, file) => {
@@ -112,7 +117,9 @@ export const FormBuilder = ({
       return (
         <>
           <select
-            {...register(title, { required: `${title} is Required` })}
+            {...register(`sections[${index}].value`, {
+              required: `${title} is Required`,
+            })}
             className={clsx(
               "text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 ",
               {
