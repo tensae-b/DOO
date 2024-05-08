@@ -13,7 +13,6 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ForgotpasswordImport } from './routes/forgotpassword'
 import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId'
 
 // Create Virtual Routes
@@ -29,6 +28,7 @@ const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
 const LoginLazyImport = createFileRoute('/login')()
 const InviteUserLazyImport = createFileRoute('/invite-user')()
+const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
@@ -97,6 +97,13 @@ const InviteUserLazyRoute = InviteUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/invite-user.lazy').then((d) => d.Route))
 
+const ForgotpasswordLazyRoute = ForgotpasswordLazyImport.update({
+  path: '/forgotpassword',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/forgotpassword.lazy').then((d) => d.Route),
+)
+
 const DocumenttempaddLazyRoute = DocumenttempaddLazyImport.update({
   path: '/documenttempadd',
   getParentRoute: () => rootRoute,
@@ -136,8 +143,6 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
-
-
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
@@ -154,10 +159,6 @@ declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
       preLoaderRoute: typeof IndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/forgotpassword': {
-      preLoaderRoute: typeof ForgotpasswordImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -186,6 +187,10 @@ declare module '@tanstack/react-router' {
     }
     '/documenttempadd': {
       preLoaderRoute: typeof DocumenttempaddLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/forgotpassword': {
+      preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/invite-user': {
@@ -243,7 +248,6 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
-  ForgotpasswordRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
   CreateUserLazyRoute,
@@ -251,6 +255,7 @@ export const routeTree = rootRoute.addChildren([
   DocumentempLazyRoute,
   DocumentsLazyRoute,
   DocumenttempaddLazyRoute,
+  ForgotpasswordLazyRoute,
   InviteUserLazyRoute,
   LoginLazyRoute,
   ManageUserLazyRoute,
