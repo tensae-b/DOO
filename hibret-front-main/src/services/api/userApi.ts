@@ -69,8 +69,10 @@ export const getUser = async () => {
 }
 
 export const activateUser = async (userInfo: object) => {
-    const activate: any = userInfo.activated
+    const activate: any = userInfo.active
+ 
     const { data } = await axiosInstance.post(`/users/activate/${userInfo.id}`, { activate });
+    console.log(data)
     return data;
 }
 

@@ -128,8 +128,8 @@ function DocumentTemp() {
         <SideBar />
         <div className="w-full flex flex-col">
           <NavBar />
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-3 my-5">
+          <div className={`flex justify-between ${showAddTemplate ? "opacity-20" : "opacity-100"}`} >
+            <div className="flex flex-col gap-3 my-5 opa">
               <h2 className="text-[#4A176D] text-3xl font-bold">Document Template</h2>
               <Dropdown options={options} onChange={(option) => setSelectedTemplate(option)} value={selectedTemplate} placeholder="Select an option" />
               
@@ -146,7 +146,7 @@ function DocumentTemp() {
           <DocumentAddTemp onClose={closeAddTemplate} />
         </React.Suspense>
       )}
-          <div className="h-full w-full mt">
+          <div className={`h-full w-full mt  ${showAddTemplate ? "opacity-20" : "opacity-100"}`}>
             <DataGrid
               rows={user}
               columns={columns}

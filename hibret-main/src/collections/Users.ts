@@ -74,6 +74,9 @@ const Users: CollectionConfig = {
             activated: !activate
           }
         })
+        .then(()=>{
+          res.send("sucess")
+        })
 
 
       }
