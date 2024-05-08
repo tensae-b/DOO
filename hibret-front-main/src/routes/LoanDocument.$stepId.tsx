@@ -187,6 +187,7 @@ function LoanDocument() {
                               <FormBuilder
                                 {...field}
                                 key={index}
+                                index={index}
                                 remove={remove}
                                 field={field}
                               />

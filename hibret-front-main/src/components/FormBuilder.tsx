@@ -96,7 +96,6 @@ export const FormBuilder = ({
     formState: { errors },
   } = useFormContext();
   const errorClassNames = ["input-error", "textarea-error"];
-
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
@@ -231,6 +230,7 @@ export const FormBuilder = ({
 
         {/* {handleInput()} */}
         <HandleInput />
+        <button onClick={() => remove(index)}>Remove</button>
       </div>
     </div>
   );
