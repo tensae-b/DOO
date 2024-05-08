@@ -23,9 +23,9 @@ function Document() {
     setShowPopUp(false);
   }
 
-  function handleChange(e: any){
-    console.log(e.target.value)
-    setSelectedWorkflow(e.target.value)
+  function handleChange(e: any) {
+    console.log(e.target.value);
+    setSelectedWorkflow(e.target.value);
   }
 
   return (
@@ -51,28 +51,34 @@ function Document() {
               </div>
 
               <div className="flex flex-col gap-6 w-full p-6">
-                <div className=" flex flex-col gap-3"> 
-                <h2 className="text-[#00B0AD] text-xl font-bold">
-                  Choose Workflow Type
-                </h2>
-                <select
-                   id="document-type"
-                  className="text-[#667085] text-sm border border-[#D0D5DD] border-dashed rounded-md px-3 py-2"
-                  onChange={handleChange} 
-                 
-                >
-                  <option>
-                    <img src="/icons/select-icon.svg" />
-                    Select Workflow Type</option>
-                  <option value="loan">Loan application</option>
-                 
-                </select>
+                <div className=" flex flex-col gap-3">
+                  <h2 className="text-[#00B0AD] text-xl font-bold">
+                    Choose Workflow Type
+                  </h2>
+                  <select
+                    id="document-type"
+                    className="text-[#667085] text-sm border border-[#D0D5DD] border-dashed rounded-md px-3 py-2"
+                    onChange={handleChange}
+                  >
+                    <option>
+                      <img src="/icons/select-icon.svg" />
+                      Select Workflow Type
+                    </option>
+                    <option value="loan">Loan application</option>
+                  </select>
                 </div>
 
-                <a href="LoanDocument" className={` text-base px-6 py-2 self-end ${selectedWorkflow != null ? "bg-[#00B0AD] text-white":"bg-[#F0F3F6] text-[#9EA9C1]"}`}>Continue</a>
+                <a
+                  href="LoanDocument/1"
+                  className={` text-base px-6 py-2 self-end ${
+                    selectedWorkflow != null
+                      ? "bg-[#00B0AD] text-white"
+                      : "bg-[#F0F3F6] text-[#9EA9C1]"
+                  }`}
+                >
+                  Continue
+                </a>
               </div>
-
-            
             </div>
           )}
         </div>
