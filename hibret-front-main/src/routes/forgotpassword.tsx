@@ -1,10 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import lock from "../../public/asset/icons/lock.svg"
-
-
 
 export const Route = createFileRoute('/forgotpassword')({
-  component: () => 
+  component: () => <div>Hello /forgotpassword!</div>
+}) () => 
     <div className='flex item-center justify-center   pt-56 '>
   <div className=' w-[400px] h-[320px] flex items-center justify-center flex-col  p-0'>
     <img src={lock}/>
