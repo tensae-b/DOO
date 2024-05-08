@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as ForgotpasswordImport } from './routes/forgotpassword'
+import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId'
 
 // Create Virtual Routes
 
@@ -33,7 +34,6 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
-const BlankpageLazyImport = createFileRoute('/blankpage')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -124,11 +124,6 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
 
-const BlankpageLazyRoute = BlankpageLazyImport.update({
-  path: '/blankpage',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/blankpage.lazy').then((d) => d.Route))
-
 const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
   path: '/adminDashboard',
   getParentRoute: () => rootRoute,
@@ -141,15 +136,17 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
-const ForgotpasswordRoute = ForgotpasswordImport.update({
-  path: '/forgotpassword',
-  getParentRoute: () => rootRoute,
-} as any)
+
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const LoanDocumentStepIdRoute = LoanDocumentStepIdImport.update({
+  path: '/LoanDocument/$stepId',
+  getParentRoute: () => rootRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -169,10 +166,6 @@ declare module '@tanstack/react-router' {
     }
     '/adminDashboard': {
       preLoaderRoute: typeof AdminDashboardLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/blankpage': {
-      preLoaderRoute: typeof BlankpageLazyImport
       parentRoute: typeof rootRoute
     }
     '/create-user': {
@@ -239,6 +232,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
+    '/LoanDocument/$stepId': {
+      preLoaderRoute: typeof LoanDocumentStepIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -249,7 +246,6 @@ export const routeTree = rootRoute.addChildren([
   ForgotpasswordRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
-  BlankpageLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
@@ -266,6 +262,7 @@ export const routeTree = rootRoute.addChildren([
   UserDashboardLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
+  LoanDocumentStepIdRoute,
 ])
 
 /* prettier-ignore-end */
