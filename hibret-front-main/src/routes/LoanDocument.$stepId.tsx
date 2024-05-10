@@ -1,11 +1,12 @@
 import ReactQuill from "react-quill";
 import "quill/dist/quill.snow.css";
-import { useFieldArray, useForm, FormProvider } from "react-hook-form";
+import { useFieldArray, useForm, FormProvider, FieldArrayMethodProps } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import { createFileRoute } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
+import { useState } from "react";
 const steps = [
   {
     id: 1,
@@ -77,8 +78,10 @@ export const Route = createFileRoute("/LoanDocument/$stepId")({
 
 function LoanDocument() {
   const step: any = Route.useLoaderData();
+  
   const defaultValues = { data: step.section[0].content };
   const methods = useForm({ mode: "onChange", defaultValues });
+  let [sectionAdd, setSectionAdd]= useState(0)
   const { control, handleSubmit } = methods;
   const { append, fields, remove } = useFieldArray({
     control,
@@ -90,15 +93,40 @@ function LoanDocument() {
   const current = "border border-[#4A176D] border-2";
   const next = "border border-[#C6C6C6]";
 
-  function addMore(sectionIndex) {
-    append(
-      { title: "another document", type: "text", required: true },
-      sectionIndex
-    );
-    append(
-      { title: "another input", type: "textarea", required: true },
-      sectionIndex
-    );
+  function addMore(sectionIndex: FieldArrayMethodProps | undefined) {
+    console.log(sectionIndex)
+    step.section.map((item: any)=>{
+   
+      if(item.sectionId== sectionIndex){
+        item.content.map((sectionContent: any)=>{
+          append(
+            { title: sectionContent.title , type: sectionContent.type, required: sectionContent.required },
+            
+          );
+          setSectionAdd(sectionAdd+1);
+        })
+      }
+      
+    })
+    
+  }
+
+  function removeSection(sectionIndex: FieldArrayMethodProps | undefined) {
+  
+    step.section.map((item: any)=>{
+   
+      if(item.sectionId== sectionIndex){
+        item.content.map((sectionContent: any)=>{
+          remove(
+            { title: sectionContent.title , type: sectionContent.type, required: sectionContent.required },
+            
+          );
+          setSectionAdd(sectionAdd+1);
+        })
+      }
+      
+    })
+    
   }
 
   return (
@@ -171,12 +199,13 @@ function LoanDocument() {
                 <div className="flex mt-10 gap-5">
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    // className="flex w-full"
+                   
 
                     className="flex flex-col gap-5 w-[75%]"
                   >
                     <div className="form flex flex-col gap-4">
-                      {step.section.map((item: any, sectionIndex: number) => (
+                      {step.section.map((item: any) => (
+                       
                         <div className="section1 flex flex-col p-6 border border-[#EFEFF4] gap-4 rounded-lg">
                           <h3 className="text-[#00B0AD] text-xl font-bold">
                             {item.title}
@@ -188,29 +217,33 @@ function LoanDocument() {
                                 {...field}
                                 key={index}
                                 index={index}
-                                remove={remove}
+                                remove={removeSection}
                                 field={field}
                               />
                             );
                           })}
-                          {/* {item.content.map((content: any, index: any) => {
-                            const data = { ...content, fields, remove };
-                            return (
-                              <>
-                                <FormBuilder {...data} key={index} />
-                              </>
-                            );
-                          })} */}
-
-                          {item.multiple == true && (
+                        
+                       <div className="flex gap-3 "> 
+                       {item.multiple == true && (
                             <button
                               type="button"
-                              className="flex justify-center items-center border border-[#00B0AD] text-[#00B0AD] p-2"
-                              onClick={() => addMore(sectionIndex)}
+                              className="flex w-full justify-center items-center border border-[#00B0AD] text-[#00B0AD] p-2"
+                              onClick={() => addMore(item.sectionId)}
                             >
                               <img src="/asset/icons/plus-black.svg" /> Add more
                             </button>
                           )}
+                          {(item.multiple == true && sectionAdd >=1) && (
+                            <button
+                              type="button"
+                              className="flex w-full justify-center items-center border border-[#00B0AD] text-[#00B0AD] p-2"
+                              onClick={() => removeSection(item.sectionId)}
+                            >
+                              <img src="/asset/icons/plus-black.svg" /> Remove
+                            </button>
+                          )}
+                       </div>
+                          
                         </div>
                       ))}
                     </div>
