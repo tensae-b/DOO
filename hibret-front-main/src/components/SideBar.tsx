@@ -38,6 +38,10 @@ const SideBar = () => {
               <p className=" text-sm text-[#667085]">Summary</p>
             </div>
             <div className="flex gap-2 ">
+              <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
+              <p className=" text-sm text-[#667085]">Workflow</p>
+            </div>
+            <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/some-list.svg" />
               <p className=" text-sm text-[#667085]">Lorem List</p>
             </div>
