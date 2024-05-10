@@ -230,7 +230,8 @@ export const FormBuilder = ({
 
         {/* {handleInput()} */}
         <HandleInput />
-        <button onClick={() => remove(index)}>Remove</button>
+{/*         
+        <button onClick={() => remove(index)}>Remove</button> */}
       </div>
     </div>
   );
