@@ -19,6 +19,7 @@ import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId
 
 const WorkflowtempLazyImport = createFileRoute('/workflowtemp')()
 const WorkflowaddLazyImport = createFileRoute('/workflowadd')()
+const UserDataLazyImport = createFileRoute('/userData')()
 const UserDashboardLazyImport = createFileRoute('/userDashboard')()
 const SetNewPasswordLazyImport = createFileRoute('/setNewPassword')()
 const RegisterLazyImport = createFileRoute('/register')()
@@ -51,6 +52,11 @@ const WorkflowaddLazyRoute = WorkflowaddLazyImport.update({
   path: '/workflowadd',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/workflowadd.lazy').then((d) => d.Route))
+
+const UserDataLazyRoute = UserDataLazyImport.update({
+  path: '/userData',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/userData.lazy').then((d) => d.Route))
 
 const UserDashboardLazyRoute = UserDashboardLazyImport.update({
   path: '/userDashboard',
@@ -249,6 +255,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserDashboardLazyImport
       parentRoute: typeof rootRoute
     }
+    '/userData': {
+      preLoaderRoute: typeof UserDataLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/workflowadd': {
       preLoaderRoute: typeof WorkflowaddLazyImport
       parentRoute: typeof rootRoute
@@ -287,6 +297,7 @@ export const routeTree = rootRoute.addChildren([
   RegisterLazyRoute,
   SetNewPasswordLazyRoute,
   UserDashboardLazyRoute,
+  UserDataLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   LoanDocumentStepIdRoute,

@@ -1,7 +1,8 @@
-import React, { useState, lazy } from "react";
+import React, { useState, useEffect, lazy } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
+import axios from "axios";
 
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
@@ -20,54 +21,9 @@ import NoData from "../components/NoData";
 // } from "../services/queries/userQuery";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "name", headerName: "name", width: 230 },
-  { field: "Type", headerName: "Type", width: 130 },
-  {
-    field: "status",
-    headerName: "status",
-    width: 150,
-    type: "actions",
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onActive = () => {
-        // Handle edit functionality for the specific row
-        console.log("Edit button clicked for row:", params.id);
-        // Implement logic to open an edit form or modal here (consider passing data)
-      };
-
-      const onInActive = () => {
-        // Handle delete functionality for the specific row
-        console.log("Delete button clicked for row:", params.id);
-        // Implement logic to confirm and delete the row (consider user confirmation)
-      };
-      const imageSrc =
-        params.row.status === "Active"
-          ? "/asset/icons/dot.png"
-          : "/asset/icons/dot2.png";
-
-      return (
-        <div className="flex gap-4 justify-center items-center">
-          <button
-            onClick={() => {
-              if (params.row.status === "Active") {
-                onActive();
-              } else {
-                onInActive();
-              }
-            }}
-            className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg  ${
-              params.row.status === "Active"
-                ? "text-[#00B0AD]"
-                : "text-[#4A176D]"
-            }`}
-          >
-            <img src={imageSrc} className="w-5" />
-            {params.row.status}
-          </button>
-        </div>
-      );
-    },
-  },
+  { field: "id", headerName: "ID", width: 230 },
+  { field: "name", headerName: "Name", width: 200 },
+  { field: "num_of_stages", headerName: "num_of_stages", width: 230 },
   {
     field: "actions",
     headerName: "Action",
@@ -139,6 +95,24 @@ const userData = [
 
 function DocumentTemp() {
   // const userData: any = [];
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/admin/workflow-templates`);
+      const updatedUserData = response.data.map((item, index) => ({
+        id: item._id, // Extracting id from fetched object
+        name: item.name,
+        num_of_stages: item.stages.length
+      }));
+      setUser(updatedUserData);
+     console.log(response.data)
+    } catch (error) {
+      console.error('Error fetching user workflow data:', error);
+    }
+  };
+
   const [user, setUser] = useState(userData);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
