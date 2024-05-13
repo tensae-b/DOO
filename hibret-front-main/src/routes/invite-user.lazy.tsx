@@ -1,249 +1,178 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import UserTabs from '../components/UserTabs'
-import { fetchUser } from "../services/api/usersApi";
+import { fetchUser, sendUser,resendUser,activateUser,deactivateUser,fetchWorkflow} from "../services/api/usersApi";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import axios from 'axios';
+
 export const Route = createFileRoute("/invite-user")({
   component: () => <InviteNewUser />,
 });
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-let buttonName="send"
-
-// import {
-//   getAllUser,
-//   verifyUser,
-//   useCreateNewUser,
-//   filterUsers,
-// } from "../services/queries/userQuery";
-import { Box } from "@mui/material";
-import axios from 'axios';
 
 const columns: GridColDef[] = [
-  { field: "id", headerName:"id", headerClassName: 'field-header', width: 70 },
-  { field: "name", headerName: "name", headerClassName: 'field-header',cellClassName: 'field-cell', width: 230 },
-  { field: "username", headerName: "username", headerClassName: 'field-header', width: 130 },
-  { field: "email", headerName: "email", headerClassName: 'field-header', width: 330 },
-  { field: "role", headerName: "role", headerClassName: 'field-header', width: 230 },
+  { field: "username", headerName: "Username", headerClassName: 'field-header', width: 150 },
+  { field: "email", headerName: "Email", headerClassName: 'field-header', width: 300 },
+  { field: "role_id", headerName: "Role ID", headerClassName: 'field-header', width: 150 },
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 150,
+    type: 'actions',
+    renderCell: (params: GridActionsCellParams<any>) => {
+      const [buttonText, setButtonText] = useState(params.row.status === "Activated" ? "Deactivated" : "Activated");
+      const buttonColor = params.row.status === "Activated" ? "#00B0AD" : "#4A176D";
+      const [button, setButtonCol] = useState( params.row.status === "Activated" ? "#00B0AD" : "#4A176D");
+      const [isLoading, setIsLoading] = useState(false);
+     const onActive = async () => {
+  try {
+    const userId = params.row.id;
+    console.log('Activating user:', userId);
+    const { data } = await activateUser(userId);
+    console.log({ data });
+    setButtonText("Deactivated"); // Update state directly
+  } catch (error) {
+    console.error('Error activating user:', error);
+  }
+};
+
+const onInActive = async () => {
+  try {
+    const userId = params.row.id;
+    console.log('Deactivating user:', userId);
+    const { data } = await deactivateUser(userId);
+    console.log({ data });
+    setButtonText("Activated"); // Update state directly
+  } catch (error) {
+    console.error('Error deactivating user:', error);
+  }
+};
+
+      const imageSrc =  "/asset/icons/dot.png" ;
+
+      return (
+        <div className="flex gap-4 justify-center items-center">
+          <button
+            onClick={() => {
+              params.row.status === "Activated" ? onInActive() : onActive();
+            }}
+            className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg text-white`}
+            style={{ color: "#00B0AD"}}
+          >
+            <img src={imageSrc} className="w-5"   style={{ color: "#00B0AD"}}/>
+            {buttonText}
+          </button>
+        </div>
+      );
+    },
+  },
+  //
+  // New column for Action
   {
     field: 'action',
     headerName: 'Action',
-    width: 1800,
+    width: 180,
     sortable: false,
-    
     renderCell: (params) => {
-        const onClick = (e) => {
-          checked(params.row.id);
-          const currentRow = params.row;
-          console.log(params.row)
-          return alert(JSON.stringify(currentRow, null, 4));
-        };
-        
-        
+      const onClick = async () => {
+        try {
+          const username = params.row.username;
+          console.log('Sending invitation to user:', username);
 
-        
-        return (
-          <div className=''>
-            <button className=' border border-red-500 px-5  rounded-md text-red-500 mr-3' onClick={onClick}>{buttonName}</button>
-            </div>
-        );
+          // Call either resendUser or sendUser based on accountCreationStatus
+          if (params.row.accountCreationStatus === "Sent") {
+            const { data } = await resendUser(username);
+            console.log({ data });
+          } else {
+            const { data } = await sendUser([username]);
+            console.log({ data });
+          }
+        } catch (error) {
+          console.error('Error sending invitation:', error);
+        }
+      };
+
+      const buttonText = params.row.accountCreationStatus === "Sent" ? "Resend" : "Send";
+
+      return (
+        <button className='border border-red-500 px-9 rounded-md text-red-500 mr-3' onClick={onClick}>{buttonText}</button>
+      );
     },
-  }
+  },
 ];
-const sampleUserData = [
-  { id: 1, name: "John Doe", username: "john_doe", email: "john@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", username: "jane_smith", email: "jane@example.com", role: "User" },
-  { id: 3, name: "Alice Johnson", username: "alice_johnson", email: "alice@example.com", role: "Editor" },
-  // Add more sample data as needed
-];
-
 
 function InviteNewUser() {
-  const userData: any = [];
-  const [user, setUser] = useState(sampleUserData); 
-  const [filtered, setFilter] = useState({
-    category: "",
-    value: "",
-  });
-  const emailList: any = [];
- 
-  // const columns: GridColDef[] = [
-  //   { field: "id", headerName:"id", headerClassName: 'field-header', width: 70 },
-  //   { field: "name", headerName: "name", headerClassName: 'field-header',cellClassName: 'field-cell', width: 230 },
-  //   { field: "username", headerName: "username", headerClassName: 'field-header', width: 130 },
-  //   { field: "email", headerName: "email", headerClassName: 'field-header', width: 330 },
-  //   { field: "role", headerName: "role", headerClassName: 'field-header', width: 230 },
-  //   {
-  //     field: 'action',
-  //     headerName: 'Action',
-  //     width: 180,
-  //     sortable: false,
-      
-  //     renderCell: (params) => {
-  //         const onClick = (e) => {
-  //           console.log("hey")
-  //           emailList.push({
-  //             email: params.row.email,
-  //             role:  params.row.role,
-  //           });
-  //           console.log(emailList);
-  //           verifying();
-  //         };
-          
-          
-  
-          
-  //         return (
-  //           <div className=''>
-  //             <button className=' border border-red-500 px-5  rounded-md text-red-500 mr-3' onClick={onClick}>{buttonName}</button>
-  //             </div>
-  //         );
-  //     },
-  //   }
-  // ];
+  const [user, setUser] = useState([]); 
+  const [refreshButtonText, setRefreshButtonText] = useState("Refresh");
 
-  // const { data, isLoading, isError } = getAllUser();
-  // console.log(data);
 
-  // const [fetch, setFetch] = useState(true);
-  // const [popup, setPopUp] = useState(false);
-  // const [popupMessage, setPopupMessage]= useState("")
-
-  // const { mutateAsync: verify }: any = verifyUser();
-  // const { mutateAsync: createUser } = useCreateNewUser();
-  // const { mutateAsync: filter }: any = filterUsers();
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/getAllUsers');
-      
-      console.log(response.data);
+      const { data } = await fetchUser();
+      // Extracting necessary fields and updating the state
+      const updatedData = data.users.map((user) => ({
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role_id: user.role_id,
+        status: user.activationStatus, // Include status property
+        isSelected: false, // Initialize isSelected property
+        accountCreationStatus: user.accountCreationStatus // Add accountCreation property
+      }));
+      setUser(updatedData);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching user:', error);
     }
   };
   
   useEffect(() => {
     fetchData();
   }, []);
-  // async function verifying() {
-  //   for (let i = 0; i < emailList.length; i++) {
-  //     let email = emailList[i].email;
-  //     let role = emailList[i].role;
-  //     console.log(email, role);
-  //     const random = Math.random() * 100;
-  //     const password = email.substring(0, 2) + Math.floor(random);
+  
+  // Other functions like toggleSelection and sendCheckedUsers remain the same
+  const sendCheckedUsers = async () => {
+    try {
+      const selectedUsernames = user
+        .filter((row) => row.isSelected)
+        .map((row) => row.username);
+      console.log(selectedUsernames); // Extract usernames of selected users
 
-  //     const res = await verify({ email, password });
+      // Check if "accountCreation" property exists
+      const isAccountCreationExist = user.some((row) => row.accountCreation);
 
-  //     console.log(res);
+      if (isAccountCreationExist) {
+        // If "accountCreation" exists, change button text to "Resend"
+        console.log("Resend functionality to be implemented...");
+      } else {
+        // If "accountCreation" doesn't exist, proceed with "Send" functionality
+        const { data } = await sendUser(selectedUsernames);
+        console.log({ data });
+      }
+    } catch (error) {
+      console.error('Error sending invitations:', error);
+    }
+  };
+  
 
-  //     if (res == "success") {
-  //       setPopUp(true);
-  //         setPopupMessage(`Email has been sent to ${email} `)
-  //       setTimeout(()=>{
-  //         setPopUp(false)
-  //         setPopupMessage("")
-  //       },3000)
-        
-  //       console.log({ email, password, role });
-  //       const userData = await createUser({ email, password, role });
-
-  //       console.log({ userData });
-  //     }
-  //   }
-  // }
-
-  // function handleChange(event: any) {
-  //   if (event.target.name == "search") {
-  //     setFilter((prevState) => ({
-  //       ...prevState,
-  //       value: event.target.value,
-  //     }));
-  //   } else {
-  //     setSelectedOption(event.target.value);
-  //     setFilter((prevState) => ({
-  //       ...prevState,
-  //       category: event.target.value,
-  //     }));
-  //   }
-  // }
-  // function checked(userid: any) {
-  //   for (let i = 0; i < user.length; i++) {
-  //     for (let j = 0; j < userid.length; j++) {
-  //       if (user[i].id == userid[j]) {
-  //         emailList.push({
-  //           email: user[i].email,
-  //           role: user[i].role,
-  //         });
-  //       }
-  //     }
-  //   }
-
-  //   console.log(emailList);
-  // }
-
-  // async function handelSubmit() {
-  //   const data = await filter(filtered);
-
-  //   for (let i = 0; i < data.length; i++) {
-  //     userData.push({
-  //       id: data[i].id,
-  //       email: data[i].email,
-  //       role: data[i].role,
-  //     });
-  //     setUser(userData);
-  //   }
-  //   console.log(data);
-  // }
   return (
-    <div className=" mx-3">
+    <div className="mx-3">
       <div className="flex">
         <SideBar />
         <div className="w-full flex flex-col">
-          
           <NavBar />
-          
-
           <div className="flex justify-between">
             <div className="flex flex-col gap-3 my-5">
-              <h2 className="text-[#4A176D] text-3xl font-bold">
-                User Management
-              </h2>
-              {/* {popup && (<div className=" w-full bg-[#00B0AD] text-white p-3 self-center rounded-md">
-            {popupMessage}
-            </div>
-            )} */}
+              <h2 className="text-[#4A176D] text-3xl font-bold">User Management</h2>
               <p className="text-[#667085] text-base"> placeholder</p>
             </div>
             <div className="flex gap-4 justify-center items-center ">
-              <button
-                onClick={() => {
-                  // verifying();
-                }}
-                className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white"
-              >
+              <button className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white" onClick={sendCheckedUsers}>
                 <img src="/asset/icons/export.svg" className="w-5" />
                 invite
               </button>
             </div>
           </div>
-          <UserTabs/>
           <div className=" h-full w-full mt">
-          <Box
-      sx={{
-       
-       
-        '& .field-header': {
-         color: '#667085',
-         fontSize: '14px',
-         fontWeight: 500
-        },
-
-        '& .field-cell': {
-          fontWeight: 'bold',
-        },
-      }}
-     >
             <DataGrid
               rows={user}
               columns={columns}
@@ -254,71 +183,21 @@ function InviteNewUser() {
               }}
               pageSizeOptions={[5, 10]}
               checkboxSelection
-              onRowSelectionModelChange={(id) => {
-                console.log(id);
-                // checked(id);
+              onRowSelectionModelChange={(selectionModel) => {
+                const selectedIds = new Set(selectionModel);
+                setUser((prevUser) =>
+                  prevUser.map((user) => ({
+                    ...user,
+                    isSelected: selectedIds.has(user.id),
+                  }))
+                );
               }}
             />
-            </Box>
           </div>
         </div>
       </div>
-
-      {/* <div className="flex">
-        <input
-          type="text "
-          placeholder="typehere"
-          name="search"
-          onChange={handleChange}
-          required
-        />
-        <div>
-          <label htmlFor="role"> role</label>
-          <input
-            type="radio"
-            value="role"
-            name="role"
-            checked={selectedOption === "role"}
-            onChange={handleChange}
-          />
-          <label htmlFor="email"> email</label>
-          <input
-            type="radio"
-            value="email"
-            name="email"
-            checked={selectedOption === "email"}
-            onChange={handleChange}
-          />
-        </div>
-        <button onClick={handelSubmit}> filter</button>
-      </div>
-
-      <div className="mt-32 mx-10 flex flex-col gap-10">
-        {user.map((item: any) => (
-          <div className="flex gap-10">
-            <h1>{item.email}</h1>
-            <p>{item.role}</p>
-            <input
-              type="checkbox"
-              onChange={() => {
-                checked(item.email, item.role);
-              }}
-            />
-
-            <br />
-          </div>
-        ))}
-       
-      </div> */}
-      {/* <button
-        className="bg-black text-white p-5 self-end"
-        onClick={() => {
-          verifying();
-        }}
-      >
-        {" "}
-        invite
-      </button> */}
     </div>
   );
 }
+
+export default InviteNewUser;
