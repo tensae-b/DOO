@@ -7,7 +7,25 @@ import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 export const Route = createFileRoute("/documenttempadd")({
   component: () => <DocumentAddTemp onClose={undefined} />,
 });
+const addSection = [
+  {
+    sectionId: 1,
+    title: "Sections",
+    content: [
+      { title: "Section-Header", type: "text" },
+      {
+        title: "Section-Type",
+        type: "select",
+        options: ["Short-Text", "Long-Text", "Select-options", "Uploaded-Document"],
+        
+      },
+      { title: "Section-Necessity", type: "radio", options: ["Required", "Optional"] },
+      { title: "Eligible-as-condition-criteria", type: "Checkbox" },
 
+    ],
+    multiple: false,
+  },
+]
 function DocumentAddTemp({ onClose }) {
   return (
     <div className="w-full h-fit max-w-[865px] absolute top-32 right-72 bg-white z-20 px-10 py-4 border-2 rounded-lg">
