@@ -1,9 +1,8 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useSession } from "../hooks/useSession";
 
 import axios from "axios";
-
-
 
 export const Route = createLazyFileRoute("/login")({
   component: () => <Login />,
@@ -14,6 +13,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const { setSession } = useSession();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -36,23 +36,30 @@ const Login = () => {
 
       if (data.error) {
         setError(data.error);
-        setSuccess(""); // Clear success message
+        setSuccess("");
       } else {
-        setError(""); // Clear previous error
-        setSuccess(data.msg); // Set success message
+        setError(""); 
+        setSuccess(data.msg);
 
-        if (data.roles === "dooAdmin") {
-          window.location.href = `/adminDashboard?username=${data.username}`;
+        // Set session data
+        setSession(data.session);
+
+        if (data.session.role === "dooAdmin") {
+          window.location.href = `/adminDashboard?${data.session.username}`;
         } else {
-          window.location.href = `/userdashboard?username=${data.username}`;
+          window.location.href = `/userdashboard?${data.session.username}`;
         }
 
         setFormData({ email: "", password: "" });
       }
     } catch (error) {
       console.log(error);
-      setError("An error occurred while logging in."); // Set error message
-      setSuccess(""); // Clear success message
+      setError("An error occurred while logging in."); 
+    
+
+      setTimeout(() => {
+        setSuccess("");
+    }, 2000);
     }
   };
 
