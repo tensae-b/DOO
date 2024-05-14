@@ -7,13 +7,17 @@ import SideBar from '../components/SideBar';
 
 export const Route = createFileRoute('/userDashboard')({
   component: () => (
-    <div className="mt-24 ml-80 mr-8">
+
+    <div>
       <NavBar/>
-      <SideBar/>
+    <SideBar/>
+    <div className="mt-24 ml-80 mr-8">
+      
       <AdminHead/>
       <UserCards/>
       <UserEnd/>
 
-  </div>
+  </div></div>
+   
   )
 });
