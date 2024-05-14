@@ -2,7 +2,13 @@
 import ReactQuill from "react-quill";
 import "quill/dist/quill.snow.css";
 import clsx from "clsx";
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+} from "react";
 import { useFormContext } from "react-hook-form";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useEffect } from "react";
@@ -12,9 +18,9 @@ export const FormBuilderTrial = ({
   type,
   options,
   index,
-//   required,
+}: //   required,
 //   parentIndex,
-}: any) => {
+any) => {
   var modules = {
     toolbar: [
       [{ size: ["small", false, "large", "huge"] }],
@@ -90,67 +96,72 @@ export const FormBuilderTrial = ({
     "align",
     "size",
   ];
-//   const {
-//     register,
-//     setError,
-//     setValue,
-//     clearErrors,
-//     watch,
-//     formState: { errors },
-//   } = useFormContext();
+  //   const {
+  //     register,
+  //     setError,
+  //     setValue,
+  //     clearErrors,
+  //     watch,
+  //     formState: { errors },
+  //   } = useFormContext();
 
-//   useEffect(() => {
-//     register(`section.${parentIndex}.content[${index}].value`, {
-//       required: true,
-//     });
-//   }, [type]);
+  //   useEffect(() => {
+  //     register(`section.${parentIndex}.content[${index}].value`, {
+  //       required: true,
+  //     });
+  //   }, [type]);
 
-//   const editorContent = watch(`section.${parentIndex}.content[${index}].value`);
-//   const errorClassNames = ["input-error", "textarea-error"];
+  //   const editorContent = watch(`section.${parentIndex}.content[${index}].value`);
+  //   const errorClassNames = ["input-error", "textarea-error"];
 
-//   const validateDocumentImage = (title: string | readonly string[] | undefined, file: File) => {
-//     // validate the size
-//     if (file.type === "application/pdf") {
-//       setValue(title, file);
-//       clearErrors(title);
-//     }
-//     if (file.type != "application/pdf") {
-//       setError(title, {
-//         type: "filetype",
-//         message: "Only PDFs are valid.",
-//       });
+  //   const validateDocumentImage = (title: string | readonly string[] | undefined, file: File) => {
+  //     // validate the size
+  //     if (file.type === "application/pdf") {
+  //       setValue(title, file);
+  //       clearErrors(title);
+  //     }
+  //     if (file.type != "application/pdf") {
+  //       setError(title, {
+  //         type: "filetype",
+  //         message: "Only PDFs are valid.",
+  //       });
 
-//       return;
-//     }
-//   };
+  //       return;
+  //     }
+  //   };
 
-//   const onEditorStateChange = (title: string, editorState: string) => {
-//     setValue(title, editorState);
-//   };
+  //   const onEditorStateChange = (title: string, editorState: string) => {
+  //     setValue(title, editorState);
+  //   };
 
   const handleInput = () => {
-    console.log(title, 'title')
     if (type === "select") {
       return (
         <>
-           <Field  as="select"  name={`content.${index}.title`}  required   className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 ">
-                   <option label="Select" value="" />
-                         { options?.map((option:any) => 
-                         <option key={option} label={option} value={option} />) }
-                                </Field>
+          <Field
+            as="select"
+            name={`documentvalue.sectionValue.${index}.${title}`}
+            required
+            className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+          >
+            <option label="Select" value="" />
+            {options?.map((option: any) => (
+              <option key={option} label={option} value={option} />
+            ))}
+          </Field>
         </>
       );
     } else if (type === "text") {
       return (
         <>
-        {/* <label htmlFor={`content.${index}.${title}`}>{title}</label> */}
-           <Field
-                        type="text"
-                        id={`content.${index}.${title}`}
-                        name={`content.${index}.${title}`}
-                        className="border rounded-md p-2 mt-1 w-full"
-                        required
-                      />
+          {/* <label htmlFor={`content.${index}.${title}`}>{title}</label> */}
+          <Field
+            type="text"
+            id={`content.${index}.${title}`}
+            name={`documentvalue.sectionValue.${index}.${title}`}
+            className="border rounded-md p-2 mt-1 w-full"
+            required
+          />
         </>
       );
     }
@@ -202,40 +213,51 @@ export const FormBuilderTrial = ({
     //     </>
     //   );
     // }
-    else if(type == 'radio'){
-        return(
-            <>
-           
-            <div
+    else if (type == "radio") {
+      return (
+        <>
+          <div
             role="group"
             aria-labelledby="my-radio-group "
             className="w-full flex gap-10 "
           >
-           {options?.map((option: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined)=>(
-            <label>
-            <Field type="radio" name={`content.${index}.${title}`}  required value={option} />
-            {option}
-          </label>
-          ))}
+            {options?.map(
+              (
+                option:
+                  | string
+                  | number
+                  | boolean
+                  | ReactElement<any, string | JSXElementConstructor<any>>
+                  | Iterable<ReactNode>
+                  | ReactPortal
+                  | null
+                  | undefined
+              ) => (
+                <label>
+                  <Field
+                    type="radio"
+                    name={`documentvalue.sectionValue.${index}.${title}`}
+                    required
+                    value={option}
+                  />
+                  {option}
+                </label>
+              )
+            )}
           </div>
-          </>
-        )
-       
-    } else if( type== "checkbox"){
-       
-        return (
-            
-                 
-            <label>
-            <Field type="checkbox" name={`content.${index}.${title}`} />
-            {/* {title} */}
-          </label>
+        </>
+      );
+    } else if (type == "checkbox") {
+      return (
+        <label>
+          <Field
+            type="checkbox"
+            name={`documentvalue.sectionValue.${index}.${title}`}
+          />
 
-           
-            
-          
-        )
-        
+          {/* {title} */}
+        </label>
+      );
     }
     //     else {
     //   // console.log(editorContent);
@@ -264,9 +286,7 @@ export const FormBuilderTrial = ({
     //       </span>
     //     </>
     //   );
-    }
-  
-
+  };
 
   return (
     <div>
@@ -283,4 +303,3 @@ export const FormBuilderTrial = ({
     </div>
   );
 };
-
