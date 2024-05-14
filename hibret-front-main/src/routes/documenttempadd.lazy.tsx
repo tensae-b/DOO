@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Formik,
@@ -40,14 +40,68 @@ const addSection = [
   },
 ];
 // const transformData = () => {};
+
 function DocumentAddTemp({ onClose }) {
+
+  const [category, setCategory]= useState([])
+  const [subCategory, setSubCategory]= useState([])
+
+  function getSubCategory(value: any){
+
+    var config = {
+      method: 'get',
+    maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/subCategory/cat/${value}`,
+      headers: { }
+    };
+    
+    axios(config)
+    .then(function (response: { data: any; }) {
+      console.log(response.data)
+      setSubCategory(response.data)
+      console.log(subCategory);
+    })
+    .catch(function (error: any) {
+      console.log(error);
+    });
+    
+  }
+  function getCategory(config: any){
+    axios(config)
+    .then(async function (response) {
+       console.log(response.data)
+      setCategory(response.data)
+   
+     
+      // console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      return error
+      // console.log(error);
+    });
+  }
+  useEffect(()=>{
+  
+
+    var config = {
+      method: 'get',
+    maxBodyLength: Infinity,
+      url: 'http://localhost:5000/admin/category',
+      headers: { }
+    };
+    
+     getCategory(config)
+    
+   
+    
+  },[])
   return (
     <div className="w-full h-fit max-w-[865px] absolute top-32 right-72 bg-white z-20 px-10 py-4 border-2 rounded-lg">
       <Formik
         initialValues={{
           content: addSection,
         }}
-        onSubmit={async (values) => {
+        onSubmit={async (values: { documentvalue: any; }) => {
           await new Promise((r) => setTimeout(r, 500));
           // console.log(values);
           axios
@@ -113,14 +167,15 @@ function DocumentAddTemp({ onClose }) {
                         name="documentvalue.categoryId"
                         as="select"
                         className="border rounded-md p-2 mt-1 w-full"
+                        onChange={(e: { target: { value: any; }; }) => getSubCategory(e.target.value)}
                         required
                       >
                         <option label="Select" value="" />
-                        <option
-                          label="general"
-                          value="6635e83600f2cf08e1654745"
-                        />
-                        <option label="contract" value="contract" />
+                        {category?.map((option: any, index) => (
+                          
+              <option key={option} label={option.name} value={option._id} />
+            ))}
+                      
                       </Field>
                     </div>
                     <div className="w-full flex flex-col justify-center gap-2">
@@ -134,11 +189,10 @@ function DocumentAddTemp({ onClose }) {
                         required
                       >
                         <option label="Select" value="" />
-                        <option
-                          label="general"
-                          value="6635e83600f2cf08e1654745"
-                        />
-                        <option label="loan" value="loan" />
+                        {subCategory?.map((option: any, index) => (
+                          
+                          <option key={option} label={option.name} value={option._id} />
+                        ))}
                       </Field>
                     </div>
                   </div>
@@ -160,7 +214,7 @@ function DocumentAddTemp({ onClose }) {
                       {({ push, remove }) => (
                         <div>
                           {values.content.length > 0 &&
-                            values.content.map((contents, idx) => {
+                            values.content.map((contents: { content: any[]; }, idx: Key | null | undefined) => {
                               return (
                                 <>
                                   {console.log(contents)}
@@ -180,7 +234,7 @@ function DocumentAddTemp({ onClose }) {
                                   </div>
 
                                   <div key={idx}>
-                                    {contents.content.map((data, i) => (
+                                    {contents.content.map((data: any, i: any) => (
                                       <FormBuilderTrial
                                         {...data}
                                         index={idx}

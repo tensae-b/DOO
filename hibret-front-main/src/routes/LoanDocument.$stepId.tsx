@@ -91,6 +91,7 @@ function LoanDocument() {
     name: "section",
   });
   const onSubmit = (data: any) => {
+    alert(JSON.stringify(data, null, 2));
     console.log(data, "submission");
   };
 

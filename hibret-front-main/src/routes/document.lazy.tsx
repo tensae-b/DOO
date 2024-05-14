@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
@@ -7,9 +7,32 @@ export const Route = createLazyFileRoute("/document")({
   component: () => <Document />,
 });
 
+import axios from "axios";
+
 function Document() {
   const data = [];
   const [showPopUp, setShowPopUp] = useState(false);
+  const [workflow, setWorkflow]= useState([])
+  useEffect(()=>{
+   
+
+    var config = {
+      method: 'get',
+    maxBodyLength: Infinity,
+      url: 'http://localhost:5000/admin/workflow-templates',
+      headers: { }
+    };
+    
+    axios(config)
+    .then(function (response) {
+      setWorkflow(response.data)
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    
+  },[])
 
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   let opacity;
@@ -64,7 +87,10 @@ function Document() {
                       <img src="/icons/select-icon.svg" />
                       Select Workflow Type
                     </option>
-                    <option value="loan">Loan application</option>
+                    {workflow?.map((option: any, index) => (
+                          
+                          <option key={option} label={option.name} value={option._id} />
+                        ))}
                   </select>
                 </div>
 
