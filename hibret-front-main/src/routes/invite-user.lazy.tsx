@@ -105,26 +105,31 @@ function InviteNewUser() {
   const [user, setUser] = useState([]); 
   const [refreshButtonText, setRefreshButtonText] = useState("Refresh");
 
-
   const fetchData = async () => {
     try {
-      const { data } = await fetchUser();
-      // Extracting necessary fields and updating the state
-      const updatedData = data.users.map((user) => ({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role_id: user.role_id,
-        status: user.activationStatus, // Include status property
-        isSelected: false, // Initialize isSelected property
-        accountCreationStatus: user.accountCreationStatus // Add accountCreation property
-      }));
-      setUser(updatedData);
+        const { data, isError } = await fetchUser();
+        if (!isError && data && data.users) {
+            const updatedData = data.users.map((user) => ({
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role_id: user.role_id,
+                status: user.activationStatus,
+                isSelected: false,
+                accountCreationStatus: user.accountCreationStatus
+            }));
+            setUser(updatedData);
+        } else {
+            // Handle case where response data is null or missing users property
+            console.error('Invalid response data:', data);
+        }
     } catch (error) {
-      console.error('Error fetching user:', error);
+        // Handle error from fetchUser function
+        console.error('Error fetching user:', error);
+        // Handle error gracefully, e.g., display error message to user
     }
-  };
-  
+};
+
   useEffect(() => {
     fetchData();
   }, []);

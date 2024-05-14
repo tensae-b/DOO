@@ -12,8 +12,29 @@ export const fetchUser = async () => {
 };
 export const sendUser = async (selectedUsers) => { // Pass selectedUsers as a parameter
     try {
-        const response = await axiosInst.post('api/sendInvitation', { "selectedUsers": selectedUsers}); // Include selectedUsers in the request body
+        const response = await axiosInst.post('api/sendInvitation', {selectedUsers}); // Include selectedUsers in the request body
         const { data } = response;
+        return { data, isLoading: false, isError: false };
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return { data: null, isLoading: false, isError: true };
+    }
+};
+export const forgot = async (email) => { // Pass selectedUsers as a parameter
+    try {
+        const response = await axiosInst.post('api/generateOTP', {email}); // Include selectedUsers in the request body
+        const { data } = response;
+        return { data, isLoading: false, isError: false };
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return { data: null, isLoading: false, isError: true };
+    }
+};
+export const reset = async (oldPassword,newPassword) => { // Pass selectedUsers as a parameter
+    try {
+        const response = await axiosInst.put('api/change-password', { oldPassword, newPassword }); // Include selectedUsers in the request body
+        const { data } = response;
+        
         return { data, isLoading: false, isError: false };
     } catch (error) {
         console.error('Error fetching user:', error);
