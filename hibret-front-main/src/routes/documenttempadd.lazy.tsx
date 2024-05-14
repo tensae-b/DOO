@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Formik,
@@ -10,6 +10,7 @@ import {
 } from "formik";
 import { FormBuilderTrial } from "../components/FormBuilderTrial";
 import "react-dropdown/style.css";
+import axios from "axios";
 
 export const Route = createFileRoute("/documenttempadd")({
   component: () => <DocumentAddTemp onClose={undefined} />,
@@ -17,24 +18,19 @@ export const Route = createFileRoute("/documenttempadd")({
 
 const addSection = [
   {
-    sectionId: 1,
+    sectionId: String(new Date().getTime()),
     title: "Sections",
     content: [
-      { title: "Section-Header", type: "text" },
+      { title: "title", type: "text" },
       {
-        title: "Section-Type",
+        title: "type",
         type: "select",
-        options: [
-          "Short-Text",
-          "Long-Text",
-          "Select-options",
-          "Uploaded-Document",
-        ],
+        options: ["text", "textarea", "select", "upload"],
       },
       {
-        title: "Section-Necessity",
+        title: "isRequired",
         type: "radio",
-        options: ["Required", "Optional"],
+        options: ["true", "Optional"],
       },
       {
         title: "Eligible-as-condition-criteria",
@@ -43,7 +39,7 @@ const addSection = [
     ],
   },
 ];
-
+// const transformData = () => {};
 function DocumentAddTemp({ onClose }) {
   return (
     <div className="w-full h-fit max-w-[865px] absolute top-32 right-72 bg-white z-20 px-10 py-4 border-2 rounded-lg">
@@ -53,7 +49,17 @@ function DocumentAddTemp({ onClose }) {
         }}
         onSubmit={async (values) => {
           await new Promise((r) => setTimeout(r, 500));
-
+          // console.log(values);
+          axios
+            .post("http://localhost:5000/admin/documentTemplate", {
+              ...values.documentvalue,
+            })
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
           alert(JSON.stringify(values.documentvalue, null, 2));
         }}
       >
@@ -85,14 +91,14 @@ function DocumentAddTemp({ onClose }) {
                   {/* Document Name */}
                   <div className="mt-4">
                     <label
-                      htmlFor="documentvalue.documentName"
+                      htmlFor="documentvalue.title"
                       className="text-sm w-full"
                     >
                       Document Name*
                     </label>
                     <Field
                       type="text"
-                      name="documentvalue.documentName"
+                      name="documentvalue.title"
                       className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                       required
                     />
@@ -104,13 +110,16 @@ function DocumentAddTemp({ onClose }) {
                         Document Category*
                       </label>
                       <Field
-                        name="documentvalue.documentCategory"
+                        name="documentvalue.categoryId"
                         as="select"
                         className="border rounded-md p-2 mt-1 w-full"
                         required
                       >
                         <option label="Select" value="" />
-                        <option label="general" value="general" />
+                        <option
+                          label="general"
+                          value="6635e83600f2cf08e1654745"
+                        />
                         <option label="contract" value="contract" />
                       </Field>
                     </div>
@@ -119,13 +128,16 @@ function DocumentAddTemp({ onClose }) {
                         Document Subcategory*
                       </label>
                       <Field
-                        name="documentvalue.documentsubCategory"
+                        name="documentvalue.subCategoryId"
                         as="select"
                         className="border rounded-md p-2 mt-1 w-full"
                         required
                       >
                         <option label="Select" value="" />
-                        <option label="general" value="general" />
+                        <option
+                          label="general"
+                          value="6635e83600f2cf08e1654745"
+                        />
                         <option label="loan" value="loan" />
                       </Field>
                     </div>
@@ -135,6 +147,15 @@ function DocumentAddTemp({ onClose }) {
 
                 <div className="flex flex-col gap-5 p-6 border border-[#EFEFF4] rounded-sm ">
                   <div className="flex flex-col w-full gap-3">
+                    <label className="text-[#00B0AD] text-xl font-bold">
+                      Section Title*
+                    </label>
+                    <Field
+                      type="text"
+                      name={`documentvalue.sections[0].title`}
+                      className="border rounded-md p-2 mt-1 w-full"
+                      required
+                    />
                     <FieldArray name="content">
                       {({ push, remove }) => (
                         <div>
@@ -142,11 +163,12 @@ function DocumentAddTemp({ onClose }) {
                             values.content.map((contents, idx) => {
                               return (
                                 <>
+                                  {console.log(contents)}
                                   <hr />
-                                  <div className="flex justify-between my-10  ">
-                                    <h3 className="text-[#00B0AD] text-xl font-bold">
+                                  <div className="flex justify-between   ">
+                                    {/* <h3 className="text-[#00B0AD] text-xl font-bold">
                                       {addSection[0].title}
-                                    </h3>
+                                    </h3>  */}
                                     {idx > 0 && (
                                       <div onClick={() => remove(idx)}>
                                         <img
@@ -158,8 +180,12 @@ function DocumentAddTemp({ onClose }) {
                                   </div>
 
                                   <div key={idx}>
-                                    {contents.content.map((data) => (
-                                      <FormBuilderTrial {...data} index={idx} />
+                                    {contents.content.map((data, i) => (
+                                      <FormBuilderTrial
+                                        {...data}
+                                        index={idx}
+                                        // parentIndex={idx}
+                                      />
                                     ))}
                                   </div>
                                 </>
@@ -169,8 +195,12 @@ function DocumentAddTemp({ onClose }) {
                             type="button"
                             className="flex items-center justify-center text-center w-full text-[#00B0AD] text-base border border-[#00B0AD] rounded-lg p-2"
                             onClick={() => {
+                              const newSection = {
+                                ...addSection[0],
+                                sectionId: String(new Date().getTime()),
+                              };
                               try {
-                                push(addSection[0]);
+                                push(newSection);
                                 console.log("Section added");
                               } catch (error) {
                                 console.error(
@@ -180,7 +210,7 @@ function DocumentAddTemp({ onClose }) {
                               }
                             }}
                           >
-                            Add More Sections
+                            Add More fields
                           </button>
                         </div>
                       )}

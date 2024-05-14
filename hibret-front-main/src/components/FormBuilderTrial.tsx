@@ -140,7 +140,7 @@ any) => {
         <>
           <Field
             as="select"
-            name={`documentvalue.sectionValue.${index}.${title}`}
+            name={`documentvalue.sections[0].content.${index}.${title}`}
             required
             className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
           >
@@ -158,7 +158,7 @@ any) => {
           <Field
             type="text"
             id={`content.${index}.${title}`}
-            name={`documentvalue.sectionValue.${index}.${title}`}
+            name={`documentvalue.sections[0].content.${index}.${title}`}
             className="border rounded-md p-2 mt-1 w-full"
             required
           />
@@ -236,11 +236,11 @@ any) => {
                 <label>
                   <Field
                     type="radio"
-                    name={`documentvalue.sectionValue.${index}.${title}`}
+                    name={`documentvalue.sections[0].content.${index}.${title}`}
                     required
                     value={option}
                   />
-                  {option}
+                  {option == "true" ? "required" : "optional"}
                 </label>
               )
             )}
@@ -252,7 +252,7 @@ any) => {
         <label>
           <Field
             type="checkbox"
-            name={`documentvalue.sectionValue.${index}.${title}`}
+            name={`documentvalue.sections[0].content.${index}.${title}`}
           />
 
           {/* {title} */}
