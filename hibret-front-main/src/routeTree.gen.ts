@@ -36,6 +36,7 @@ const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const AssignedtomedetailsLazyImport = createFileRoute('/assignedtomedetails')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
+const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -145,6 +146,11 @@ const AssignedtomeLazyRoute = AssignedtomeLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/assignedtome.lazy').then((d) => d.Route))
 
+const AssignedbymeLazyRoute = AssignedbymeLazyImport.update({
+  path: '/assignedbyme',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/assignedbyme.lazy').then((d) => d.Route))
+
 const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
   path: '/adminDashboard',
   getParentRoute: () => rootRoute,
@@ -182,6 +188,10 @@ declare module '@tanstack/react-router' {
     }
     '/adminDashboard': {
       preLoaderRoute: typeof AdminDashboardLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedbyme': {
+      preLoaderRoute: typeof AssignedbymeLazyImport
       parentRoute: typeof rootRoute
     }
     '/assignedtome': {
@@ -273,6 +283,7 @@ export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
+  AssignedbymeLazyRoute,
   AssignedtomeLazyRoute,
   AssignedtomedetailsLazyRoute,
   CreateUserLazyRoute,
