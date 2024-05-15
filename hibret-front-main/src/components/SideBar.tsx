@@ -31,20 +31,17 @@ const SideBar = () => {
         </div>
 
         <div className="category2 flex flex-col justify-center ">
-          <h2 className=" text-sm text-[#667085] font-bold">Catagory2</h2>
+          <h2 className=" text-sm text-[#667085] font-bold">WorkFlows</h2>
           <div className=" flex flex-col justify-center mt-5 gap-3">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <p className=" text-sm text-[#667085]">Summary</p>
+              <Link to="/assignedTome" className=" text-sm text-[#667085]">Assigned To Me</Link>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/some-list.svg" />
-              <p className=" text-sm text-[#667085]">Lorem List</p>
+              <Link to="/assignedByme" className=" text-sm text-[#667085]">Assigned By Me</Link>
             </div>
-            <div className="flex gap-2 ">
-              <img className=" max-w-4" src="/asset/icons/category-list.svg" />
-              <p className=" text-sm text-[#667085]">Category List</p>
-            </div>
+            
           </div>
         </div>
 
