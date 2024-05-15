@@ -1,4 +1,5 @@
 import "quill/dist/quill.snow.css";
+import { create } from "zustand";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
@@ -6,67 +7,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 
 let steps: any[] = [];
-// [
-//   {
-//     id: 1,
-//     title: "Personal information",
-//     section: [
-//       {
-//         sectionId: 1,
-//         title: "Loan Information",
-//         content: [
-//           { title: "Borrower Name", type: "text", required: true },
-//           {
-//             title: "Loan Type",
-//             type: "select",
-//             options: ["Personal", "Business"],
-//             required: true,
-//           },
-//         ],
-//         multiple: false,
-//       },
-//       {
-//         sectionId: 2,
-//         title: " Bank Information",
-//         content: [
-//           { title: "Bank account number", type: "text", required: true },
-//           {
-//             title: "Bank account type",
-//             type: "select",
-//             options: ["saving"],
-//             required: true,
-//           },
-//           { title: "Add another account", type: "text", required: false },
-//         ],
-//         multiple: false,
-//       },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     title: "Collateral information",
-//     section: [
-//       {
-//         sectionId: 1,
-//         title: "Collateral Information",
-//         content: [
-//           { title: "Collateral Type", type: "text", required: true },
-//           {
-//             title: "Collateral Description",
-//             type: "text-editor",
-//             required: true,
-//           },
-//           { title: "Documents", type: "upload", required: true },
-//         ],
-//         multiple: true,
-//       },
-//     ],
-//   },
-// ];
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
@@ -107,6 +51,8 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 });
 
 function LoanDocument() {
+  const formdata: any[] = [];
+  const [form, setForm] = useState([]);
   const step: any = Route.useLoaderData();
   console.log(step);
   const defaultValues = { section: step.formated[step.stepId].sections };
@@ -122,9 +68,13 @@ function LoanDocument() {
     name: "section",
   });
   const onSubmit = (data: any) => {
-    console.log("hello");
-    alert(JSON.stringify(data, null, 2));
-    console.log(data, "submission");
+    data.section.map((content: any, index: any) => {
+      formdata.push(content.documentData);
+      // alert(JSON.stringify(content.documentData, null, 2));
+      // console.log(content.documentData, "submission");
+    });
+    setForm(formdata);
+    alert(JSON.stringify(formdata, null, 2));
   };
 
   const done = "border border-[#4A176D] bg-[#4A176D]  border-double";
@@ -132,7 +82,7 @@ function LoanDocument() {
   const next = "border border-[#C6C6C6]";
 
   function addMore() {
-    append(step.section);
+    append(step.formated[step.stepId].sections);
   }
 
   function removeSection(sectionIndex: number) {
@@ -216,6 +166,7 @@ function LoanDocument() {
                         key={parentIndex}
                         className="section1 flex flex-col p-6 border border-[#EFEFF4] gap-4 rounded-lg"
                       >
+                        {console.log(item)}
                         <h3
                           id={`${item.title}`}
                           className="text-[#00B0AD] text-xl font-bold"
@@ -223,7 +174,7 @@ function LoanDocument() {
                           {item.title}
                         </h3>
                         <hr className="bg-[#EFEFF4]" />
-                        {item?.content.map((content, idx: number) => {
+                        {item?.content.map((content: any, idx: number) => {
                           return (
                             <div className="" key={idx}>
                               <FormBuilder
@@ -249,7 +200,7 @@ function LoanDocument() {
                             <button
                               type="button"
                               className="flex w-full justify-center items-center border border-[#00B0AD] text-[#00B0AD] p-2"
-                              onClick={() => removeSection(item.sectionId)}
+                              onClick={() => removeSection(parentIndex)}
                             >
                               <img src="/asset/icons/plus-black.svg" /> Remove
                             </button>
@@ -262,7 +213,7 @@ function LoanDocument() {
                   <button type="button" onClick={() => reset(defaultValues)}>
                     Reset
                   </button>
-                  <a
+                  {/* <a
                     href={`/LoanDocument/${step.id + 1}`}
                     className={` text-base px-6 py-2 self-end ${
                       null != null
@@ -271,7 +222,7 @@ function LoanDocument() {
                     }`}
                   >
                     <button type="submit">Continue</button>
-                  </a>
+                  </a> */}
                   <DevTool control={control} />
                 </form>
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
