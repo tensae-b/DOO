@@ -1,8 +1,6 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
-
-
 import axios from "axios";
 import Cookies from 'js-cookie';
 import axiosInst from '../services/api/axiosInst';
@@ -36,32 +34,38 @@ const Login = () => {
         email,
         password,
       });
-  
-      // Extract the token from the response headers
-      const token =  response.data.data
-     
-  console.log( response.data.data)
-      // Store the token in a cookie
-      Cookies.set('token', token, { expires: 7 }); // Set the cookie to expire in 7 days
-  
-      // Handle other response data as needed
+
       const { data } = response;
       if (data.error) {
         setError(data.error);
         setSuccess("");
       } else {
-        setError(""); 
+        const { _id, username, role } = data;
         setSuccess(data.msg);
         setFormData({ email: "", password: "" });
+
+        // Set session or token here if needed
+        // For example:
+        // setSession({ userId: _id, username, role });
+
+        // Check the role and redirect accordingly
+        if (role === "66374bd0fdfae8633a05d11e") {
+          // Redirect to admin dashboard
+          window.location.href = "/adminDashboard";
+        } else {
+          // Redirect to user dashboard
+          window.location.href = "/userDashboard";
+        }
       }
     } catch (error) {
       console.log(error);
-      setError("An error occurred while logging in."); 
+      setError("An error occurred while logging in.");
       setTimeout(() => {
         setSuccess("");
       }, 2000);
     }
   };
+
   return (
     <div className="flex justify-center items-center h-screen w-screen">
       <div className="w-80 h-96 gap-4 flex flex-col">
@@ -71,8 +75,8 @@ const Login = () => {
         <h3 className="w-full text-center font-urbanist font-normal text-base text-gray-400">
           Sign in to your account.
         </h3>
-        {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-        {success && <p className="text-green-500">{success}</p>} {/* Display success message */}
+        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
         <form onSubmit={handleLogin} className="gap-4 flex flex-col">
           <input
             id="email"
@@ -104,3 +108,5 @@ const Login = () => {
     </div>
   );
 };
+
+export default Login;
