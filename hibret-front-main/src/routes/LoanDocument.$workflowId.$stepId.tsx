@@ -3,18 +3,18 @@ import { create } from "zustand";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link} from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
+import useStepFormStore from "../store/formStore";
+
 
 let steps: any[] = [];
-const useStepFormStore = create((set) => ({
-  stepFormData: [], // Initial step form data
-  setStepFormData: (data: any) => set({ stepFormData: data }),
-}));
+
+
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
     console.log(stepId);
@@ -41,6 +41,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     const res = await axios(config);
     const data = await res.data;
     const formated = data.documents.flat();
+    
     return { workflowId, stepId, formated };
 
     // const res = steps.find((step) => step.id === Number(stepId));
@@ -54,6 +55,8 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 });
 
 function LoanDocument() {
+  const stepFormData = useStepFormStore((state:any) => state.stepFormData);
+  // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const [form, setForm] = useState([]);
   const step: any = Route.useLoaderData();
@@ -71,13 +74,21 @@ function LoanDocument() {
     name: "section",
   });
   const onSubmit = (data: any) => {
+    
     data.section.map((content: any, index: any) => {
       formdata.push(content.documentData);
       // alert(JSON.stringify(content.documentData, null, 2));
       // console.log(content.documentData, "submission");
     });
     setForm(formdata);
-    useStepFormStore.setState({ formData: form });
+    console.log(formdata)
+   
+    // const res= setData(formdata)
+    useStepFormStore.setState((state: any) => ({
+      ...state,
+      stepFormData: formdata,
+    }));
+    
     alert(JSON.stringify(formdata, null, 2));
   };
 
@@ -85,7 +96,8 @@ function LoanDocument() {
   const current = "border border-[#4A176D] border-2";
   const next = "border border-[#C6C6C6]";
   function getData() {
-    const stepFormData = useStepFormStore((state: any) => state.formData);
+    console.log('hello')
+  
     console.log(stepFormData);
   }
 
@@ -96,7 +108,7 @@ function LoanDocument() {
   function removeSection(sectionIndex: number) {
     remove(sectionIndex);
   }
-
+  
   return (
     <FormProvider {...methods}>
       <div className="mx-3 mb-10 ">
@@ -118,7 +130,7 @@ function LoanDocument() {
                   <button
                     className={` text-base px-6 py-2 border border-[#DC251C] border-dotted text-[#DC251C] font-semibold rounded-lg`}
                   >
-                    Cancel
+                    Cancel {stepFormData.LoanType}
                   </button>
                 </div>
               </div>
@@ -127,8 +139,8 @@ function LoanDocument() {
                   <div className="flex flex-col gap-2" key={index}>
                     <div className="flex gap-0 items-center justify-center">
                       <div className="flex flex-col">
-                        <a
-                          href={`/LoanDocument/${step.workflowId}/${index}`}
+                        <Link
+                          to={`/LoanDocument/${step.workflowId}/${index}`}
                           className={`flex p-5 w-12 h-12 justify-center items-center rounded-full max-w-20 max-h-20 ${
                             index == step.stepId
                               ? current
@@ -147,7 +159,7 @@ function LoanDocument() {
                                 : " "
                             }`}
                           />
-                        </a>
+                        </Link>
                       </div>
                       {index < step.formated.length - 1 && (
                         <img src="/asset/icons/Line.svg" />
@@ -218,12 +230,10 @@ function LoanDocument() {
                     ))}
                   </div>
                   <button type="submit">test submit</button>
-                  <button type="button" onClick={() => reset(defaultValues)}>
+                  {/* <button type="button" onClick={() => reset(defaultValues)}>
                     Reset
-                  </button>
-                  <button type="button" onClick={() => reset(defaultValues)}>
-                    Reset
-                  </button>
+                  </button> */}
+                  
                   <a
                     href={`/LoanDocument/${step.id + 1}`}
                     className={` text-base px-6 py-2 self-end ${
@@ -236,6 +246,9 @@ function LoanDocument() {
                   </a>
                   <DevTool control={control} />
                 </form>
+                <button  className="text-red" onClick={() => getData()}>
+                    Reset
+                  </button>
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-sm font-bold p-2">Quick Access</p>
                   {step.formated[step.stepId].sections.map(
