@@ -159,86 +159,149 @@ const LoanDocumentWorkflowIdStepIdRoute =
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/adminDashboard': {
+      id: '/adminDashboard'
+      path: '/adminDashboard'
+      fullPath: '/adminDashboard'
       preLoaderRoute: typeof AdminDashboardLazyImport
       parentRoute: typeof rootRoute
     }
     '/create-user': {
+      id: '/create-user'
+      path: '/create-user'
+      fullPath: '/create-user'
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/document': {
+      id: '/document'
+      path: '/document'
+      fullPath: '/document'
       preLoaderRoute: typeof DocumentLazyImport
       parentRoute: typeof rootRoute
     }
     '/documentemp': {
+      id: '/documentemp'
+      path: '/documentemp'
+      fullPath: '/documentemp'
       preLoaderRoute: typeof DocumentempLazyImport
       parentRoute: typeof rootRoute
     }
     '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
       preLoaderRoute: typeof DocumentsLazyImport
       parentRoute: typeof rootRoute
     }
     '/documenttempadd': {
+      id: '/documenttempadd'
+      path: '/documenttempadd'
+      fullPath: '/documenttempadd'
       preLoaderRoute: typeof DocumenttempaddLazyImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/invite-user': {
+      id: '/invite-user'
+      path: '/invite-user'
+      fullPath: '/invite-user'
       preLoaderRoute: typeof InviteUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
     '/manage-user': {
+      id: '/manage-user'
+      path: '/manage-user'
+      fullPath: '/manage-user'
       preLoaderRoute: typeof ManageUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/my-documents': {
+      id: '/my-documents'
+      path: '/my-documents'
+      fullPath: '/my-documents'
       preLoaderRoute: typeof MyDocumentsLazyImport
       parentRoute: typeof rootRoute
     }
     '/notification': {
+      id: '/notification'
+      path: '/notification'
+      fullPath: '/notification'
       preLoaderRoute: typeof NotificationLazyImport
       parentRoute: typeof rootRoute
     }
     '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
       preLoaderRoute: typeof ProfileLazyImport
       parentRoute: typeof rootRoute
     }
     '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
     '/setNewPassword': {
+      id: '/setNewPassword'
+      path: '/setNewPassword'
+      fullPath: '/setNewPassword'
       preLoaderRoute: typeof SetNewPasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/userDashboard': {
+      id: '/userDashboard'
+      path: '/userDashboard'
+      fullPath: '/userDashboard'
       preLoaderRoute: typeof UserDashboardLazyImport
       parentRoute: typeof rootRoute
     }
     '/workflowadd': {
+      id: '/workflowadd'
+      path: '/workflowadd'
+      fullPath: '/workflowadd'
       preLoaderRoute: typeof WorkflowaddLazyImport
       parentRoute: typeof rootRoute
     }
     '/workflowtemp': {
+      id: '/workflowtemp'
+      path: '/workflowtemp'
+      fullPath: '/workflowtemp'
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
     '/LoanDocument/$workflowId/$stepId': {
+      id: '/LoanDocument/$workflowId/$stepId'
+      path: '/LoanDocument/$workflowId/$stepId'
+      fullPath: '/LoanDocument/$workflowId/$stepId'
       preLoaderRoute: typeof LoanDocumentWorkflowIdStepIdImport
       parentRoute: typeof rootRoute
     }
@@ -247,7 +310,7 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
@@ -269,6 +332,6 @@ export const routeTree = rootRoute.addChildren([
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   LoanDocumentWorkflowIdStepIdRoute,
-])
+})
 
 /* prettier-ignore-end */
