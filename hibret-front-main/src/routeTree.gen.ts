@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WorkflowaAsignedByMeImport } from './routes/WorkflowaAsignedByMe'
 import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId'
 
 // Create Virtual Routes
@@ -32,9 +33,10 @@ const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
-const DocumentDetailsLazyImport = createFileRoute('/documentDetails')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const AssignedTomeLazyImport = createFileRoute('/assignedTome')()
+const AssignedBymeLazyImport = createFileRoute('/assignedByme')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -122,13 +124,6 @@ const DocumentempLazyRoute = DocumentempLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/documentemp.lazy').then((d) => d.Route))
 
-const DocumentDetailsLazyRoute = DocumentDetailsLazyImport.update({
-  path: '/documentDetails',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/documentDetails.lazy').then((d) => d.Route),
-)
-
 const DocumentLazyRoute = DocumentLazyImport.update({
   path: '/document',
   getParentRoute: () => rootRoute,
@@ -138,6 +133,16 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   path: '/create-user',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
+
+const AssignedTomeLazyRoute = AssignedTomeLazyImport.update({
+  path: '/assignedTome',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/assignedTome.lazy').then((d) => d.Route))
+
+const AssignedBymeLazyRoute = AssignedBymeLazyImport.update({
+  path: '/assignedByme',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/assignedByme.lazy').then((d) => d.Route))
 
 const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
   path: '/adminDashboard',
@@ -150,6 +155,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const WorkflowaAsignedByMeRoute = WorkflowaAsignedByMeImport.update({
+  path: '/WorkflowaAsignedByMe',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -169,6 +179,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/WorkflowaAsignedByMe': {
+      preLoaderRoute: typeof WorkflowaAsignedByMeImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
@@ -177,16 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardLazyImport
       parentRoute: typeof rootRoute
     }
+    '/assignedByme': {
+      preLoaderRoute: typeof AssignedBymeLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedTome': {
+      preLoaderRoute: typeof AssignedTomeLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/create-user': {
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/document': {
       preLoaderRoute: typeof DocumentLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/documentDetails': {
-      preLoaderRoute: typeof DocumentDetailsLazyImport
       parentRoute: typeof rootRoute
     }
     '/documentemp': {
@@ -260,11 +278,13 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  WorkflowaAsignedByMeRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
+  AssignedBymeLazyRoute,
+  AssignedTomeLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
-  DocumentDetailsLazyRoute,
   DocumentempLazyRoute,
   DocumentsLazyRoute,
   DocumenttempaddLazyRoute,
