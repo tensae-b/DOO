@@ -11,7 +11,10 @@ import { useEffect, useState } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 
 let steps: any[] = [];
-
+const useStepFormStore = create((set) => ({
+  stepFormData: [], // Initial step form data
+  setStepFormData: (data: any) => set({ stepFormData: data }),
+}));
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
     console.log(stepId);
@@ -74,12 +77,17 @@ function LoanDocument() {
       // console.log(content.documentData, "submission");
     });
     setForm(formdata);
+    useStepFormStore.setState({ formData: form });
     alert(JSON.stringify(formdata, null, 2));
   };
 
   const done = "border border-[#4A176D] bg-[#4A176D]  border-double";
   const current = "border border-[#4A176D] border-2";
   const next = "border border-[#C6C6C6]";
+  function getData() {
+    const stepFormData = useStepFormStore((state: any) => state.formData);
+    console.log(stepFormData);
+  }
 
   function addMore() {
     append(step.formated[step.stepId].sections);
@@ -213,7 +221,10 @@ function LoanDocument() {
                   <button type="button" onClick={() => reset(defaultValues)}>
                     Reset
                   </button>
-                  {/* <a
+                  <button type="button" onClick={() => reset(defaultValues)}>
+                    Reset
+                  </button>
+                  <a
                     href={`/LoanDocument/${step.id + 1}`}
                     className={` text-base px-6 py-2 self-end ${
                       null != null
@@ -222,7 +233,7 @@ function LoanDocument() {
                     }`}
                   >
                     <button type="submit">Continue</button>
-                  </a> */}
+                  </a>
                   <DevTool control={control} />
                 </form>
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
