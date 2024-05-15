@@ -5,69 +5,100 @@ import SideBar from "../components/SideBar";
 import { createFileRoute } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
+import axios from "axios";
+import { useEffect } from "react";
+import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 
-const steps = [
-  {
-    id: 1,
-    title: "Personal information",
-    section: [
-      {
-        sectionId: 1,
-        title: "Loan Information",
-        content: [
-          { title: "Borrower Name", type: "text", required: true },
-          {
-            title: "Loan Type",
-            type: "select",
-            options: ["Personal", "Business"],
-            required: true,
-          },
-        ],
-        multiple: false,
-      },
-      {
-        sectionId: 2,
-        title: " Bank Information",
-        content: [
-          { title: "Bank account number", type: "text", required: true },
-          {
-            title: "Bank account type",
-            type: "select",
-            options: ["saving"],
-            required: true,
-          },
-          { title: "Add another account", type: "text", required: false },
-        ],
-        multiple: false,
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Collateral information",
-    section: [
-      {
-        sectionId: 1,
-        title: "Collateral Information",
-        content: [
-          { title: "Collateral Type", type: "text", required: true },
-          {
-            title: "Collateral Description",
-            type: "text-editor",
-            required: true,
-          },
-          { title: "Documents", type: "upload", required: true },
-        ],
-        multiple: true,
-      },
-    ],
-  },
-];
+let steps: any[] = [];
+// [
+//   {
+//     id: 1,
+//     title: "Personal information",
+//     section: [
+//       {
+//         sectionId: 1,
+//         title: "Loan Information",
+//         content: [
+//           { title: "Borrower Name", type: "text", required: true },
+//           {
+//             title: "Loan Type",
+//             type: "select",
+//             options: ["Personal", "Business"],
+//             required: true,
+//           },
+//         ],
+//         multiple: false,
+//       },
+//       {
+//         sectionId: 2,
+//         title: " Bank Information",
+//         content: [
+//           { title: "Bank account number", type: "text", required: true },
+//           {
+//             title: "Bank account type",
+//             type: "select",
+//             options: ["saving"],
+//             required: true,
+//           },
+//           { title: "Add another account", type: "text", required: false },
+//         ],
+//         multiple: false,
+//       },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     title: "Collateral information",
+//     section: [
+//       {
+//         sectionId: 1,
+//         title: "Collateral Information",
+//         content: [
+//           { title: "Collateral Type", type: "text", required: true },
+//           {
+//             title: "Collateral Description",
+//             type: "text-editor",
+//             required: true,
+//           },
+//           { title: "Documents", type: "upload", required: true },
+//         ],
+//         multiple: true,
+//       },
+//     ],
+//   },
+// ];
 
-export const Route = createFileRoute("/LoanDocument/$stepId")({
-  loader: async ({ params: { stepId } }) => {
-    const res = steps.find((step) => step.id === Number(stepId));
-    return res;
+export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
+  loader: async ({ params: { workflowId, stepId } }) => {
+    console.log(stepId);
+    console.log(workflowId);
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${stepId}`,
+      headers: {},
+    };
+
+    // return axios(config)
+    //   .then(function (response) {
+    //     const dat = response.data;
+    //     const res = dat.documents.flat();
+    //     steps = res;
+    //     console.log(res);
+    //     console.log(res[0]);
+    //     return res[0];
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+    const res = await axios(config);
+    const data = await res.data;
+    const formated = data.documents.flat();
+    return { workflowId, stepId, formated };
+
+    // const res = steps.find((step) => step.id === Number(stepId));
+    // console.log(res);
+    // return res;
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -77,8 +108,8 @@ export const Route = createFileRoute("/LoanDocument/$stepId")({
 
 function LoanDocument() {
   const step: any = Route.useLoaderData();
-
-  const defaultValues = { section: step.section };
+  console.log(step);
+  const defaultValues = { section: step.formated[step.stepId].sections };
 
   const methods = useForm({
     mode: "onChange",
@@ -91,6 +122,7 @@ function LoanDocument() {
     name: "section",
   });
   const onSubmit = (data: any) => {
+    console.log("hello");
     alert(JSON.stringify(data, null, 2));
     console.log(data, "submission");
   };
@@ -133,16 +165,16 @@ function LoanDocument() {
                 </div>
               </div>
               <div className="steps-bar flex w-full justify-center my-10">
-                {steps.map((item, index) => (
+                {step.formated.map((item: any, index: any) => (
                   <div className="flex flex-col gap-2" key={index}>
                     <div className="flex gap-0 items-center justify-center">
                       <div className="flex flex-col">
                         <a
-                          href={`/LoanDocument/${item.id}`}
+                          href={`/LoanDocument/${step.workflowId}/${index}`}
                           className={`flex p-5 w-12 h-12 justify-center items-center rounded-full max-w-20 max-h-20 ${
-                            item.id == step.id
+                            index == step.stepId
                               ? current
-                              : item.id < step.id
+                              : index < step.stepId
                               ? done
                               : next
                           }`}
@@ -150,16 +182,16 @@ function LoanDocument() {
                           <img
                             className="max-w-10 max-h-10"
                             src={`${
-                              item.id < step.id
+                              index < step.stepId
                                 ? "/asset/icons/tick.svg"
-                                : item.id == step.id
+                                : index == step.stepId
                                 ? "/asset/icons/dot.svg"
                                 : " "
                             }`}
                           />
                         </a>
                       </div>
-                      {item.id < steps.length && (
+                      {index < step.formated.length - 1 && (
                         <img src="/asset/icons/Line.svg" />
                       )}
                     </div>
@@ -171,7 +203,7 @@ function LoanDocument() {
               </div>
 
               <h2 className="text-[#4A176D] text-2xl font-bold">
-                {step.title}
+                {step.formated[step.stepId].title}
               </h2>
               <div className="flex mt-10 gap-5">
                 <form
@@ -184,7 +216,10 @@ function LoanDocument() {
                         key={parentIndex}
                         className="section1 flex flex-col p-6 border border-[#EFEFF4] gap-4 rounded-lg"
                       >
-                        <h3 className="text-[#00B0AD] text-xl font-bold">
+                        <h3
+                          id={`${item.title}`}
+                          className="text-[#00B0AD] text-xl font-bold"
+                        >
                           {item.title}
                         </h3>
                         <hr className="bg-[#EFEFF4]" />
@@ -241,11 +276,18 @@ function LoanDocument() {
                 </form>
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-sm font-bold p-2">Quick Access</p>
-                  <p className="text-sm bg-[#E0F1F3] rounded-lg p-2 text-[#00B0AD]">
-                    Personal Information
-                  </p>
-                  <p className="text-sm  p-2">Account Details</p>
-                  <p className="text-sm  p-2">Employment Details</p>
+                  {step.formated[step.stepId].sections.map(
+                    (item: any, index: any) => (
+                      <a
+                        className="text-sm bg-[#E0F1F3] rounded-lg p-2 text-[#00B0AD]"
+                        href={`#${item.title}`}
+                      >
+                        {item.title}
+                      </a>
+                    )
+                  )}
+                  {/* <p className="text-sm  p-2">Account Details</p>
+                  <p className="text-sm  p-2">Employment Details</p> */}
                 </div>
               </div>
             </div>

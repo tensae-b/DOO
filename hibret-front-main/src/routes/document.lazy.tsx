@@ -12,29 +12,26 @@ import axios from "axios";
 function Document() {
   const data = [];
   const [showPopUp, setShowPopUp] = useState(false);
-  const [workflow, setWorkflow]= useState([])
-  useEffect(()=>{
-   
-
+  const [workflow, setWorkflow] = useState([]);
+  useEffect(() => {
     var config = {
-      method: 'get',
-    maxBodyLength: Infinity,
-      url: 'http://localhost:5000/admin/workflow-templates',
-      headers: { }
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/workflow-templates",
+      headers: {},
     };
-    
-    axios(config)
-    .then(function (response) {
-      setWorkflow(response.data)
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-    
-  },[])
 
-  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+    axios(config)
+      .then(function (response) {
+        setWorkflow(response.data);
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  const [selectedWorkflow, setSelectedWorkflow] = useState("");
   let opacity;
 
   showPopUp ? (opacity = "opacity-30") : (opacity = "opacity-100");
@@ -49,6 +46,26 @@ function Document() {
   function handleChange(e: any) {
     console.log(e.target.value);
     setSelectedWorkflow(e.target.value);
+  }
+
+  function getDocument() {
+    console.log("hell0");
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${selectedWorkflow}`,
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response) {
+        const dat = response.data;
+        const ress = dat.documents.flat();
+        console.log(JSON.stringify(ress));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   return (
@@ -88,21 +105,24 @@ function Document() {
                       Select Workflow Type
                     </option>
                     {workflow?.map((option: any, index) => (
-                          
-                          <option key={option} label={option.name} value={option._id} />
-                        ))}
+                      <option
+                        key={option}
+                        label={option.name}
+                        value={option._id}
+                      />
+                    ))}
                   </select>
                 </div>
 
                 <a
-                  href="LoanDocument/1"
+                  href={`LoanDocument/${selectedWorkflow}/${0}`}
                   className={` text-base px-6 py-2 self-end ${
                     selectedWorkflow != null
                       ? "bg-[#00B0AD] text-white"
                       : "bg-[#F0F3F6] text-[#9EA9C1]"
                   }`}
                 >
-                  Continue
+                  <button onClick={getDocument}>Continue</button>
                 </a>
               </div>
             </div>

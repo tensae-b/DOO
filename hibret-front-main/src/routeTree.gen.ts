@@ -13,7 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId'
+import { Route as LoanDocumentWorkflowIdStepIdImport } from './routes/LoanDocument.$workflowId.$stepId'
 
 // Create Virtual Routes
 
@@ -148,10 +148,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const LoanDocumentStepIdRoute = LoanDocumentStepIdImport.update({
-  path: '/LoanDocument/$stepId',
-  getParentRoute: () => rootRoute,
-} as any)
+const LoanDocumentWorkflowIdStepIdRoute =
+  LoanDocumentWorkflowIdStepIdImport.update({
+    path: '/LoanDocument/$workflowId/$stepId',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -237,8 +238,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
-    '/LoanDocument/$stepId': {
-      preLoaderRoute: typeof LoanDocumentStepIdImport
+    '/LoanDocument/$workflowId/$stepId': {
+      preLoaderRoute: typeof LoanDocumentWorkflowIdStepIdImport
       parentRoute: typeof rootRoute
     }
   }
@@ -267,7 +268,7 @@ export const routeTree = rootRoute.addChildren([
   UserDashboardLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
-  LoanDocumentStepIdRoute,
+  LoanDocumentWorkflowIdStepIdRoute,
 ])
 
 /* prettier-ignore-end */
