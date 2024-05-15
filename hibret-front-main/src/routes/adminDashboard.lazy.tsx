@@ -7,12 +7,16 @@ import SideBar from '../components/SideBar';
 
 export const Route = createFileRoute('/adminDashboard')({
   component: () => (
-    <div className="mt-24 ml-80 mr-8">
-      <NavBar/>
-      <SideBar/>
+    <div className="mx-3 flex">
+    <SideBar style={{ flex: '1 0 20%' }} /> {/* Set sidebar width to 20% */}
+    <div className="" style={{ flex: '1 0 80%' }}> {/* Set report analytics part width to 80% */}
+      <NavBar className="w-80%" />
+      <div className="flex flex-col gap-3 my-5">
       <AdminHead />
       <AdminMiddle />
       <AdminEnd />
+      </div>
     </div>
+  </div>
   )
 });
