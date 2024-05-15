@@ -20,11 +20,11 @@ import { DataGrid, GridColDef, GridActionsCellParams } from '@mui/x-data-grid';
 // } from "../services/queries/userQuery";
 
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'id', headerName: 'ID', width: 230 },
   { field: 'catagoryname', headerName: 'catagoryname', width: 230 },
   // { field: 'accountdocument', headerName: 'accountdocument', width: 130 },
   // { field: 'accountworkflows', headerName: 'accountworkflows', width: 130 },
-  { field: 'number_of_subcatagory', headerName: 'number_of_subcatagory', width: 130 },
+ 
   {
     field: 'actions',
     headerName: 'Action',
@@ -58,10 +58,10 @@ const columns: GridColDef[] = [
 ];
 
 const userData = [
-  { id: 1, catagoryname: "John Doe",number_of_subcatagory: "Active", Action: "Admin" },
-  { id: 2, catagoryname: "Jane Smith",number_of_subcatagory: "johndoe", Action: "Editor" },
-  { id: 3, catagoryname: "Michael Brown",number_of_subcatagory: "johndoe", Action: "Member" },
-  { id: 4, catagoryname: "Alice Garcia",number_of_subcatagory: "johndoe", Action: "Member" },
+  { id: 1, catagoryname: "John Doe", Action: "Admin" },
+  { id: 2, catagoryname: "Jane Smith",Action: "Editor" },
+  { id: 3, catagoryname: "Michael Brown",Action: "Member" },
+  { id: 4, catagoryname: "Alice Garcia", Action: "Member" },
 ]
 
 
@@ -69,29 +69,22 @@ const userData = [
 
 
 function CatagoryList() {
-    const [user, setUser] = useState(userData);
-    const [selectedTemplate, setSelectedTemplate] = useState(null); 
-    const options = ['Template one', 'Template two', 'Template three'];
-    const [showAddTemplate, setShowAddTemplate] = useState(false);
-    const [categories, setCategories] = useState([]);
+  const [user, setUser] = useState([]);
+  const [showAddTemplate, setShowAddTemplate] = useState(false);
 
-    useEffect(() => {
-        async function fetchCategories() {
-            const { data, isError } = await fetchCatag();
-            if (!isError) {
-                // Transform fetched data into the format expected by userData array
-                // const updatedUserData = data.map((category, index) => ({
-                //     id: index + 1,
-                //     name: category.name,
-                //     numberOfSubcategories: category.subcategories.length,
-                // }));
-                // setCategories(updatedUserData);
-                console.log(data)
-            }
-        }
-        fetchCategories();
-    }, []);
-  
+  useEffect(() => {
+      async function fetchCategories() {
+          const { data, isError } = await fetchCatag();
+          if (!isError) {
+              const updatedUserData = data.map((category, index) => ({
+                  id: category._id,
+                  catagoryname: category.name,
+              }));
+              setUser(updatedUserData);
+          }
+      }
+      fetchCategories();
+  }, []);
     const openAddTemplate = () => {
       setShowAddTemplate(true);
     };
