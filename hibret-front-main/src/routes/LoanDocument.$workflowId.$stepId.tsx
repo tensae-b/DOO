@@ -10,7 +10,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 import useStepFormStore from "../store/formStore";
-import SideBar2 from "../components/SideBar2";
 
 
 let steps: any[] = [];
@@ -23,31 +22,18 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${stepId}`,
+      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
       headers: {},
     };
 
-    // return axios(config)
-    //   .then(function (response) {
-    //     const dat = response.data;
-    //     const res = dat.documents.flat();
-    //     steps = res;
-    //     console.log(res);
-    //     console.log(res[0]);
-    //     return res[0];
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
+  
     const res = await axios(config);
     const data = await res.data;
+    console.log(data)
     const formated = data.documents.flat();
     
     return { workflowId, stepId, formated };
 
-    // const res = steps.find((step) => step.id === Number(stepId));
-    // console.log(res);
-    // return res;
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -59,10 +45,11 @@ function LoanDocument() {
   const stepFormData = useStepFormStore((state:any) => state.stepFormData);
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
-  const [form, setForm] = useState([]);
   const step: any = Route.useLoaderData();
   console.log(step);
-  const defaultValues = { section: step.formated[step.stepId].sections };
+  const [form, setForm] = useState({});
+ 
+  const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
     mode: "onChange",
@@ -72,18 +59,59 @@ function LoanDocument() {
   const { control, handleSubmit, reset } = methods;
   const { append, fields, remove } = useFieldArray({
     control,
-    name: "section",
+    name: "sections",
   });
+
+  function sendData(){
+    console.log(form)
+    return 'sucess'
+  }
   const onSubmit = (data: any) => {
+    // event?.preventDefault();
+    console.log(data);
+    // alert(JSON.stringify(data, null, 2));
     
-    data.section.map((content: any, index: any) => {
-      formdata.push(content.documentData);
-      // alert(JSON.stringify(content.documentData, null, 2));
-      // console.log(content.documentData, "submission");
+    data.sections.map((content: any, index: any) => {
+      
+      formdata.push(content);
+      // alert(JSON.stringify(content, null, 2));
+      console.log(content, "submission");
     });
-    setForm(formdata);
-    console.log(formdata)
-   
+    // setForm(formdata);
+    console.log(formdata);
+  const documentData={
+    workflowTemplateId: step.workflowId,
+    userId: "663c92732358e4d0b92c928b",
+    data: [
+      {
+        templateId: step.formated[step.stepId]._id,
+        title: step.formated[step.stepId].title,
+         sections: formdata,
+      }
+    ]
+
+  }
+  var config = {
+    method: 'post',
+  maxBodyLength: Infinity,
+    url: 'http://localhost:5000/admin/workflows',
+    headers: { },
+    data : documentData
+  };
+  
+  axios(config)
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+  // alert(JSON.stringify(documentData, null, 2));
+  // setForm(documentData)
+  // console.log(form , 'form')
+
+  // const result= sendData();
+  // console.log(result)
     // const res= setData(formdata)
     useStepFormStore.setState((state: any) => ({
       ...state,
@@ -203,7 +231,7 @@ function LoanDocument() {
                           id={`${item.title}`}
                           className="text-[#00B0AD] text-xl font-bold"
                         >
-                          {item.title}
+                          {item.title} 
                         </h3>
                         <hr className="bg-[#EFEFF4]" />
                         {item?.content.map((content: any, idx: number) => {
