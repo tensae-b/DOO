@@ -99,12 +99,12 @@ export const FormBuilder = ({
   } = useFormContext();
 
   useEffect(() => {
-    register(`section.${parentIndex}.documentData.${title}`, {
+    register(`sections.${parentIndex}.content.${index}.value`, {
       required: true,
     });
   }, [type]);
 
-  const editorContent = watch(`section.${parentIndex}.documentData.${title}`);
+  const editorContent = watch(`sections.${parentIndex}.content.${index}.value`);
   const errorClassNames = ["input-error", "textarea-error"];
 
   const validateDocumentImage = (title, file) => {
@@ -132,7 +132,7 @@ export const FormBuilder = ({
       return (
         <>
           <select
-            {...register(`section.${parentIndex}.documentData.${title}`, {
+            {...register(`sections.${parentIndex}.content.${index}.value`, {
               required: `${title} is Required`,
             })}
             className={clsx(
@@ -161,8 +161,8 @@ export const FormBuilder = ({
       return (
         <>
           <input
-            {...register(`section.${parentIndex}.documentData.${title}`, {
-              required: `section.documentData.${parentIndex}[${index}].title is Required`,
+            {...register(`sections.${parentIndex}.content.${index}.value`, {
+              required: `sections.${parentIndex}.content.${index}.value`,
             })}
             required={required}
             className={clsx(
@@ -176,7 +176,7 @@ export const FormBuilder = ({
           <span className="label-text-alt text-[hsl(var(--er))]">
             <ErrorMessage
               errors={errors}
-              name={`section.${parentIndex}.documentData.${title}}`}
+              name={`sections.${parentIndex}.content.${index}.value`}
             />
           </span>
         </>
@@ -213,7 +213,7 @@ export const FormBuilder = ({
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `section.${parentIndex}.documentData.${title}`,
+                    `sections.${parentIndex}.content.${index}.value`,
                     e.target.files[0]
                   )
                 }
@@ -223,7 +223,7 @@ export const FormBuilder = ({
           <span className="label-text-alt text-[hsl(var(--er))]">
             <ErrorMessage
               errors={errors}
-              name={`section.${parentIndex}.documentData.${title}`}
+              name={`sections.${parentIndex}.content.${index}.value`}
             />
           </span>
         </>
@@ -241,7 +241,7 @@ export const FormBuilder = ({
               value={editorContent}
               onChange={(editorState) =>
                 onEditorStateChange(
-                  `section.${parentIndex}.documentData.${title}`,
+                  `sections.${parentIndex}.content.${index}.value`,
                   editorState
                 )
               }
@@ -250,7 +250,7 @@ export const FormBuilder = ({
           <span className="label-text-alt text-[hsl(var(--er))]">
             <ErrorMessage
               errors={errors}
-              name={`section.${parentIndex}.documentData.${title}`}
+              name={`sections.${parentIndex}.content.${index}.value`}
             />
           </span>
         </>
