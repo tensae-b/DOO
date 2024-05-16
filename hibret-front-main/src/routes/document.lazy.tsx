@@ -8,6 +8,7 @@ export const Route = createLazyFileRoute("/document")({
 });
 
 import axios from "axios";
+import SideBar2 from "../components/SideBar2";
 
 function Document() {
   const data = [];
@@ -71,8 +72,8 @@ function Document() {
   return (
     <div className="mx-3 mb-10 ">
       <div className="flex">
-        <SideBar />
-        <div className="w-full flex flex-col">
+      <SideBar2/>
+        <div className="w-full flex flex-col  ml-80 mr-8">
           <NavBar />
           {data.length == 0 && (
             <NoData title={"Document"} openPopUp={openPopUp} />

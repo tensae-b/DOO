@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router'
 
 const SideBar2 = () => {
   return (
-    <div className="flex flex-col w-64 mx-6 mt-11 h-full fixed left-0 top-0">
+    <div className="flex flex-col w-64 mx-6 mt-11 h-full fixed left-0 top-0 ">
     <div className="flex flex-col gap-12 m-0 ">
       <img src="/asset/icons/hibret2.svg" className='h-16 justify-start' />
       <hr className="border border-[#EFEFF4]" />
@@ -23,7 +23,7 @@ const SideBar2 = () => {
               className=" max-w-4"
               src="/asset/icons/user-management.svg"
             />
-            <Link to="/manage-user" className=" text-sm text-[#667085] [&.active]:font-bold">User Management</Link>
+            <Link to="/document" className=" text-sm text-[#667085] [&.active]:font-bold">Documents</Link>
             
           </div>
           <div className="flex gap-2 ">

@@ -114,7 +114,8 @@ function DocumentAddTemp({ onClose }) {
             .catch(function (error) {
               console.log(error);
             });
-          alert(JSON.stringify(values.documentvalue, null, 2));
+            console.log(values.documentvalue)
+          // alert(JSON.stringify(values.documentvalue, null, 2));
         }}
       >
         {({ values }) => (

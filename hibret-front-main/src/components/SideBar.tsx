@@ -13,7 +13,7 @@ const SideBar = () => {
           <div className=" flex flex-col mt-5 gap-3 justify-center">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <p className=" text-sm text-[#667085]">Dashboard</p>
+              <Link to="/adminDashboard" className=" text-sm text-[#667085] [&.active]:font-bold">Dashboard</Link>
             </div>
             <div className="flex gap-2 ">
               <img
@@ -35,11 +35,11 @@ const SideBar = () => {
           <div className=" flex flex-col justify-center mt-5 gap-3">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <p className=" text-sm text-[#667085]">Summary</p>
+              <Link to="/documentemp" className=" text-sm text-[#667085] [&.active]:font-bold">Document Template</Link>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/some-list.svg" />
-              <p className=" text-sm text-[#667085]">Lorem List</p>
+              <Link to="/workflowtemp" className=" text-sm text-[#667085] [&.active]:font-bold">Workflow Template</Link>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/category-list.svg" />

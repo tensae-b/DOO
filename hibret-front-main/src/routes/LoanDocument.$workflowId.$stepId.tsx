@@ -10,6 +10,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 import useStepFormStore from "../store/formStore";
+import SideBar2 from "../components/SideBar2";
 
 
 let steps: any[] = [];
@@ -88,8 +89,8 @@ function LoanDocument() {
       ...state,
       stepFormData: formdata,
     }));
-    
-    alert(JSON.stringify(formdata, null, 2));
+    console.log(formdata)
+    // alert(JSON.stringify(formdata, null, 2));
   };
 
   const done = "border border-[#4A176D] bg-[#4A176D]  border-double";
@@ -108,13 +109,21 @@ function LoanDocument() {
   function removeSection(sectionIndex: number) {
     remove(sectionIndex);
   }
+  let nextId;
+  if (Number(step.stepId)<step.formated.length-1 ){
+    nextId= true
+   
+  }else{
+     nextId=false;
+     
+  }
   
   return (
     <FormProvider {...methods}>
       <div className="mx-3 mb-10 ">
         <div className="flex">
-          <SideBar />
-          <div className="w-full flex flex-col">
+        <SideBar2/>
+          <div className="w-full flex flex-col ml-80 mr-8">
             <NavBar />
             <div className="mt-10">
               <div className="header flex justify-between">
@@ -136,11 +145,13 @@ function LoanDocument() {
               </div>
               <div className="steps-bar flex w-full justify-center my-10">
                 {step.formated.map((item: any, index: any) => (
+                 
                   <div className="flex flex-col gap-2" key={index}>
                     <div className="flex gap-0 items-center justify-center">
                       <div className="flex flex-col">
-                        <Link
-                          to={`/LoanDocument/${step.workflowId}/${index}`}
+                      
+                        <a
+                          href={`/LoanDocument/${step.workflowId}/${index}`}
                           className={`flex p-5 w-12 h-12 justify-center items-center rounded-full max-w-20 max-h-20 ${
                             index == step.stepId
                               ? current
@@ -148,6 +159,7 @@ function LoanDocument() {
                               ? done
                               : next
                           }`}
+                          
                         >
                           <img
                             className="max-w-10 max-h-10"
@@ -159,7 +171,7 @@ function LoanDocument() {
                                 : " "
                             }`}
                           />
-                        </Link>
+                        </a>
                       </div>
                       {index < step.formated.length - 1 && (
                         <img src="/asset/icons/Line.svg" />
@@ -229,26 +241,27 @@ function LoanDocument() {
                       </div>
                     ))}
                   </div>
-                  <button type="submit">test submit</button>
+                  <button type="submit" className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white">submit</button>
                   {/* <button type="button" onClick={() => reset(defaultValues)}>
                     Reset
                   </button> */}
                   
-                  <a
-                    href={`/LoanDocument/${step.id + 1}`}
-                    className={` text-base px-6 py-2 self-end ${
-                      null != null
-                        ? "bg-[#00B0AD] text-white"
-                        : "bg-[#F0F3F6] text-[#9EA9C1]"
-                    }`}
-                  >
-                    <button type="submit">Continue</button>
-                  </a>
+                 {nextId && <a
+                  
+                  href={`/LoanDocument//${step.workflowId}/${Number(step.stepId) + 1}`}
+                  className={` text-base px-6 py-2 self-end ${
+                    null != null
+                      ? "bg-[#00B0AD] text-white"
+                      : "bg-[#F0F3F6] text-[#9EA9C1]"
+                  }`}
+                >
+                 Continue
+                </a>} 
                   <DevTool control={control} />
                 </form>
-                <button  className="text-red" onClick={() => getData()}>
+                {/* <button  className="text-red" onClick={() => getData()}>
                     Reset
-                  </button>
+                  </button> */}
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-sm font-bold p-2">Quick Access</p>
                   {step.formated[step.stepId].sections.map(
