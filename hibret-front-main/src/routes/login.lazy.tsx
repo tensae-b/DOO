@@ -2,8 +2,9 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
 import axios from "axios";
-import Cookies from 'js-cookie';
+
 import axiosInst from '../services/api/axiosInst';
+
 
 export const Route = createLazyFileRoute("/login")({
   component: () => <Login />,

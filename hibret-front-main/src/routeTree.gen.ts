@@ -15,7 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as CatagoryListImport } from './routes/catagoryList'
 import { Route as AddCatagoryImport } from './routes/addCatagory'
-import { Route as LoanDocumentStepIdImport } from './routes/LoanDocument.$stepId'
+import { Route as LoanDocumentWorkflowIdStepIdImport } from './routes/LoanDocument.$workflowId.$stepId'
 
 // Create Virtual Routes
 
@@ -38,6 +38,9 @@ const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const AssignedworkLazyImport = createFileRoute('/assignedwork')()
+const AssignedtomedetailsLazyImport = createFileRoute('/assignedtomedetails')()
+const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
+const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminreportLazyImport = createFileRoute('/adminreport')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
@@ -146,6 +149,23 @@ const AssignedworkLazyRoute = AssignedworkLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/assignedwork.lazy').then((d) => d.Route))
 
+const AssignedtomedetailsLazyRoute = AssignedtomedetailsLazyImport.update({
+  path: '/assignedtomedetails',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/assignedtomedetails.lazy').then((d) => d.Route),
+)
+
+const AssignedtomeLazyRoute = AssignedtomeLazyImport.update({
+  path: '/assignedtome',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/assignedtome.lazy').then((d) => d.Route))
+
+const AssignedbymeLazyRoute = AssignedbymeLazyImport.update({
+  path: '/assignedbyme',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/assignedbyme.lazy').then((d) => d.Route))
+
 const AdminreportLazyRoute = AdminreportLazyImport.update({
   path: '/adminreport',
   getParentRoute: () => rootRoute,
@@ -178,10 +198,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const LoanDocumentStepIdRoute = LoanDocumentStepIdImport.update({
-  path: '/LoanDocument/$stepId',
-  getParentRoute: () => rootRoute,
-} as any)
+const LoanDocumentWorkflowIdStepIdRoute =
+  LoanDocumentWorkflowIdStepIdImport.update({
+    path: '/LoanDocument/$workflowId/$stepId',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -209,6 +230,18 @@ declare module '@tanstack/react-router' {
     }
     '/adminreport': {
       preLoaderRoute: typeof AdminreportLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedbyme': {
+      preLoaderRoute: typeof AssignedbymeLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedtome': {
+      preLoaderRoute: typeof AssignedtomeLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedtomedetails': {
+      preLoaderRoute: typeof AssignedtomedetailsLazyImport
       parentRoute: typeof rootRoute
     }
     '/assignedwork': {
@@ -287,8 +320,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
-    '/LoanDocument/$stepId': {
-      preLoaderRoute: typeof LoanDocumentStepIdImport
+    '/LoanDocument/$workflowId/$stepId': {
+      preLoaderRoute: typeof LoanDocumentWorkflowIdStepIdImport
       parentRoute: typeof rootRoute
     }
   }
@@ -303,6 +336,9 @@ export const routeTree = rootRoute.addChildren([
   AboutLazyRoute,
   AdminDashboardLazyRoute,
   AdminreportLazyRoute,
+  AssignedbymeLazyRoute,
+  AssignedtomeLazyRoute,
+  AssignedtomedetailsLazyRoute,
   AssignedworkLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
@@ -322,7 +358,7 @@ export const routeTree = rootRoute.addChildren([
   UserDataLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
-  LoanDocumentStepIdRoute,
+  LoanDocumentWorkflowIdStepIdRoute,
 ])
 
 /* prettier-ignore-end */

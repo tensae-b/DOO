@@ -4,14 +4,15 @@ import "quill/dist/quill.snow.css";
 import clsx from "clsx";
 import { Key } from "react";
 import { useFormContext } from "react-hook-form";
+import { useEffect } from "react";
 
 export const FormBuilder = ({
   title,
   type,
   options,
-  fields,
-  remove,
   index,
+  required,
+  parentIndex,
 }: any) => {
   var modules = {
     toolbar: [
@@ -93,9 +94,19 @@ export const FormBuilder = ({
     setError,
     setValue,
     clearErrors,
+    watch,
     formState: { errors },
   } = useFormContext();
+
+  useEffect(() => {
+    register(`section.${parentIndex}.documentData.${title}`, {
+      required: true,
+    });
+  }, [type]);
+
+  const editorContent = watch(`section.${parentIndex}.documentData.${title}`);
   const errorClassNames = ["input-error", "textarea-error"];
+
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
@@ -111,12 +122,17 @@ export const FormBuilder = ({
       return;
     }
   };
-  const HandleInput = () => {
+
+  const onEditorStateChange = (title, editorState) => {
+    setValue(title, editorState);
+  };
+
+  const handleInput = () => {
     if (type === "select") {
       return (
         <>
           <select
-            {...register(`sections[${index}].value`, {
+            {...register(`section.${parentIndex}.documentData.${title}`, {
               required: `${title} is Required`,
             })}
             className={clsx(
@@ -145,7 +161,10 @@ export const FormBuilder = ({
       return (
         <>
           <input
-            {...register(title, { required: `${title} is Required` })}
+            {...register(`section.${parentIndex}.documentData.${title}`, {
+              required: `section.documentData.${parentIndex}[${index}].title is Required`,
+            })}
+            required={required}
             className={clsx(
               "w-full border border-[#EFEFF4] p-3 rounded-lg text-base",
               {
@@ -155,7 +174,10 @@ export const FormBuilder = ({
             placeholder=""
           />
           <span className="label-text-alt text-[hsl(var(--er))]">
-            <ErrorMessage errors={errors} name={`${title}`} />
+            <ErrorMessage
+              errors={errors}
+              name={`section.${parentIndex}.documentData.${title}}`}
+            />
           </span>
         </>
       );
@@ -186,22 +208,28 @@ export const FormBuilder = ({
                 </p>
               </div>
               <input
-                // {...register(title)}
-                {...register(title)}
                 type="file"
+                required={required}
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
-                  validateDocumentImage(title, e.target.files[0])
+                  validateDocumentImage(
+                    `section.${parentIndex}.documentData.${title}`,
+                    e.target.files[0]
+                  )
                 }
               />
             </label>
           </div>
           <span className="label-text-alt text-[hsl(var(--er))]">
-            <ErrorMessage errors={errors} name={`${title}`} />
+            <ErrorMessage
+              errors={errors}
+              name={`section.${parentIndex}.documentData.${title}`}
+            />
           </span>
         </>
       );
     } else {
+      // console.log(editorContent);
       return (
         <>
           <div className="w-full">
@@ -210,11 +238,20 @@ export const FormBuilder = ({
               modules={modules}
               formats={formats}
               placeholder="write your content ...."
-              onChange={(e) => setValue(title, e)}
+              value={editorContent}
+              onChange={(editorState) =>
+                onEditorStateChange(
+                  `section.${parentIndex}.documentData.${title}`,
+                  editorState
+                )
+              }
             />
           </div>
           <span className="label-text-alt text-[hsl(var(--er))]">
-            <ErrorMessage errors={errors} name={`${title}`} />
+            <ErrorMessage
+              errors={errors}
+              name={`section.${parentIndex}.documentData.${title}`}
+            />
           </span>
         </>
       );
@@ -228,9 +265,9 @@ export const FormBuilder = ({
           <span className="label-text">{title}</span>
         </label>
 
-        {/* {handleInput()} */}
-        <HandleInput />
-{/*         
+        {handleInput()}
+        {/* <HandleInput /> */}
+        {/*         
         <button onClick={() => remove(index)}>Remove</button> */}
       </div>
     </div>
