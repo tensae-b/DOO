@@ -1,15 +1,22 @@
 import { ReactElement } from "react";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
-const useStepFormStore = create((set) => ({
-    stepFormData: [], // Initial step form data
-    setStepFormData: (data: any) => set({ stepFormData: data }),
-    // setStepFormData: (form: any) =>  set((state: { stepFormData: any; }) => ({
-    //   stepFormData: {
-    //     ...state. stepFormData,
-    //     ...form,
-    //   },
-    // })),
-  }));
+const useStepFormStore = create(
+  persist(
+    (set) => ({
+      stepFormData: [],
+      setStepFormData: (data: any) => set({ stepFormData: data }),
+      clearFormData: () =>
+        set(() => ({
+          stepFormData: [],
+        })),
+    }),
 
-  export default useStepFormStore
+    {
+      name: "stepperData",
+    }
+  )
+);
+
+export default useStepFormStore;
