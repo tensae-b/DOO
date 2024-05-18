@@ -13,8 +13,7 @@ import SideBar2 from "../components/SideBar2";
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
-    console.log(stepId);
-    console.log(workflowId);
+ 
     var config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -24,7 +23,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 
     const res = await axios(config);
     const data = await res.data;
-    console.log(data);
+    
     const formated = data.documents.flat();
 
     return { workflowId, stepId, formated };
@@ -58,14 +57,13 @@ function LoanDocument() {
   });
 
   function sendData() {
-    console.log(form);
+    
     return "sucess";
   }
   const onSubmit = (data: any) => {
     // event?.preventDefault();
 
-    // alert(JSON.stringify(data, null, 2));
-    console.log(data, "submission");
+    
     if (nextId) {
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
@@ -92,7 +90,7 @@ function LoanDocument() {
         userId: "663c92732358e4d0b92c928b",
         data: stepFormData,
       };
-      console.log("ssssssssdocument");
+    
 
       var config = {
         method: "post",
@@ -109,7 +107,7 @@ function LoanDocument() {
         .catch(function (error) {
           console.log(error);
         });
-      console.log("ssssssssdocument");
+      
 
       console.log(stepFormData, "persistent");
       // clearStepData();
@@ -120,7 +118,7 @@ function LoanDocument() {
   const current = "border border-[#4A176D] border-2";
   const next = "border border-[#C6C6C6]";
   function getData() {
-    console.log("hello");
+    
 
     console.log(stepFormData, "persistent");
   }
@@ -216,7 +214,7 @@ function LoanDocument() {
                         key={parentIndex}
                         className="section1 flex flex-col p-6 border border-[#EFEFF4] gap-4 rounded-lg"
                       >
-                        {console.log(item)}
+                       
                         <h3
                           id={`${item.title}`}
                           className="text-[#00B0AD] text-xl font-bold"
