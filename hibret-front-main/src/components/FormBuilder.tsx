@@ -162,7 +162,7 @@ export const FormBuilder = ({
         <>
           <input
             {...register(`sections.${parentIndex}.content.${index}.value`, {
-              required: `sections.${parentIndex}.content.${index}.value`,
+              required: `${title} is Required`,
             })}
             required={required}
             className={clsx(
@@ -181,7 +181,58 @@ export const FormBuilder = ({
           </span>
         </>
       );
-    } else if (type === "upload") {
+    }
+    else if (type === "number") {
+      return (
+        <>
+          <input
+          type="number"
+            {...register(`sections.${parentIndex}.content.${index}.value`, {
+              required: `${title} is Required`,
+            })}
+            required={required}
+            className={clsx(
+              "w-full border border-[#EFEFF4] p-3 rounded-lg text-base",
+              {
+                [errorClassNames.join(" ")]: errors?.[title],
+              }
+            )}
+            placeholder=""
+          />
+          <span className="label-text-alt text-[hsl(var(--er))]">
+            <ErrorMessage
+              errors={errors}
+              name={`sections.${parentIndex}.content.${index}.value`}
+            />
+          </span>
+        </>
+      );
+    } else if (type == "date") {
+      return (
+        <>
+          <input
+          type='date'
+            {...register(`sections.${parentIndex}.content.${index}.value`, {
+              required: `${title} is Required`,
+            })}
+            required={required}
+            className={clsx(
+              "w-full border border-[#EFEFF4] p-3 rounded-lg text-base",
+              {
+                [errorClassNames.join(" ")]: errors?.[title],
+              }
+            )}
+            placeholder=""
+          />
+          <span className="label-text-alt text-[hsl(var(--er))]">
+            <ErrorMessage
+              errors={errors}
+              name={`sections.${parentIndex}.content.${index}.value`}
+            />
+          </span>
+        </>
+      );
+    }else if (type === "upload") {
       return (
         <>
           <div

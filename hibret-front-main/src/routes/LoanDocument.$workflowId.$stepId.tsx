@@ -37,11 +37,12 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 function LoanDocument() {
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
+  const setStepData = useStepFormStore((state: any) => state.setStepFormData);
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-
-  const [form, setForm] = useState([]);
+     console.log(step)
+  
 
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
@@ -56,10 +57,6 @@ function LoanDocument() {
     name: "sections",
   });
 
-  function sendData() {
-    
-    return "sucess";
-  }
   const onSubmit = (data: any) => {
     // event?.preventDefault();
 
@@ -75,15 +72,18 @@ function LoanDocument() {
       // alert(JSON.stringify(content, null, 2));
     });
     // setForm(formdata);
-    useStepFormStore.setState((state: any) => ({
-      ...state,
-      stepFormData: {
-        templateId: step.formated[step.stepId]._id,
-        title: step.formated[step.stepId].title,
-        sections: formdata,
-      },
-    }));
-
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
+    // setStepData(
+    //   ,)
+    // useStepFormStore.setState((state: any) => ({
+     
+    // }));
+    console.log(stepFormData, "stepformdata")
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
@@ -103,6 +103,7 @@ function LoanDocument() {
       axios(config)
         .then(function (response) {
           console.log(JSON.stringify(response.data));
+          clearStepData();
         })
         .catch(function (error) {
           console.log(error);
@@ -117,11 +118,6 @@ function LoanDocument() {
   const done = "border border-[#4A176D] bg-[#4A176D]  border-double";
   const current = "border border-[#4A176D] border-2";
   const next = "border border-[#C6C6C6]";
-  function getData() {
-    
-
-    console.log(stepFormData, "persistent");
-  }
 
   function addMore() {
     append(step.formated[step.stepId].sections);
@@ -184,7 +180,7 @@ function LoanDocument() {
                                 ? "/asset/icons/tick.svg"
                                 : index == step.stepId
                                 ? "/asset/icons/dot.svg"
-                                : " "
+                                : ""
                             }`}
                           />
                         </a>
@@ -258,22 +254,18 @@ function LoanDocument() {
                     ))}
                   </div>
 
-                  {/* <button type="button" onClick={() => reset(defaultValues)}>
-                    Reset
-                  </button> */}
-
+                
+                  
                   <button
                     type="submit"
-                    className="text-base px-6 py-2 self-endbg-[#F0F3F6] text-[#9EA9C1]"
+                    className="text-base px-6 py-2 self-end bg-[#F0F3F6] text-[#9EA9C1]"
                   >
                     {nextId ? "continue" : "submit"}
                   </button>
 
                   <DevTool control={control} />
                 </form>
-                <button className="text-red" onClick={() => getData()}>
-                  Reset
-                </button>
+             
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-sm font-bold p-2">Quick Access</p>
                   {step.formated[step.stepId].sections.map(
@@ -286,8 +278,7 @@ function LoanDocument() {
                       </a>
                     )
                   )}
-                  {/* <p className="text-sm  p-2">Account Details</p>
-                  <p className="text-sm  p-2">Employment Details</p> */}
+                
                 </div>
               </div>
             </div>
