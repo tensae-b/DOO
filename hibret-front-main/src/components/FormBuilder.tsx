@@ -162,7 +162,7 @@ export const FormBuilder = ({
         <>
           <input
             {...register(`sections.${parentIndex}.content.${index}.value`, {
-              required: `sections.${parentIndex}.content.${index}.value`,
+              required: `${title} is Required`,
             })}
             required={required}
             className={clsx(
@@ -188,7 +188,7 @@ export const FormBuilder = ({
           <input
           type="number"
             {...register(`sections.${parentIndex}.content.${index}.value`, {
-              required: `sections.${parentIndex}.content.${index}.value`,
+              required: `${title} is Required`,
             })}
             required={required}
             className={clsx(
@@ -213,7 +213,7 @@ export const FormBuilder = ({
           <input
           type='date'
             {...register(`sections.${parentIndex}.content.${index}.value`, {
-              required: `sections.${parentIndex}.content.${index}.value`,
+              required: `${title} is Required`,
             })}
             required={required}
             className={clsx(
