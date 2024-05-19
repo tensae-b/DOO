@@ -6,7 +6,14 @@ const useStepFormStore = create(
   persist(
     (set) => ({
       stepFormData: [],
-      setStepFormData: (data: any) => set({ stepFormData: data }),
+      setStepFormData: (data: any) => 
+        set((state: any) => ({
+          stepFormData: [
+            ...state.stepFormData,
+            data, // Directly add the whole data object
+            
+          ],
+        })),
       clearFormData: () =>
         set(() => ({
           stepFormData: [],

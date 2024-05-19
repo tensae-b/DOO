@@ -37,6 +37,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 function LoanDocument() {
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
+  const setStepData = useStepFormStore((state: any) => state.setStepFormData);
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
@@ -75,15 +76,18 @@ function LoanDocument() {
       // alert(JSON.stringify(content, null, 2));
     });
     // setForm(formdata);
-    useStepFormStore.setState((state: any) => ({
-      ...state,
-      stepFormData: {
-        templateId: step.formated[step.stepId]._id,
-        title: step.formated[step.stepId].title,
-        sections: formdata,
-      },
-    }));
-
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
+    // setStepData(
+    //   ,)
+    // useStepFormStore.setState((state: any) => ({
+     
+    // }));
+    console.log(stepFormData, "stepformdata")
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
