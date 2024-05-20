@@ -8,7 +8,8 @@ const NavBar2 = () => {
         <img src="/asset/icons/search.svg" />
       </div>
 
-      <div className="flex gap-6 items-center">
+
+      <div> <div className="flex gap-6 items-center">
         <img src="/asset/icons/notification.svg" className=" max-w-6 " />
         <hr className=" border border-[#EFEFF4] h-11" />
         <div className="flex gap-4 w-56 items-center ">
@@ -18,7 +19,9 @@ const NavBar2 = () => {
             <img src="/asset/icons/arrowDown.svg" className=" max-w-4" />
           </div>
         </div>
-      </div>
+      </div></div>
+
+     
     </div>
   )
 }
