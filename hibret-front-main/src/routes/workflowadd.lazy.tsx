@@ -21,6 +21,8 @@ export const Route = createFileRoute("/workflowadd")({
 function WorkFlowAddTemp() {
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+  const [requiredDocuments, setRequiredDocuments] = useState([]);
+  const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   function getSubCategory(value: any) {
     var config = {
       method: "get",
@@ -39,7 +41,31 @@ function WorkFlowAddTemp() {
         console.log(error);
       });
   }
-  function getCategory(config: any) {
+  function requriedDocument(subCategoryId: any) {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/documentTemplate/sub/${subCategoryId}`,
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response: any) {
+        setRequiredDocuments(response.data.templates);
+        console.log(response.data.templates, "documenttemplate");
+      })
+      .catch(function (error: any) {
+        console.log(error);
+      });
+  }
+
+  function getCategory() {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/category",
+      headers: {},
+    };
     axios(config)
       .then(async function (response) {
         console.log(response.data);
@@ -52,15 +78,14 @@ function WorkFlowAddTemp() {
         // console.log(error);
       });
   }
+  const handleDeleteDocument = (title: any) => {
+    console.log(title);
+    setChosenDocument((prevDocuments) =>
+      prevDocuments.filter((doc) => doc.title !== title)
+    );
+  };
   useEffect(() => {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/category",
-      headers: {},
-    };
-
-    getCategory(config);
+    getCategory();
   }, []);
   const [stageCondition, setStageCondition] = useState([]);
   const [stageGroup, setStageGroup] = useState([]);
@@ -79,6 +104,8 @@ function WorkFlowAddTemp() {
     defaultValues: {
       stageTitle: "",
       hasCondition: "",
+      allowAdditional: "",
+      // documents:[],
       listCondition: "",
       group: "",
       department: "",
@@ -185,7 +212,7 @@ function WorkFlowAddTemp() {
                             <option value="">Select Department</option>
                             {category?.map((option: any, index) => (
                               <option
-                                key={option}
+                                key={index}
                                 label={option.name}
                                 value={option._id}
                               />
@@ -201,11 +228,14 @@ function WorkFlowAddTemp() {
                             {...register("workflowtemp.workflowSubcategory", {
                               required: true,
                             })}
+                            onChange={(e: { target: { value: any } }) =>
+                              requriedDocument(e.target.value)
+                            }
                           >
                             <option value="">Select Department</option>
                             {subCategory?.map((option: any, index) => (
                               <option
-                                key={option}
+                                key={index}
                                 label={option.name}
                                 value={option._id}
                               />
@@ -233,12 +263,30 @@ function WorkFlowAddTemp() {
                             >
                               Document Templates
                             </label>
-                            <select className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 ">
+                            <select
+                              className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                              onChange={(e: { target: { value: any } }) => {
+                                setChosenDocument((prevDocuments) => [
+                                  ...prevDocuments,
+                                  e.target.value,
+                                ]);
+                              }}
+                            >
                               <option>Choose Required Documents</option>
+                              {requiredDocuments?.map((option: any, index) => (
+                                <option
+                                  key={index}
+                                  label={option.title}
+                                  value={option.title}
+                                />
+                              ))}
                             </select>
                           </div>
                           <div className="flex gap-4 justify-center items-center w-full">
-                            <input type="checkbox" name="additionalInfo" />
+                            <input
+                              type="checkbox"
+                              // {...register("workflowtemp.allowAdditional")}
+                            />
                             <label
                               htmlFor="additionalInfo"
                               className="text-sm w-full"
@@ -255,12 +303,21 @@ function WorkFlowAddTemp() {
                           >
                             Order of appearance
                           </label>
-                          <div className="flex gap-2">
-                            <img src="/asset/icons/order.svg" />
-                            <p className="text-[#667085] text-sm">
-                              Chosen Required Documents 1
-                            </p>
-                          </div>
+
+                          {chosenDocuments.map((item, index) => (
+                            <div className="flex gap-2">
+                              <img src="/asset/icons/order.svg" />
+                              <p className="text-[#667085] text-sm">{item}</p>
+                              <div>
+                                <img
+                                  onClick={() => {
+                                    handleDeleteDocument(item);
+                                  }}
+                                  src="/asset/icons/delete.svg"
+                                />
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -269,7 +326,7 @@ function WorkFlowAddTemp() {
                     <div className="condition-stages flex flex-col gap-7  border border-[#EFEFF4] rounded-lg  p-6">
                       <div className="flex flex-col gap-7">
                         {fields.map((field, index) => (
-                          <div key={field.id}>
+                          <div key={index}>
                             <div className="flex flex-col gap-5 mb-7">
                               <div className="flex justify-between w-full">
                                 <h3
