@@ -6,7 +6,7 @@ import SideBar from "../components/SideBar";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 export const Route = createFileRoute("/workflowtemp")({
-  component: () => <DocumentTemp />,
+  component: () => <WorkflowTemp />,
 });
 const WorkFlowAddTemp = lazy(() => import("./workflowadd.lazy"));
 import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
@@ -137,7 +137,7 @@ const userData = [
   },
 ];
 
-function DocumentTemp() {
+function WorkflowTemp() {
   // const userData: any = [];
   const [user, setUser] = useState(userData);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
