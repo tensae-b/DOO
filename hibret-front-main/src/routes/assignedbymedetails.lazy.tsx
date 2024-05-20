@@ -1,13 +1,10 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import backArrow from "/asset/icons/back-arrow.svg";
-import DocumentDetailsCard from "../components/DocumentDetailsCard";
 import UserName from "../components/UserName";
 import SideBar2 from "../components/SideBar2";
 import Comm from "../components/Comm";
 import AuditTrial from "../components/AuditTrial";
 import { useState, useEffect, useRef } from "react";
-import arrowdown from "/asset/icons/arrowDown.svg";
-import downArrow from "/asset/icons/down-arrow.svg";
 import WorkflowInformation from "../components/WorkflowInformation";
 
 export const Route = createLazyFileRoute("/assignedbymedetails")({
@@ -69,9 +66,8 @@ export const Route = createLazyFileRoute("/assignedbymedetails")({
           </div>
           <div className="flex flex-col gap-9  w-6/12  mt-7">
             {activeTab === 1 && (
-              <div >
-                
-               <WorkflowInformation/>
+              <div>
+                <WorkflowInformation />
               </div>
             )}
             {activeTab === 2 && (
