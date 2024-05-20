@@ -35,6 +35,9 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const ComponentsLazyImport = createFileRoute('/components')()
+const AssignedtomedetailsLazyImport = createFileRoute('/assignedtomedetails')()
+const AssignedbymedetailsLazyImport = createFileRoute('/assignedbymedetails')()
 const AssignedTomeLazyImport = createFileRoute('/assignedTome')()
 const AssignedBymeLazyImport = createFileRoute('/assignedByme')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
@@ -134,6 +137,25 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
 
+const ComponentsLazyRoute = ComponentsLazyImport.update({
+  path: '/components',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/components.lazy').then((d) => d.Route))
+
+const AssignedtomedetailsLazyRoute = AssignedtomedetailsLazyImport.update({
+  path: '/assignedtomedetails',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/assignedtomedetails.lazy').then((d) => d.Route),
+)
+
+const AssignedbymedetailsLazyRoute = AssignedbymedetailsLazyImport.update({
+  path: '/assignedbymedetails',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/assignedbymedetails.lazy').then((d) => d.Route),
+)
+
 const AssignedTomeLazyRoute = AssignedTomeLazyImport.update({
   path: '/assignedTome',
   getParentRoute: () => rootRoute,
@@ -176,98 +198,191 @@ const LoanDocumentStepIdRoute = LoanDocumentStepIdImport.update({
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/WorkflowaAsignedByMe': {
+      id: '/WorkflowaAsignedByMe'
+      path: '/WorkflowaAsignedByMe'
+      fullPath: '/WorkflowaAsignedByMe'
       preLoaderRoute: typeof WorkflowaAsignedByMeImport
       parentRoute: typeof rootRoute
     }
     '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/adminDashboard': {
+      id: '/adminDashboard'
+      path: '/adminDashboard'
+      fullPath: '/adminDashboard'
       preLoaderRoute: typeof AdminDashboardLazyImport
       parentRoute: typeof rootRoute
     }
     '/assignedByme': {
+      id: '/assignedByme'
+      path: '/assignedByme'
+      fullPath: '/assignedByme'
       preLoaderRoute: typeof AssignedBymeLazyImport
       parentRoute: typeof rootRoute
     }
     '/assignedTome': {
+      id: '/assignedTome'
+      path: '/assignedTome'
+      fullPath: '/assignedTome'
       preLoaderRoute: typeof AssignedTomeLazyImport
       parentRoute: typeof rootRoute
     }
+    '/assignedbymedetails': {
+      id: '/assignedbymedetails'
+      path: '/assignedbymedetails'
+      fullPath: '/assignedbymedetails'
+      preLoaderRoute: typeof AssignedbymedetailsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/assignedtomedetails': {
+      id: '/assignedtomedetails'
+      path: '/assignedtomedetails'
+      fullPath: '/assignedtomedetails'
+      preLoaderRoute: typeof AssignedtomedetailsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/components': {
+      id: '/components'
+      path: '/components'
+      fullPath: '/components'
+      preLoaderRoute: typeof ComponentsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/create-user': {
+      id: '/create-user'
+      path: '/create-user'
+      fullPath: '/create-user'
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/document': {
+      id: '/document'
+      path: '/document'
+      fullPath: '/document'
       preLoaderRoute: typeof DocumentLazyImport
       parentRoute: typeof rootRoute
     }
     '/documentemp': {
+      id: '/documentemp'
+      path: '/documentemp'
+      fullPath: '/documentemp'
       preLoaderRoute: typeof DocumentempLazyImport
       parentRoute: typeof rootRoute
     }
     '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
       preLoaderRoute: typeof DocumentsLazyImport
       parentRoute: typeof rootRoute
     }
     '/documenttempadd': {
+      id: '/documenttempadd'
+      path: '/documenttempadd'
+      fullPath: '/documenttempadd'
       preLoaderRoute: typeof DocumenttempaddLazyImport
       parentRoute: typeof rootRoute
     }
     '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
       preLoaderRoute: typeof ForgotpasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/invite-user': {
+      id: '/invite-user'
+      path: '/invite-user'
+      fullPath: '/invite-user'
       preLoaderRoute: typeof InviteUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
     '/manage-user': {
+      id: '/manage-user'
+      path: '/manage-user'
+      fullPath: '/manage-user'
       preLoaderRoute: typeof ManageUserLazyImport
       parentRoute: typeof rootRoute
     }
     '/my-documents': {
+      id: '/my-documents'
+      path: '/my-documents'
+      fullPath: '/my-documents'
       preLoaderRoute: typeof MyDocumentsLazyImport
       parentRoute: typeof rootRoute
     }
     '/notification': {
+      id: '/notification'
+      path: '/notification'
+      fullPath: '/notification'
       preLoaderRoute: typeof NotificationLazyImport
       parentRoute: typeof rootRoute
     }
     '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
       preLoaderRoute: typeof ProfileLazyImport
       parentRoute: typeof rootRoute
     }
     '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
     '/setNewPassword': {
+      id: '/setNewPassword'
+      path: '/setNewPassword'
+      fullPath: '/setNewPassword'
       preLoaderRoute: typeof SetNewPasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/userDashboard': {
+      id: '/userDashboard'
+      path: '/userDashboard'
+      fullPath: '/userDashboard'
       preLoaderRoute: typeof UserDashboardLazyImport
       parentRoute: typeof rootRoute
     }
     '/workflowadd': {
+      id: '/workflowadd'
+      path: '/workflowadd'
+      fullPath: '/workflowadd'
       preLoaderRoute: typeof WorkflowaddLazyImport
       parentRoute: typeof rootRoute
     }
     '/workflowtemp': {
+      id: '/workflowtemp'
+      path: '/workflowtemp'
+      fullPath: '/workflowtemp'
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
     '/LoanDocument/$stepId': {
+      id: '/LoanDocument/$stepId'
+      path: '/LoanDocument/$stepId'
+      fullPath: '/LoanDocument/$stepId'
       preLoaderRoute: typeof LoanDocumentStepIdImport
       parentRoute: typeof rootRoute
     }
@@ -276,13 +391,16 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   WorkflowaAsignedByMeRoute,
   AboutLazyRoute,
   AdminDashboardLazyRoute,
   AssignedBymeLazyRoute,
   AssignedTomeLazyRoute,
+  AssignedbymedetailsLazyRoute,
+  AssignedtomedetailsLazyRoute,
+  ComponentsLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
@@ -301,6 +419,6 @@ export const routeTree = rootRoute.addChildren([
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   LoanDocumentStepIdRoute,
-])
+})
 
 /* prettier-ignore-end */
