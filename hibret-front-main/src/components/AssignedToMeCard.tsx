@@ -6,29 +6,33 @@ import { Link } from '@tanstack/react-router';
 
 interface AssignedToMeCardProps {
   link: string;
+  name: string;
+  dateCreated:string;
+  type:string,
+  status:string;
 }
 
 const AssignedToMeCard: React.FC<AssignedToMeCardProps> = (props) => {
   return (
-    <Link to={props.link} className='flex border-b border-gray-500 border-opacity-20 gap-10'>
+    <div className='flex border-b border-gray-500 border-opacity-20 gap-10'>
       <div className='py-3 px-4 h-11 w-24'>
         <input
           type="checkbox"
           className="w-4 h-4 text-teal-600 bg-teal-100 border-teal-300 rounded focus:ring-teal-500"
         />
       </div>
-      <div className='py-3 px-6 flex items-center gap-4 text-xs text-gray-600 w-96'>
+      <Link  to={`${props.link}?name=${encodeURIComponent(props.name)}`}  className='py-3  flex items-center gap-4 text-xs text-gray-600 w-96'>
         <img src={pdf} alt="" />
-        <p>Bold Text Column</p>
+        <p>{props.name}</p>
+      </Link>
+      <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'>
+        {props.dateCreated}
       </div>
       <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'>
-        Regular text column
-      </div>
-      <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'>
-        Regular text column
+      {props.type}
       </div>
       <div className='py-3 px-6 flex items-center gap-1 text-xs text-teal-400 w-96'>
-        Active
+      {props.status}
       </div>
       <div className='py-3 px-6 flex items-center text-xs text-gray-600 w-96 gap-2'>
         <button>
@@ -41,7 +45,7 @@ const AssignedToMeCard: React.FC<AssignedToMeCardProps> = (props) => {
           <img src={trash} alt="" />
         </button>
       </div>
-    </Link>
+    </div>
   );
 }
 
