@@ -1,9 +1,9 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-import WorkflowInformation from '../components/WorkflowInformation'
+import Navbar2 from '../components/NavBar2'
 
 
 export const Route = createLazyFileRoute('/components')({
   component: () => <div>
-      <WorkflowInformation/>
+     <Navbar2/>
   </div>
 })
