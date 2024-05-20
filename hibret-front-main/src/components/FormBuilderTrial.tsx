@@ -253,9 +253,9 @@ any) => {
           <Field
             type="checkbox"
             name={`documentvalue.sections[0].content.${index}.${title}`}
+            label="condition"
           />
-
-          {/* {title} */}
+          condition
         </label>
       );
     }
