@@ -2,7 +2,20 @@ import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import Dropdown from "react-dropdown";
 import {
   useFieldArray,
@@ -13,6 +26,9 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
+import { SortableItem } from "../components/SortableItem";
+
+
 
 export const Route = createFileRoute("/workflowadd")({
   component: () => <WorkFlowAddTemp />,
@@ -21,8 +37,17 @@ export const Route = createFileRoute("/workflowadd")({
 function WorkFlowAddTemp() {
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
-  const [requiredDocuments, setRequiredDocuments] = useState([]);
+  const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
+
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   function getSubCategory(value: any) {
     var config = {
       method: "get",
@@ -82,6 +107,7 @@ function WorkFlowAddTemp() {
     console.log(title);
     setChosenDocument((prevDocuments) =>
       prevDocuments.filter((doc) => doc.title !== title)
+   
     );
   };
   useEffect(() => {
@@ -146,6 +172,21 @@ function WorkFlowAddTemp() {
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
   };
+
+  function handleDragEnd(event:any) {
+    const {active, over} = event;
+    console.log(active, over.id)
+    if (active.id !== over.id) {
+      setRequiredDocuments((items) => {
+
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        console.log(oldIndex,newIndex)
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  }
+
   return (
     <FormProvider {...methods}>
       <div className="mx-3 mb-10 ">
@@ -209,7 +250,7 @@ function WorkFlowAddTemp() {
                               getSubCategory(e.target.value)
                             }
                           >
-                            <option value="">Select Department</option>
+                            <option value="">Select Category</option>
                             {category?.map((option: any, index) => (
                               <option
                                 key={index}
@@ -232,7 +273,7 @@ function WorkFlowAddTemp() {
                               requriedDocument(e.target.value)
                             }
                           >
-                            <option value="">Select Department</option>
+                            <option value="">Select Subcatgory</option>
                             {subCategory?.map((option: any, index) => (
                               <option
                                 key={index}
@@ -268,7 +309,7 @@ function WorkFlowAddTemp() {
                               onChange={(e: { target: { value: any } }) => {
                                 setChosenDocument((prevDocuments) => [
                                   ...prevDocuments,
-                                  e.target.value,
+                                  {id: index, title: e.target.value},
                                 ]);
                               }}
                             >
@@ -303,8 +344,21 @@ function WorkFlowAddTemp() {
                           >
                             Order of appearance
                           </label>
-
-                          {chosenDocuments.map((item, index) => (
+ <DndContext 
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext 
+       items={chosenDocuments}
+        strategy={verticalListSortingStrategy}
+      >
+         {chosenDocuments.map((item, index) =><SortableItem key={index} title={item} id={index+1} />)}
+         
+         
+         
+         {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
+                          {/* {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
                               <p className="text-[#667085] text-sm">{item}</p>
@@ -317,7 +371,9 @@ function WorkFlowAddTemp() {
                                 />
                               </div>
                             </div>
-                          ))}
+                          ))} */}
+                          </SortableContext>
+                        </DndContext>
                         </div>
                       </div>
                     </div>
