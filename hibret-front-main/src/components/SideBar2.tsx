@@ -23,7 +23,7 @@ const SideBar2 = () => {
               className=" max-w-4"
               src="/asset/icons/user-management.svg"
             />
-            <Link to="/manage-user" className=" text-sm text-[#667085] [&.active]:font-bold">User Management</Link>
+            <Link to="/manage-user" className=" text-sm text-[#667085] [&.active]:text-teal-400">User Management</Link>
             
           </div>
           <div className="flex gap-2 ">
@@ -38,11 +38,11 @@ const SideBar2 = () => {
           <div className=" flex flex-col justify-center mt-5 gap-3">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <Link to="/assignedTome" className=" text-sm text-[#667085]">Assigned To Me</Link>
+              <Link to="/assignedTome" className=" text-sm text-[#667085] [&.active]:text-teal-400">Assigned To Me</Link>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/some-list.svg" />
-              <Link to="/assignedByme" className=" text-sm text-[#667085]">Assigned By Me</Link>
+              <Link to="/assignedByme" className=" text-sm text-[#667085] [&.active]:text-teal-400">Assigned By Me</Link>
             </div>
             
           </div>
