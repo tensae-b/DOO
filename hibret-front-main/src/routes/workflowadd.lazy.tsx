@@ -2,20 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import {
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+
 import Dropdown from "react-dropdown";
 import {
   useFieldArray,
@@ -35,24 +22,84 @@ export const Route = createFileRoute("/workflowadd")({
 });
 
 function WorkFlowAddTemp() {
+  useEffect(() => {
+    getCategory();
+    getDepartments();
+    getCommittees();
+  }, []);
+
   const [category, setCategory] = useState([]);
+  const [department, setDepartment] = useState([]);
+  const [committee, setCommittee] = useState([]);
+  const [role, setRoles] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
 
-  
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+
+  function getDepartments() {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/deps",
+      headers: {},
+    };
+    axios(config)
+      .then(async function (response) {
+        setDepartment(response.data);
+
+        // console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        return error;
+        // console.log(error);
+      });
+  }
+  function getCommittees() {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/committee",
+      headers: {},
+    };
+    axios(config)
+      .then(async function (response) {
+        console.log(response.data, "getCommittes");
+        setCommittee(response.data);
+
+        // console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        return error;
+        // console.log(error);
+      });
+  }
+  function getRoles(value: any) {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/roles/dep/${value}`,
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response: { data: any }) {
+        console.log(response.data);
+        setRoles(response.data);
+        console.log(subCategory);
+      })
+      .catch(function (error: any) {
+        console.log(error);
+      });
+  }
+
 
   function getSubCategory(value: any) {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
       url: `http://localhost:5000/admin/subCategory/cat/${value}`,
+
       headers: {},
     };
 
@@ -65,6 +112,10 @@ function WorkFlowAddTemp() {
       .catch(function (error: any) {
         console.log(error);
       });
+  }
+
+  function setRequiredDocument(title: any, value: any) {
+    setValue(title, value);
   }
   function requriedDocument(subCategoryId: any) {
     var config = {
@@ -104,27 +155,25 @@ function WorkFlowAddTemp() {
       });
   }
   const handleDeleteDocument = (title: any) => {
-    console.log(title);
     setChosenDocument((prevDocuments) =>
       prevDocuments.filter((doc) => doc.title !== title)
    
     );
   };
-  useEffect(() => {
-    getCategory();
-  }, []);
+
   const [stageCondition, setStageCondition] = useState([]);
   const [stageGroup, setStageGroup] = useState([]);
   const methods = useForm({
     mode: "onChange",
     shouldUnregister: false,
   });
+
   const { control, reset } = methods;
   const {
     register,
     handleSubmit,
     watch,
-
+    setValue,
     formState: { errors },
   } = useForm<any>({
     defaultValues: {
@@ -133,16 +182,16 @@ function WorkFlowAddTemp() {
       allowAdditional: "",
       // documents:[],
       listCondition: "",
-      group: "",
+      approverType: "",
       department: "",
       Committee: "",
       role: "",
       permissionType: "",
-      conditions: [
+      conditionvariants: [
         {
           operator: "",
-          condition: "",
-          group: "",
+          value: "",
+          approverType: "",
           department: "",
           role: "",
           permissionType: "",
@@ -171,6 +220,26 @@ function WorkFlowAddTemp() {
 
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
+
+    var config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/workflow-templates",
+      headers: {},
+      data: data.workflowtemp,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    // const dataSent={
+
+    // }
   };
 
   function handleDragEnd(event:any) {
@@ -228,7 +297,7 @@ function WorkFlowAddTemp() {
                         <input
                           type="text"
                           id="WorkflowName"
-                          {...register("workflowtemp.workflowName", {
+                          {...register("workflowtemp.name", {
                             required: true,
                           })}
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
@@ -243,7 +312,7 @@ function WorkFlowAddTemp() {
                           </label>
                           <select
                             className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.workflowCategory", {
+                            {...register("workflowtemp.categoryId", {
                               required: true,
                             })}
                             onChange={(e: { target: { value: any } }) =>
@@ -266,14 +335,17 @@ function WorkFlowAddTemp() {
                           </label>
                           <select
                             className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.workflowSubcategory", {
+                            {...register("workflowtemp.subCategoryId", {
                               required: true,
                             })}
                             onChange={(e: { target: { value: any } }) =>
                               requriedDocument(e.target.value)
                             }
                           >
-                            <option value="">Select Subcatgory</option>
+
+                            <option value="">Select SubCategory</option>
+
+        
                             {subCategory?.map((option: any, index) => (
                               <option
                                 key={index}
@@ -304,21 +376,44 @@ function WorkFlowAddTemp() {
                             >
                               Document Templates
                             </label>
+
                             <select
                               className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                               onChange={(e: { target: { value: any } }) => {
-                                setChosenDocument((prevDocuments) => [
-                                  ...prevDocuments,
-                                  {id: index, title: e.target.value},
-                                ]);
+
+                                // setChosenDocument((prevDocuments) =>
+                                //   [...prevDocuments, e.target.value];
+
+                                // setRequiredDocument(
+                                //   "workflowtemp.requiredDocumentTemplates",
+                                //   chosenDocuments
+                                // );
+                                // );
+                                // console.log({ chosenDocuments });
+                                setChosenDocument((prevDocuments) => {
+                                  const s = [...prevDocuments, e.target.value];
+                                  console.log({ s });
+                                  setRequiredDocument(
+                                    "workflowtemp.requiredDocumentTemplates",
+                                    s
+                                  );
+                                  return s;
+                                });
+
+                                // setRequiredDocument(
+                                //   "workflowtemp.requiredDocumentTemplates",
+                                //   chosenDocuments
+                                // );
+
                               }}
                             >
-                              <option>Choose Required Documents</option>
+                              <option>select a document</option>
                               {requiredDocuments?.map((option: any, index) => (
                                 <option
+                                  className="border"
                                   key={index}
                                   label={option.title}
-                                  value={option.title}
+                                  value={option._id}
                                 />
                               ))}
                             </select>
@@ -326,7 +421,7 @@ function WorkFlowAddTemp() {
                           <div className="flex gap-4 justify-center items-center w-full">
                             <input
                               type="checkbox"
-                              // {...register("workflowtemp.allowAdditional")}
+                              {...register("workflowtemp.additionalDoc")}
                             />
                             <label
                               htmlFor="additionalInfo"
@@ -361,7 +456,12 @@ function WorkFlowAddTemp() {
                           {/* {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
-                              <p className="text-[#667085] text-sm">{item}</p>
+                              <p className="text-[#667085] text-sm">
+                                {
+                                  requiredDocuments.find((i) => i._id === item)
+                                    .title
+                                }
+                              </p>
                               <div>
                                 <img
                                   onClick={() => {
@@ -416,7 +516,7 @@ function WorkFlowAddTemp() {
                                     type="text"
                                     id="stagetitle"
                                     {...register(
-                                      `workflowtemp.${index}.stageTitle`,
+                                      `workflowtemp.stages.${index}.stageTitle`,
                                       { required: true }
                                     )}
                                     className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
@@ -428,7 +528,7 @@ function WorkFlowAddTemp() {
                                     <input
                                       type="checkbox"
                                       {...register(
-                                        `workflowtemp.${index}.hasCondition`
+                                        `workflowtemp.stages.${index}.hasCondition`
                                       )}
                                       onChange={(e) => {
                                         handleConditionChange(
@@ -447,7 +547,7 @@ function WorkFlowAddTemp() {
                                   <div>
                                     <select
                                       {...register(
-                                        `workflowtemp.${index}.ListCondition`
+                                        `workflowtemp.stages.${index}.ListCondition`
                                       )}
                                       className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                                     >
@@ -462,6 +562,8 @@ function WorkFlowAddTemp() {
                               <StageCondition
                                 conditionIndex={index}
                                 {...{ control, register }}
+                                departmentData={department}
+                                committeeData={committee}
                               />
                             )}
                             {!stageCondition[index] && (
@@ -474,17 +576,17 @@ function WorkFlowAddTemp() {
                                 <div className="flex gap-5 w-full">
                                   <div className="flex gap-4 justify-center items-center">
                                     <div
-                                      role="group"
-                                      aria-labelledby="my-radio-group "
+                                      role="approverType"
+                                      aria-labelledby="my-radio-approverType "
                                       className="w-full flex gap-10 "
                                     >
                                       <div className="flex gap-2">
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.${index}.group`
+                                            `workflowtemp.stages.${index}.approverType`
                                           )}
-                                          value="single"
+                                          value="Single Person"
                                           onChange={(e) => {
                                             handleGroupChange(
                                               index,
@@ -499,7 +601,7 @@ function WorkFlowAddTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.${index}.group`
+                                            `workflowtemp.stages.${index}.approverType`
                                           )}
                                           value="committee"
                                           onChange={(e) => {
@@ -517,17 +619,42 @@ function WorkFlowAddTemp() {
 
                                 {stageGroup[index] == "committee" ? (
                                   <div className="w-full flex flex-col gap-2">
-                                    <label className="text-sm w-full">
-                                      Select Committee*
-                                    </label>
-                                    <select
-                                      {...register(
-                                        `workflowtemp.${index}.Committee`
-                                      )}
-                                      className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                    >
-                                      <option>Select Committee</option>
-                                    </select>
+                                    <div className="w-full flex flex-col gap-2">
+                                      <label className="text-sm w-full">
+                                        Select Committee*
+                                      </label>
+                                      <select
+                                        {...register(
+                                          `workflowtemp.stages.${index}.committee_permissions.role_ids`
+                                        )}
+                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                                      >
+                                        <option>Select Committee</option>
+                                        {committee.map((option: any, index) => (
+                                          <option
+                                            key={index}
+                                            label={option.name}
+                                            value={option._id}
+                                          />
+                                        ))}
+                                      </select>
+                                    </div>
+
+                                    <div className="w-full flex flex-col gap-2">
+                                      <label className="text-sm w-full">
+                                        permission Type
+                                      </label>
+                                      <select
+                                        {...register(
+                                          `workflowtemp.stages.${index}.committee_permissions.permission`
+                                        )}
+                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                                      >
+                                        <option value="reviewer">
+                                          Select permission type
+                                        </option>
+                                      </select>
+                                    </div>
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
@@ -537,11 +664,25 @@ function WorkFlowAddTemp() {
                                       </label>
                                       <select
                                         {...register(
-                                          `workflowtemp.${index}.department`
+                                          `workflowtemp.stages.${index}.single_permissions.department`
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                                        onChange={(e: {
+                                          target: { value: any };
+                                        }) => {
+                                          getRoles(e.target.value);
+                                        }}
                                       >
                                         <option>Select Department</option>
+                                        {department.map(
+                                          (option: any, index) => (
+                                            <option
+                                              key={index}
+                                              label={option.name}
+                                              value={option._id}
+                                            />
+                                          )
+                                        )}
                                       </select>
                                     </div>
                                     <div className="w-full flex gap-6">
@@ -551,11 +692,18 @@ function WorkFlowAddTemp() {
                                         </label>
                                         <select
                                           {...register(
-                                            `workflowtemp.${index}.role`
+                                            `workflowtemp.stages.${index}.single_permissions.role_id`
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
                                           <option>Select Role</option>
+                                          {role.map((option: any, index) => (
+                                            <option
+                                              key={index}
+                                              label={option.roleName}
+                                              value={option._id}
+                                            />
+                                          ))}
                                         </select>
                                       </div>
                                       <div className="w-full flex flex-col gap-2">
@@ -564,11 +712,13 @@ function WorkFlowAddTemp() {
                                         </label>
                                         <select
                                           {...register(
-                                            `workflowtemp.${index}.permissionType`
+                                            `workflowtemp.stages.${index}.single_permissions.permission`
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
-                                          <option>Permission Type</option>
+                                          <option value="reviewer">
+                                            Permission Type
+                                          </option>
                                         </select>
                                       </div>
                                     </div>
@@ -584,7 +734,7 @@ function WorkFlowAddTemp() {
                             append({
                               stageTitle: "",
                               hasCondition: "",
-                              listCondition: "",
+                              approverType: "",
                               group: "",
                               department: "",
                               role: "",

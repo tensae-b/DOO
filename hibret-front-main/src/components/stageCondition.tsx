@@ -1,10 +1,35 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useFieldArray } from "react-hook-form";
 
-export default ({ conditionIndex, control, register }: any) => {
+export default ({
+  conditionIndex,
+  control,
+  register,
+  departmentData,
+  committeeData,
+}: any) => {
+  const [role, setRoles] = useState([]);
+  function getRoles(value: any) {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/roles/dep/${value}`,
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response: { data: any }) {
+        console.log(response.data);
+        setRoles(response.data);
+      })
+      .catch(function (error: any) {
+        console.log(error);
+      });
+  }
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `workflowtemp.${conditionIndex}.conditions`,
+    name: `workflowtemp.${conditionIndex}.conditionvariants`,
   });
   const [stageGroup, setStageGroup] = useState([]);
   const handleGroupChange = (index: any, newCondition: any) => {
@@ -35,7 +60,7 @@ export default ({ conditionIndex, control, register }: any) => {
             <select
               className="w-[10%] text-sm bg-white border-r-2 border-[#D0D5DD] p-3"
               {...register(
-                `workflowtemp.${conditionIndex}.conditions.${index}.operator`
+                `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.operator`
               )}
             >
               <option className="text-[#667085]">{`>`}</option>
@@ -44,7 +69,7 @@ export default ({ conditionIndex, control, register }: any) => {
             <input
               type="text"
               {...register(
-                `workflowtemp.${conditionIndex}.conditions.${index}.condition`,
+                `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.value`,
                 {
                   required: true,
                 }
@@ -59,7 +84,7 @@ export default ({ conditionIndex, control, register }: any) => {
                 <input
                   type="radio"
                   {...register(
-                    `workflowtemp.${conditionIndex}.conditions.${index}.group`
+                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.approverType`
                   )}
                   value="single"
                   onChange={(e) => {
@@ -73,7 +98,7 @@ export default ({ conditionIndex, control, register }: any) => {
                 <input
                   type="radio"
                   {...register(
-                    `workflowtemp.${conditionIndex}.conditions.${index}.group`
+                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.approverType`
                   )}
                   value="committee"
                   onChange={(e) => {
@@ -87,15 +112,36 @@ export default ({ conditionIndex, control, register }: any) => {
 
           {stageGroup[index] == "committee" ? (
             <div className="w-full flex flex-col gap-2">
-              <label className="text-sm w-full">Select Committee*</label>
-              <select
-                {...register(
-                  `workflowtemp.${conditionIndex}.conditions.${index}.Committee`
-                )}
-                className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-              >
-                <option>Select Committee</option>
-              </select>
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm w-full">Select Committee*</label>
+                <select
+                  {...register(
+                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.role_ids`
+                  )}
+                  className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                >
+                  <option>Select Committee</option>
+                  {committeeData.map((option: any, index: any) => (
+                    <option
+                      key={index}
+                      label={option.name}
+                      value={option._id}
+                    />
+                  ))}
+                </select>
+              </div>
+
+              <div className="w-full flex flex-col gap-2">
+                <label className="text-sm w-full">permission Type</label>
+                <select
+                  {...register(
+                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.permission`
+                  )}
+                  className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                >
+                  <option value="reviewer">Select permission type</option>
+                </select>
+              </div>
             </div>
           ) : (
             <div className="w-full flex flex-col gap-2">
@@ -103,11 +149,21 @@ export default ({ conditionIndex, control, register }: any) => {
                 <label className="text-sm w-full">Select Department*</label>
                 <select
                   {...register(
-                    `workflowtemp.${conditionIndex}.conditions.${index}.department`
+                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.department`
                   )}
                   className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                  onChange={(e: { target: { value: any } }) => {
+                    getRoles(e.target.value);
+                  }}
                 >
                   <option>Select Department</option>
+                  {departmentData.map((option: any, index: any) => (
+                    <option
+                      key={index}
+                      label={option.name}
+                      value={option._id}
+                    />
+                  ))}
                 </select>
               </div>
               <div className="w-full flex gap-6">
@@ -115,18 +171,25 @@ export default ({ conditionIndex, control, register }: any) => {
                   <label className="text-sm w-full">Select Role**</label>
                   <select
                     {...register(
-                      `workflowtemp.${conditionIndex}.conditions.${index}.role`
+                      `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.role_id`
                     )}
                     className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                   >
                     <option>Select Role</option>
+                    {role.map((option: any, index) => (
+                      <option
+                        key={index}
+                        label={option.roleName}
+                        value={option._id}
+                      />
+                    ))}
                   </select>
                 </div>
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm w-full">Permission Type*</label>
                   <select
                     {...register(
-                      `workflowtemp.${conditionIndex}.conditions.${index}.permissionType`
+                      `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.permission`
                     )}
                     className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                   >
@@ -143,8 +206,8 @@ export default ({ conditionIndex, control, register }: any) => {
         onClick={() =>
           append({
             operator: "",
-            condition: "",
-            group: "single",
+            value: "",
+            approverType: "single",
             department: "",
             role: "",
             permissionType: "",
