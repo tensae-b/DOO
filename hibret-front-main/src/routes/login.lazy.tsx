@@ -37,6 +37,7 @@ const Login = () => {
       });
 
       const { data } = response;
+      console.log(data)
       if (data.error) {
         setError(data.error);
         setSuccess("");

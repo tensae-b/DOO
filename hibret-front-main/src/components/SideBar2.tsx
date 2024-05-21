@@ -38,7 +38,7 @@ const SideBar2 = () => {
           <div className=" flex flex-col justify-center mt-5 gap-3">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <Link to="/assignedTome" className=" text-sm text-[#667085]">Assigned To Me</Link>
+              <Link to="/assignedwork" className=" text-sm text-[#667085]">Assigned To Me</Link>
             </div>
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/some-list.svg" />

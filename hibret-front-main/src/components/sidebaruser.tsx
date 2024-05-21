@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const SideBarUser = ({ fetchData }) => {
+const SideBarUser = () => {
   return (
     <div className="flex flex-col w-72 mx-11 mt-11 h-full">
       <div className="flex flex-col gap-12">

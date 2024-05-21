@@ -31,6 +31,8 @@ const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
 const LoginLazyImport = createFileRoute('/login')()
 const InviteUserLazyImport = createFileRoute('/invite-user')()
+const FulldocumentbackLazyImport = createFileRoute('/fulldocumentback')()
+const FulldocumentLazyImport = createFileRoute('/fulldocument')()
 const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
@@ -38,13 +40,15 @@ const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const AssignedworkLazyImport = createFileRoute('/assignedwork')()
-const AssignedtomedetailsLazyImport = createFileRoute('/assignedtomedetails')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
 const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminreportLazyImport = createFileRoute('/adminreport')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const AssignedtomedetailsWorkflowIdUserIdLazyImport = createFileRoute(
+  '/assignedtomedetails/$workflowId/$userId',
+)()
 
 // Create/Update Routes
 
@@ -110,6 +114,18 @@ const InviteUserLazyRoute = InviteUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/invite-user.lazy').then((d) => d.Route))
 
+const FulldocumentbackLazyRoute = FulldocumentbackLazyImport.update({
+  path: '/fulldocumentback',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/fulldocumentback.lazy').then((d) => d.Route),
+)
+
+const FulldocumentLazyRoute = FulldocumentLazyImport.update({
+  path: '/fulldocument',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/fulldocument.lazy').then((d) => d.Route))
+
 const ForgotpasswordLazyRoute = ForgotpasswordLazyImport.update({
   path: '/forgotpassword',
   getParentRoute: () => rootRoute,
@@ -148,13 +164,6 @@ const AssignedworkLazyRoute = AssignedworkLazyImport.update({
   path: '/assignedwork',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/assignedwork.lazy').then((d) => d.Route))
-
-const AssignedtomedetailsLazyRoute = AssignedtomedetailsLazyImport.update({
-  path: '/assignedtomedetails',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/assignedtomedetails.lazy').then((d) => d.Route),
-)
 
 const AssignedtomeLazyRoute = AssignedtomeLazyImport.update({
   path: '/assignedtome',
@@ -198,6 +207,16 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const AssignedtomedetailsWorkflowIdUserIdLazyRoute =
+  AssignedtomedetailsWorkflowIdUserIdLazyImport.update({
+    path: '/assignedtomedetails/$workflowId/$userId',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/assignedtomedetails.$workflowId.$userId.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const LoanDocumentWorkflowIdStepIdRoute =
   LoanDocumentWorkflowIdStepIdImport.update({
     path: '/LoanDocument/$workflowId/$stepId',
@@ -240,10 +259,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssignedtomeLazyImport
       parentRoute: typeof rootRoute
     }
-    '/assignedtomedetails': {
-      preLoaderRoute: typeof AssignedtomedetailsLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/assignedwork': {
       preLoaderRoute: typeof AssignedworkLazyImport
       parentRoute: typeof rootRoute
@@ -270,6 +285,14 @@ declare module '@tanstack/react-router' {
     }
     '/forgotpassword': {
       preLoaderRoute: typeof ForgotpasswordLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/fulldocument': {
+      preLoaderRoute: typeof FulldocumentLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/fulldocumentback': {
+      preLoaderRoute: typeof FulldocumentbackLazyImport
       parentRoute: typeof rootRoute
     }
     '/invite-user': {
@@ -324,6 +347,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoanDocumentWorkflowIdStepIdImport
       parentRoute: typeof rootRoute
     }
+    '/assignedtomedetails/$workflowId/$userId': {
+      preLoaderRoute: typeof AssignedtomedetailsWorkflowIdUserIdLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -338,7 +365,6 @@ export const routeTree = rootRoute.addChildren([
   AdminreportLazyRoute,
   AssignedbymeLazyRoute,
   AssignedtomeLazyRoute,
-  AssignedtomedetailsLazyRoute,
   AssignedworkLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
@@ -346,6 +372,8 @@ export const routeTree = rootRoute.addChildren([
   DocumentsLazyRoute,
   DocumenttempaddLazyRoute,
   ForgotpasswordLazyRoute,
+  FulldocumentLazyRoute,
+  FulldocumentbackLazyRoute,
   InviteUserLazyRoute,
   LoginLazyRoute,
   ManageUserLazyRoute,
@@ -359,6 +387,7 @@ export const routeTree = rootRoute.addChildren([
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   LoanDocumentWorkflowIdStepIdRoute,
+  AssignedtomedetailsWorkflowIdUserIdLazyRoute,
 ])
 
 /* prettier-ignore-end */

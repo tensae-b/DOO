@@ -6,6 +6,7 @@ import { getUsers, useActivate } from "../services/queries/userQuery";
 import { DataGrid, GridApi, GridColDef, GridRow, GridRowParams } from "@mui/x-data-grid";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
+import SideBaruser from "../components/SideBar";
 import UserTabs from '../components/UserTabs'
 import { Button, Stack } from "@mui/material";
 
