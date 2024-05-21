@@ -188,6 +188,7 @@ function DocumentAddTemp({ onClose }) {
                             as="select"
                             className="border rounded-md p-2 mt-1 w-full"
                             required
+                            
                           >
                             <option label="Select" value="" />
                             {subCategory?.map((option: any, index) => (
