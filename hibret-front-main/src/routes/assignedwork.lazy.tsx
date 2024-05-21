@@ -3,8 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { workuser } from "../services/api/userworkApi";
 import NavBar from "../components/NavBar";
+import NavBar2 from "../components/NavBar2";
 import SideBarUser from "../components/sidebaruser";
-import SideBar2 from "../components/SideBar2";
+import SideBar from "../components/SideBar";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
@@ -115,8 +116,8 @@ function AssignWork() {
 
   return (
     <div className="flex">
-      <SideBar2/>
-      <div className="flex flex-col w-full ml-80"> {/* Added ml-64 to offset the sidebar width */}
+      <SideBar/>
+      <div className="flex flex-col w-full ml-74"> {/* Added ml-64 to offset the sidebar width */}
         <NavBar />
         <div className="flex justify-between">
           <div className="flex flex-col gap-3 my-5">

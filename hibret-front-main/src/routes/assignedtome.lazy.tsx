@@ -1,7 +1,8 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-import filter from "/asset/icons/filter.svg"
-import minus from "/asset/icons/minus.svg"
-import downArrow from '/asset/icons/down-arrow.svg'
+
+export const Route = createLazyFileRoute('/assignedtome')({
+  component: () => <div>Hello /assignedtomee!</div>
+})t/icons/down-arrow.svg'
 import AssignedToMeCard from '../components/AssignedToMeCard'
 import UserName from '../components/UserName'
 import SideBar2 from '../components/SideBar2'

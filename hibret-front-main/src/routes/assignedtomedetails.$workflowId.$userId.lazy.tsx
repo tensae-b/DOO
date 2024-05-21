@@ -25,9 +25,7 @@ function Assiendtomedeatils() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(workflowId);
         const { data, isError } = await workdetail(workflowId, userId);
-        console.log(data);
         if (!isError) {
           setWorkflowDetail(data.workflow);
         }
@@ -52,15 +50,13 @@ function Assiendtomedeatils() {
       <div className="mt-24 ml-80 mr-8 w-full h-full">
         <div>
           <div className="flex flex-row gap-6 text-bold item-center">
-          <Link 
-  to="/assignedwork" >
+            <Link to="/assignedwork">
               <img src={backArrow} alt="Back Arrow" />
-              </Link>
+            </Link>
             <h1 className="text-teal-600 font-semibold text-2xl">
               {workflowDetail?.workflowTemplate?.name}
             </h1>
           </div>
-          {/* <p className="text-gray-600 text-sm pl-12">Some Helper Text here</p> */}
         </div>
         <div className="flex gap-6">
           <div className="flex flex-col w-6/12 my-9 h-12 gap-9 border border-gray-500 border-opacity-10">
@@ -91,9 +87,9 @@ function Assiendtomedeatils() {
                 <h4 className="text-teal-600">Documents</h4>
                 <img src={arrowdown} alt="Arrow Down" />
               </div>
-              {workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((docId, index) => (
+              {/* {workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((docId, index) => (
                 <DocumentDetailsCard key={index} docId={docId} />
-              ))}
+              ))} */}
             </div>
           </div>
           <Comments

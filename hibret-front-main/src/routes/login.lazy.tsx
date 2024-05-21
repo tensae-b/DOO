@@ -1,10 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
-import axios from "axios";
-
 import axiosInst from '../services/api/axiosInst';
-
 
 export const Route = createLazyFileRoute("/login")({
   component: () => <Login />,
@@ -37,17 +34,19 @@ const Login = () => {
       });
 
       const { data } = response;
-      console.log(data)
+      console.log(data);
       if (data.error) {
         setError(data.error);
         setSuccess("");
       } else {
-        const { _id, username, role } = data;
+        const { _id, username, role } = data.data; // Extract data from the nested data object
         setSuccess(data.msg);
         setFormData({ email: "", password: "" });
 
-        // Set session or token here if needed
-        // For example:
+        // Store user details in localStorage
+        localStorage.setItem('user', JSON.stringify({ _id, username, role }));
+
+        // Optionally, set session
         // setSession({ userId: _id, username, role });
 
         // Check the role and redirect accordingly
@@ -63,7 +62,7 @@ const Login = () => {
       console.log(error);
       setError("An error occurred while logging in.");
       setTimeout(() => {
-        setSuccess("");
+        setError("");
       }, 2000);
     }
   };
