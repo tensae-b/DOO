@@ -13,9 +13,6 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
-import { SortableItem } from "../components/SortableItem";
-
-
 
 export const Route = createFileRoute("/workflowadd")({
   component: () => <WorkFlowAddTemp />,
@@ -35,7 +32,6 @@ function WorkFlowAddTemp() {
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
-
 
   function getDepartments() {
     var config = {
@@ -92,7 +88,6 @@ function WorkFlowAddTemp() {
         console.log(error);
       });
   }
-
 
   function getSubCategory(value: any) {
     var config = {
@@ -157,7 +152,6 @@ function WorkFlowAddTemp() {
   const handleDeleteDocument = (title: any) => {
     setChosenDocument((prevDocuments) =>
       prevDocuments.filter((doc) => doc.title !== title)
-   
     );
   };
 
@@ -242,19 +236,18 @@ function WorkFlowAddTemp() {
     // }
   };
 
-  function handleDragEnd(event:any) {
-    const {active, over} = event;
-    console.log(active, over.id)
-    if (active.id !== over.id) {
-      setRequiredDocuments((items) => {
-
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-        console.log(oldIndex,newIndex)
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  }
+  // function handleDragEnd(event: any) {
+  //   const { active, over } = event;
+  //   console.log(active, over.id);
+  //   if (active.id !== over.id) {
+  //     setRequiredDocuments((items) => {
+  //       const oldIndex = items.indexOf(active.id);
+  //       const newIndex = items.indexOf(over.id);
+  //       console.log(oldIndex, newIndex);
+  //       return arrayMove(items, oldIndex, newIndex);
+  //     });
+  //   }
+  // }
 
   return (
     <FormProvider {...methods}>
@@ -342,10 +335,8 @@ function WorkFlowAddTemp() {
                               requriedDocument(e.target.value)
                             }
                           >
-
                             <option value="">Select SubCategory</option>
 
-        
                             {subCategory?.map((option: any, index) => (
                               <option
                                 key={index}
@@ -380,7 +371,6 @@ function WorkFlowAddTemp() {
                             <select
                               className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                               onChange={(e: { target: { value: any } }) => {
-
                                 // setChosenDocument((prevDocuments) =>
                                 //   [...prevDocuments, e.target.value];
 
@@ -404,7 +394,6 @@ function WorkFlowAddTemp() {
                                 //   "workflowtemp.requiredDocumentTemplates",
                                 //   chosenDocuments
                                 // );
-
                               }}
                             >
                               <option>select a document</option>
@@ -439,20 +428,24 @@ function WorkFlowAddTemp() {
                           >
                             Order of appearance
                           </label>
- <DndContext 
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext 
-       items={chosenDocuments}
-        strategy={verticalListSortingStrategy}
-      >
-         {chosenDocuments.map((item, index) =><SortableItem key={index} title={item} id={index+1} />)}
-         
-         
-         
-         {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
+                          {/* <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                          >
+                            <SortableContext
+                              items={chosenDocuments}
+                              strategy={verticalListSortingStrategy}
+                            >
+                              {chosenDocuments.map((item, index) => (
+                                <SortableItem
+                                  key={index}
+                                  title={item}
+                                  id={index + 1}
+                                />
+                              ))} */}
+
+                          {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
                           {/* {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
@@ -472,8 +465,8 @@ function WorkFlowAddTemp() {
                               </div>
                             </div>
                           ))} */}
-                          </SortableContext>
-                        </DndContext>
+                          {/* </SortableContext>
+                          </DndContext> */}
                         </div>
                       </div>
                     </div>
