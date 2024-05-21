@@ -1,4 +1,4 @@
-import React, { useState, lazy } from "react";
+import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/workflowtemp")({
 const WorkFlowAddTemp = lazy(() => import("./workflowadd.lazy"));
 import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import NoData from "../components/NoData";
+import axios from "axios";
 
 // import {
 //   getAllUser,
@@ -20,54 +21,54 @@ import NoData from "../components/NoData";
 // } from "../services/queries/userQuery";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "name", headerName: "name", width: 230 },
-  { field: "Type", headerName: "Type", width: 130 },
-  {
-    field: "status",
-    headerName: "status",
-    width: 150,
-    type: "actions",
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onActive = () => {
-        // Handle edit functionality for the specific row
-        console.log("Edit button clicked for row:", params.id);
-        // Implement logic to open an edit form or modal here (consider passing data)
-      };
+  { field: "_id", headerName: "ID", width: 270 },
+  { field: "name", headerName: "name", width: 330 },
+  // { field: "Type", headerName: "Type", width: 130 },
+  // {
+  //   field: "status",
+  //   headerName: "status",
+  //   width: 150,
+  //   type: "actions",
+  //   renderCell: (params: GridActionsCellParams<any>) => {
+  //     const onActive = () => {
+  //       // Handle edit functionality for the specific row
+  //       console.log("Edit button clicked for row:", params.id);
+  //       // Implement logic to open an edit form or modal here (consider passing data)
+  //     };
 
-      const onInActive = () => {
-        // Handle delete functionality for the specific row
-        console.log("Delete button clicked for row:", params.id);
-        // Implement logic to confirm and delete the row (consider user confirmation)
-      };
-      const imageSrc =
-        params.row.status === "Active"
-          ? "/asset/icons/dot.png"
-          : "/asset/icons/dot2.png";
+  //     const onInActive = () => {
+  //       // Handle delete functionality for the specific row
+  //       console.log("Delete button clicked for row:", params.id);
+  //       // Implement logic to confirm and delete the row (consider user confirmation)
+  //     };
+  //     const imageSrc =
+  //       params.row.status === "Active"
+  //         ? "/asset/icons/dot.png"
+  //         : "/asset/icons/dot2.png";
 
-      return (
-        <div className="flex gap-4 justify-center items-center">
-          <button
-            onClick={() => {
-              if (params.row.status === "Active") {
-                onActive();
-              } else {
-                onInActive();
-              }
-            }}
-            className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg  ${
-              params.row.status === "Active"
-                ? "text-[#00B0AD]"
-                : "text-[#4A176D]"
-            }`}
-          >
-            <img src={imageSrc} className="w-5" />
-            {params.row.status}
-          </button>
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="flex gap-4 justify-center items-center">
+  //         <button
+  //           onClick={() => {
+  //             if (params.row.status === "Active") {
+  //               onActive();
+  //             } else {
+  //               onInActive();
+  //             }
+  //           }}
+  //           className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg  ${
+  //             params.row.status === "Active"
+  //               ? "text-[#00B0AD]"
+  //               : "text-[#4A176D]"
+  //           }`}
+  //         >
+  //           <img src={imageSrc} className="w-5" />
+  //           {params.row.status}
+  //         </button>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     field: "actions",
     headerName: "Action",
@@ -106,40 +107,57 @@ const columns: GridColDef[] = [
   },
 ];
 
-const userData = [
-  {
-    id: 1,
-    name: "John Doe",
-    Type: "johndoe",
-    status: "Active",
-    Action: "Admin",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    Type: "janesmith",
-    status: "Inactive",
-    Action: "Editor",
-  },
-  {
-    id: 3,
-    name: "Michael Brown",
-    Type: "michaelbrown",
-    status: "Active",
-    Action: "Member",
-  },
-  {
-    id: 4,
-    name: "Alice Garcia",
-    Type: "alicegarcia",
-    status: "Active",
-    Action: "Member",
-  },
-];
+// const userData = [
+//   {
+//     id: 1,
+//     name: "John Doe",
+//     Type: "johndoe",
+//     status: "Active",
+//     Action: "Admin",
+//   },
+//   {
+//     id: 2,
+//     name: "Jane Smith",
+//     Type: "janesmith",
+//     status: "Inactive",
+//     Action: "Editor",
+//   },
+//   {
+//     id: 3,
+//     name: "Michael Brown",
+//     Type: "michaelbrown",
+//     status: "Active",
+//     Action: "Member",
+//   },
+//   {
+//     id: 4,
+//     name: "Alice Garcia",
+//     Type: "alicegarcia",
+//     status: "Active",
+//     Action: "Member",
+//   },
+// ];
 
 function WorkflowTemp() {
+  useEffect(() => {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/workflow-templates",
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(response.data);
+        setUser(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
   // const userData: any = [];
-  const [user, setUser] = useState(userData);
+  const [user, setUser] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
   const options = ["Template one", "Template two", "Template three"];
@@ -189,6 +207,7 @@ function WorkflowTemp() {
               <div className="h-full w-full mt">
                 <DataGrid
                   rows={user}
+                  getRowId={(row) => row._id}
                   columns={columns}
                   initialState={{
                     pagination: {
