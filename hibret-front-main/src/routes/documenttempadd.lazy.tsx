@@ -1,5 +1,6 @@
 import { Key, useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Formik,
   Form,
@@ -15,7 +16,7 @@ import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
 
 export const Route = createFileRoute("/documenttempadd")({
-  component: () => <DocumentAddTemp onClose={undefined} />,
+  component: () => <DocumentAddTemp />,
 });
 
 const addSection = [
@@ -43,7 +44,8 @@ const addSection = [
 ];
 // const transformData = () => {};
 
-function DocumentAddTemp({ onClose }) {
+function DocumentAddTemp() {
+  const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
 
@@ -90,6 +92,7 @@ function DocumentAddTemp({ onClose }) {
   }, []);
   return (
     <div className="mx-3 mb-10 ">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex">
         <SideBar />
         <div className="w-full flex flex-col">
@@ -107,9 +110,11 @@ function DocumentAddTemp({ onClose }) {
                 })
                 .then(function (response) {
                   console.log(response);
+                  toast.success("Successfully submited!");
+                  navigate({ to: "/documentemp" });
                 })
                 .catch(function (error) {
-                  console.log(error);
+                  toast.error("Please try again");
                 });
               console.log(values.documentvalue);
               // alert(JSON.stringify(values.documentvalue, null, 2));
@@ -188,7 +193,6 @@ function DocumentAddTemp({ onClose }) {
                             as="select"
                             className="border rounded-md p-2 mt-1 w-full"
                             required
-                            
                           >
                             <option label="Select" value="" />
                             {subCategory?.map((option: any, index) => (

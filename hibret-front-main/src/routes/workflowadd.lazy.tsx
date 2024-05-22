@@ -13,6 +13,7 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export const Route = createFileRoute("/workflowadd")({
   component: () => <WorkFlowAddTemp />,
@@ -226,9 +227,11 @@ function WorkFlowAddTemp() {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        toast.success("Successfully toasted!");
       })
       .catch(function (error) {
         console.log(error);
+        toast.error("please try again");
       });
 
     // const dataSent={
@@ -251,6 +254,7 @@ function WorkFlowAddTemp() {
 
   return (
     <FormProvider {...methods}>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="mx-3 mb-10 ">
         <div className="flex">
           <SideBar />
