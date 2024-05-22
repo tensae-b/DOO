@@ -1,8 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
-
-import axios from "axios";
+import axiosInst from '../services/api/axiosInst';
 
 export const Route = createLazyFileRoute("/login")({
   component: () => <Login />,
@@ -29,41 +28,47 @@ const Login = () => {
     event.preventDefault();
     const { email, password } = formData;
     try {
-      const { data } = await axios.post("http://localhost:5000/api/login", {
+      const response = await axiosInst.post("api/login", {
         email,
         password,
       });
 
+      const { data } = response;
+      console.log(data);
       if (data.error) {
         setError(data.error);
         setSuccess("");
       } else {
-        setError(""); 
+        const { _id, username, role } = data.data; // Extract data from the nested data object
         setSuccess(data.msg);
-
-        // Set session data
-        setSession(data.session);
-
-        if (data.session.role === "dooAdmin") {
-          window.location.href = `/adminDashboard?${data.session.username}`;
-        } else {
-          window.location.href = `/userdashboard?${data.session.username}`;
-        }
-
         setFormData({ email: "", password: "" });
+
+        // Store user details in localStorage
+        localStorage.setItem('user', JSON.stringify({ _id, username, role }));
+
+        // Optionally, set session
+        // setSession({ userId: _id, username, role });
+
+        // Check the role and redirect accordingly
+        if (role === "66374bd0fdfae8633a05d11e") {
+          // Redirect to admin dashboard
+          window.location.href = "/adminDashboard";
+        } else {
+          // Redirect to user dashboard
+          window.location.href = "/userDashboard";
+        }
       }
     } catch (error) {
       console.log(error);
-      setError("An error occurred while logging in."); 
-    
-
+      setError("An error occurred while logging in.");
       setTimeout(() => {
-        setSuccess("");
-    }, 2000);
+        setError("");
+      }, 2000);
     }
   };
 
   return (
+    //integrated but a bit left
     <div className="flex justify-center items-center h-screen w-screen">
       <div className="w-80 h-96 gap-4 flex flex-col">
         <h1 className="w-full h-10 font-ralewa font-bold text-3xl text-center bg-gradient-to-r text-transparent bg-clip-text from-teal-500 to-purple-900">
@@ -72,8 +77,8 @@ const Login = () => {
         <h3 className="w-full text-center font-urbanist font-normal text-base text-gray-400">
           Sign in to your account.
         </h3>
-        {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-        {success && <p className="text-green-500">{success}</p>} {/* Display success message */}
+        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
         <form onSubmit={handleLogin} className="gap-4 flex flex-col">
           <input
             id="email"
@@ -105,3 +110,5 @@ const Login = () => {
     </div>
   );
 };
+
+export default Login;
