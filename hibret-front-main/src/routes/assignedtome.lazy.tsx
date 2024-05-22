@@ -1,55 +1,145 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
-import filter from "/asset/icons/filter.svg"
-import minus from "/asset/icons/minus.svg"
-import downArrow from '/asset/icons/down-arrow.svg'
-import AssignedToMeCard from '../components/AssignedToMeCard'
-import UserName from '../components/UserName'
-import SideBar2 from '../components/SideBar2'
+import React, { useState, useEffect } from "react";
+import { Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { workuser } from "../services/api/userworkApi";
+import NavBar from "../components/NavBar";
+import NavBar2 from "../components/NavBar2";
+import SideBarUser from "../components/sidebaruser";
+import SideBar from "../components/SideBar";
 
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import axios from "axios";
 
-export const Route = createLazyFileRoute('/assignedtome')({
-  component: () => 
-      <div>
-        <UserName/>
-        <SideBar2/>
-      <div className="mt-24 ml-80 mr-8">
-           <div className='flex gap-4 mb-9 ml-4'>
-            <p>All</p>
-            <p>Ongoing</p>
-            <p>completed</p>
+export const Route = createFileRoute("/assignedtome")({
+  component: () => <AssignWork />,
+});
 
+const columns: GridColDef[] = [
+  { field: "id", headerName: "ID", width: 230 },
+  {
+    field: "workflow_id",
+    headerName: "Workflow id",
+    width: 230,
+    renderCell: (params) => (
+      <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
+        {params.value}
+      </Link>
+    ),
+  },
+  { field: "status", headerName: "Status", width: 130 },
+  {
+    field: 'actions',
+    headerName: 'Action',
+    width: 150,
+    type: 'actions',
+    renderCell: (params: GridActionsCellParams<any>) => {
+      const onEdit = () => {
+        console.log('Edit button clicked for row:', params.id);
+      };
 
-           </div>
-          <div className='flex flex-row justify-between'> 
-          <div className="flex border border-[#667085] px-3 py-2 rounded-lg w-72 h-8 justify-between">
-        <input type="text" placeholder="Search something...." />
-        <img src="/asset/icons/search.svg" />
-      </div>
-          <div className='flex gap-1 items-center'>
-             <img src={filter}/>
-             <p className='text-md text-gray-600'>Filters</p>
-          </div>
-      
-      </div>
+      const onDelete = () => {
+        console.log('Delete button clicked for row:', params.id);
+      };
 
-      <div className='mt-9 flex flex-col w-full'>
-        <div className='flex border-b border-gray-500 border-opacity-20 gap-10'>
-          <div className='py-3 px-4 h-11 w-24 '><img src={minus} alt="" w-4 h-4 /></div>
-          <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96' > <p>Name</p> <img src={downArrow} alt="" /></div>
-          <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'> <p>Date  Created</p> <img src={downArrow} alt="" /></div>
-          <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'> <p>Type</p> <img src={downArrow} alt="" /></div>
-          <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'> <p>Document Status</p> <img src={downArrow} alt="" /></div>
-          <div className='py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96'> <p>Name</p> <img src={downArrow} alt="" /></div>
+      return (
+        <div className="flex justify-around">
+          <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
+            <img src="/asset/icons/edit.png" className="w-5 h-5" />
+          </button>
+          <button onClick={onDelete} className="text-red-500 hover:text-red-700">
+            <img src="/asset/icons/delete.svg" className="w-5 h-5" />
+          </button>
         </div>
+      );
+    },
+  },
+];
 
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
-       <AssignedToMeCard/>
+function AssignWork() {
+  const [user, setUser] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [acceptanceStatus, setAcceptanceStatus] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await workuser('663c62145dd5d333dbdaaf00');
+      console.log(response)
+      const updatedUserData = response.data.map((item) => {
+        console.log( item.workflows[0].workflowId._id)
+       
+        if (
+          item.workflows &&
+          item.workflows.length > 0 &&
+          item.workflows[0].workflowId
+        ) {
+          return {
+            id: item._id,
+            workflow_id:  item.workflows[0].workflowId._id,
+            status: item.workflows[0].workflowId ? item.workflows[0].workflowId.status : "Unknown",
+          };
+        } else {
+          return {
+            id: item._id,
+            workflow_id: "Unknown",
+            status: "Unknown",
+          };
+        }
+      });
+      setUser(updatedUserData);
+    } catch (error) {
+      console.error("Error fetching user workflow data:", error);
+    }
+  };
+
+  const handleRowClick = (row) => {
+    setAcceptanceStatus(null);
+  };
+
+  const handleAccept = () => {
+    setAcceptanceStatus("Accepted");
+    console.log("Document accepted");
+  };
+
+  const handleReject = () => {
+    setAcceptanceStatus("Rejected");
+    console.log("Document rejected");
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRow(null);
+    setAcceptanceStatus(null);
+  };
+
+  return (
+    //integrated
+    <div className="flex">
+      <SideBar/>
+      <div className="flex flex-col w-full ml-74"> {/* Added ml-64 to offset the sidebar width */}
+        <NavBar />
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-3 my-5">
+            <h2 className="text-[#4A176D] text-3xl font-bold">
+              Assigned workflow
+            </h2>
+            <p className="text-[#667085] text-base"> placeholder</p>
+          </div>
+        </div>
+        <div className="h-full w-full mt">
+          <DataGrid
+            rows={user}
+            columns={columns}
+            pageSizeOptions={[5, 10]}
+            checkboxSelection
+            onRowClick={(row) => handleRowClick(row)}
+          />
+        </div>
       </div>
-  </div>
-  </div>
-})
+    </div>
+  );
+}
+
+export default AssignWork;

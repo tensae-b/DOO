@@ -1,29 +1,13 @@
-import axiosInstance from "./axiosInstance";
+import axiosInst from './axiosInst';
 
-
-export const fetchDocument = async (userId: string) => {
-    const { data } = await axiosInstance.get(`/documents?where[user][equals]=${userId}`);
-    return data;
+export const fetchdoc = async (workId) => {
+  try {
+    const response = await axiosInst.get(`initiate/reqDoc/workflows/${workId}`);
+    const { data } = response;
+    console.log(data)
+    return { data, isLoading: false, isError: false }; 
+  } catch (error) {
+    console.error('Error fetching detail:', error);
+    return { data: null, isLoading: false, isError: true };
+  }
 };
-
-// create a new document
-type CreateDocumentPayload = {
-    title: string;
-    content: string;
-    type: string;
-};
-
-export const createDocument = async (payload: CreateDocumentPayload) => {
-    const { data } = await axiosInstance.post("/documents", payload);
-    return data;
-};
-
-export const getDocumentsToApprove = async () => {
-    const { data } = await axiosInstance.get("/documents/workflow-visible");
-    return data;
-}
-
-export const changeDocumentStatus = async ({ documentId, status }: { documentId: string, status: "Approved" | "Declined" }) => {
-    const { data } = await axiosInstance.post(`/documents/update-workflow/${documentId}`, { status });
-    return data;
-}
