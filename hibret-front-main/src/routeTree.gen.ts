@@ -35,8 +35,10 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const ChangepasswordLazyImport = createFileRoute('/changepassword')()
 const CatagoryListLazyImport = createFileRoute('/catagoryList')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
+const AssignedbymedetailsLazyImport = createFileRoute('/assignedbymedetails')()
 const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminreportLazyImport = createFileRoute('/adminreport')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
@@ -145,6 +147,13 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
 
+const ChangepasswordLazyRoute = ChangepasswordLazyImport.update({
+  path: '/changepassword',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/changepassword.lazy').then((d) => d.Route),
+)
+
 const CatagoryListLazyRoute = CatagoryListLazyImport.update({
   path: '/catagoryList',
   getParentRoute: () => rootRoute,
@@ -154,6 +163,13 @@ const AssignedtomeLazyRoute = AssignedtomeLazyImport.update({
   path: '/assignedtome',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/assignedtome.lazy').then((d) => d.Route))
+
+const AssignedbymedetailsLazyRoute = AssignedbymedetailsLazyImport.update({
+  path: '/assignedbymedetails',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/assignedbymedetails.lazy').then((d) => d.Route),
+)
 
 const AssignedbymeLazyRoute = AssignedbymeLazyImport.update({
   path: '/assignedbyme',
@@ -231,12 +247,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssignedbymeLazyImport
       parentRoute: typeof rootRoute
     }
+    '/assignedbymedetails': {
+      preLoaderRoute: typeof AssignedbymedetailsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/assignedtome': {
       preLoaderRoute: typeof AssignedtomeLazyImport
       parentRoute: typeof rootRoute
     }
     '/catagoryList': {
       preLoaderRoute: typeof CatagoryListLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/changepassword': {
+      preLoaderRoute: typeof ChangepasswordLazyImport
       parentRoute: typeof rootRoute
     }
     '/create-user': {
@@ -331,8 +355,10 @@ export const routeTree = rootRoute.addChildren([
   AdminDashboardLazyRoute,
   AdminreportLazyRoute,
   AssignedbymeLazyRoute,
+  AssignedbymedetailsLazyRoute,
   AssignedtomeLazyRoute,
   CatagoryListLazyRoute,
+  ChangepasswordLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
