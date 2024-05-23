@@ -22,7 +22,7 @@ import axios from "axios";
 
 const columns: GridColDef[] = [
   { field: "_id", headerName: "ID", width: 270 },
-  { field: "name", headerName: "name", width: 330 },
+  { field: "workflowName", headerName: "name", width: 330 },
   // { field: "Type", headerName: "Type", width: 130 },
   // {
   //   field: "status",

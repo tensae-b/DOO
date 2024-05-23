@@ -25,7 +25,7 @@ function Document() {
     axios(config)
       .then(function (response) {
         setWorkflow(response.data);
-        console.log(JSON.stringify(response.data));
+        console.log(response.data, 'workflow');
       })
       .catch(function (error) {
         console.log(error);
@@ -107,8 +107,8 @@ function Document() {
                     </option>
                     {workflow?.map((option: any, index) => (
                       <option
-                        key={option}
-                        label={option.name}
+                        key={index}
+                        label={option.workflowName}
                         value={option._id}
                       />
                     ))}

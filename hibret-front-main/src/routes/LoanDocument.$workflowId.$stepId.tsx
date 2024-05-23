@@ -1,8 +1,8 @@
 import "quill/dist/quill.snow.css";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
-import { createFileRoute } from "@tanstack/react-router";
-
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
@@ -35,9 +35,13 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 });
 
 function LoanDocument() {
+  const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
+  const user: any=  localStorage.getItem('user');
+  const userId = JSON.parse(user);
+  console.log(userId)
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
@@ -87,11 +91,11 @@ function LoanDocument() {
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
-        userId: "663c92732358e4d0b92c928b",
-        data: stepFormData,
+        userId: userId._id,
+        reqDoc: stepFormData,
       };
     
-
+     
       var config = {
         method: "post",
         maxBodyLength: Infinity,
@@ -99,13 +103,18 @@ function LoanDocument() {
         headers: {},
         data: documentData,
       };
-      console.log(documentData, "document");
+      
       axios(config)
         .then(function (response) {
+          console.log(documentData, "document");
           console.log(JSON.stringify(response.data));
+          toast.success("Successfully submited!");
+                  navigate({ to: "/document" });
           clearStepData();
         })
         .catch(function (error) {
+          console.log(documentData, "document");
+          toast.error("Please try again");
           console.log(error);
         });
       
@@ -258,7 +267,7 @@ function LoanDocument() {
                   
                   <button
                     type="submit"
-                    className="text-base px-6 py-2 self-end bg-[#F0F3F6] text-[#9EA9C1]"
+                    className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
                   >
                     {nextId ? "continue" : "submit"}
                   </button>
