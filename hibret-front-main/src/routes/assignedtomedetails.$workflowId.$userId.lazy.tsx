@@ -9,6 +9,7 @@ import { workdetail } from "../services/api/userworkApi";
 import Comments from "../components/Comments";
 import UserName from "../components/UserName";
 import SideBar2 from "../components/SideBar2";
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId/$userId")({
   component: Assiendtomedeatils
@@ -25,7 +26,7 @@ function Assiendtomedeatils() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, isError } = await workdetail(workflowId, userId);
+        const { data, isError } = await axios.get('http://localhost:5000/initiate/workflows/664a7c9a94faa8411ca2b0ef/user/663c62145dd5d333dbdaaf00');
         if (!isError) {
           setWorkflowDetail(data.workflow);
         }
@@ -88,6 +89,7 @@ function Assiendtomedeatils() {
                 <h4 className="text-teal-600">Documents</h4>
                 <img src={arrowdown} alt="Arrow Down" />
               </div>
+              <DocumentDetailsCard />
               {/* {workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((docId, index) => (
                 <DocumentDetailsCard key={index} docId={docId} />
               ))} */}

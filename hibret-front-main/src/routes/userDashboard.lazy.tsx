@@ -4,6 +4,7 @@ import UserCards from '../components/UserCards';
 import UserEnd from '../components/UserEnd';
 import NavBar2 from '../components/NavBar2';
 import SideBar2 from '../components/SideBar2';
+import UserName from "../components/UserName";
 
 export const Route = createFileRoute('/userDashboard')({
   component: () => (

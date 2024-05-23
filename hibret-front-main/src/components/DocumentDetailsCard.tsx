@@ -4,20 +4,21 @@ import { Link } from "@tanstack/react-router";
 import download from '/asset/icons/download.svg';
 import pdf from '/asset/icons/pdf.svg';
 import visible from '/asset/icons/visible.svg';
-import { fetchdoc } from '../services/api/documentApi';
 
-const DocumentDetailsCard = ({ docId }) => {
+const DocumentDetailsCard = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [document, setDocument] = useState(null);
 
   useEffect(() => {
     const fetchDocumentDetails = async () => {
-      const { data, isError } = await axios.get('http://localhost:5000/initiate/reqDoc/workflows/664a7c9a94faa8411ca2b0ef')
-      if (!isError) {
-        // setDocument(data);
-      } else {
-        console.error("Error fetching document details");
+      try {
+        const { data } = await axios.get(`http://localhost:5000/initiate/reqDoc/workflows/664a5d6c8812be42ee4d727e`);
+        setDocument(data);
+        
+      } catch (error) {
+        console.error("Error fetching document details:", error);
       }
+      console.log("fetch")
     };
 
     fetchDocumentDetails();
@@ -32,7 +33,6 @@ const DocumentDetailsCard = ({ docId }) => {
   }
 
   return (
-    //integration in progress
     <div className="flex justify-between items-center p-4 border rounded shadow">
       <div className="flex gap-6 items-center">
         <img src={pdf} alt="PDF Icon" className="w-8 h-8" />
@@ -42,7 +42,7 @@ const DocumentDetailsCard = ({ docId }) => {
         {isVisible && (
           <div className="relative" style={{ width: '200px', height: '200px' }}>
             <iframe
-              src={}
+              src={document.fileUrl}
               style={{ width: '100%', height: '100%' }}
               frameBorder="0"
             ></iframe>
