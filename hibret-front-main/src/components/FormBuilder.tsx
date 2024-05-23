@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Key } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
+import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
 
 export const FormBuilder = ({
   title,
@@ -110,6 +111,7 @@ export const FormBuilder = ({
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
+    console.log(file)
       setValue(title, file);
       clearErrors(title);
     }
@@ -260,11 +262,11 @@ export const FormBuilder = ({
               </div>
               <input
                 type="file"
-                required={required}
+                
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `sections.${parentIndex}.content.${index}.value`,
+                    `sections.${parentIndex}.content.${index}.value.${index}`,
                     e.target.files[0]
                   )
                 }

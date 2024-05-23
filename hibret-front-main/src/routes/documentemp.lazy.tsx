@@ -14,7 +14,7 @@ import axios from "axios";
 
 const columns: GridColDef[] = [
   { field: "_id", headerName: "ID", width: 270 },
-  { field: "title", headerName: "Title", width: 230 },
+  { field: "documentTitle", headerName: "Title", width: 230 },
 
   {
     field: "actions",
