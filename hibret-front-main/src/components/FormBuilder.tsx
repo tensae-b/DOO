@@ -105,6 +105,13 @@ export const FormBuilder = ({
     });
   }, [type]);
 
+   
+  const convertToPlainText = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
+
   const editorContent = watch(`sections.${parentIndex}.content.${index}.value`);
   const errorClassNames = ["input-error", "textarea-error"];
 
@@ -126,7 +133,10 @@ export const FormBuilder = ({
   };
 
   const onEditorStateChange = (title, editorState) => {
-    setValue(title, editorState);
+   
+    const text= convertToPlainText(editorState)
+    
+    setValue(title, text);
   };
 
   const handleInput = () => {
