@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import downArrow from "/asset/icons/down-arrow.svg";
-import upArrow from "/asset/icons/upArrow.svg";
+import upArrow from "/asset/icons/down-arrow.svg";
 import DocumentDetailsCard1 from "./DocumentDetailsCard1";
 
 const WorkflowInformation: React.FC = () => {
@@ -44,35 +44,8 @@ const WorkflowInformation: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between">
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-            </div>
-
-            <div className="flex justify-between">
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-            </div>
+         
+            
 
             <div>{/* Any additional content goes here */}</div>
           </div>
