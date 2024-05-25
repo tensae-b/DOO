@@ -75,7 +75,7 @@ const UserName: React.FC = () => {
           <div onClick={toggle} className="flex relative gap-2 cursor-pointer">
             <div>
               <p>{username}</p>
-              <p className="text-sm text-gray-500">{role}</p>
+              {/* <p className="text-sm text-gray-500">{role}</p> */}
             </div>
             <img src={isOpen ? "uparrow" : downArrow} className="max-w-4" alt="Dropdown Arrow" />
           </div>

@@ -17,9 +17,9 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c92732358e4d0b92c928b';
       const workflowId = workflowDetail._id;
-
+console.log(workflowDetail._id)
       const { data, isError } = await workapprove(workflowId, userId, comment);
       if (!isError) {
         setApproveStatus("Workflow approved successfully.");
@@ -40,7 +40,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c92732358e4d0b92c928b';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workareject(workflowId, userId, comment);
@@ -63,7 +63,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c92732358e4d0b92c928b';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workforward(workflowId, userId, comment);
@@ -86,7 +86,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId =  '663c92732358e4d0b92c928b';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workback(workflowId, userId, comment);

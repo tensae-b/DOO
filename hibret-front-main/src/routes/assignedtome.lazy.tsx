@@ -12,17 +12,21 @@ export const Route = createFileRoute("/assignedtome")({
 });
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 230 },
   {
     field: "workflow_id",
-    headerName: "Workflow id",
+    headerName: "Workflow ID",
     width: 230,
     renderCell: (params) => (
-      <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
-        {params.value}
-      </Link>
+      params.value !== "Unknown" ? (
+        <Link to={`/assignedtomedetails/${params.value}/663c92732358e4d0b92c928b`}>
+          {params.value}
+        </Link>
+      ) : (
+        <span>Unknown</span>
+      )
     ),
   },
+  { field: "name", headerName: "Name", width: 230 },
   { field: "status", headerName: "Status", width: 130 },
   {
     field: 'actions',
@@ -63,28 +67,15 @@ function AssignWork() {
 
   const fetchData = async () => {
     try {
-      const response = await workuser('663c62145dd5d333dbdaaf00');
+      const response = await workuser('663c92732358e4d0b92c928b');
       console.log(response)
-      const updatedUserData = response.data.map((item) => {
-        console.log(item.workflows[0].workflowId._id)
-
-        if (
-          item.workflows &&
-          item.workflows.length > 0 &&
-          item.workflows[0].workflowId
-        ) {
-          return {
-            id: item._id,
-            workflow_id: item.workflows[0].workflowId._id,
-            status: item.workflows[0].workflowId ? item.workflows[0].workflowId.status : "Unknown",
-          };
-        } else {
-          return {
-            id: item._id,
-            workflow_id: "Unknown",
-            status: "Unknown",
-          };
-        }
+      const updatedUserData = response.data.map((item, index) => {
+        return {
+          id: item.workflowId || `unknown-${index}`,  // Ensure unique id for DataGrid
+          workflow_id: item.workflowId || "Unknown",
+          name: item.name || "Unnamed Workflow",
+          status: item.status || "Unknown",
+        };
       });
       setUser(updatedUserData);
     } catch (error) {
