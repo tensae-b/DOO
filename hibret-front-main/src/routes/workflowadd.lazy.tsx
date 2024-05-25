@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-
+import toast, { Toaster } from "react-hot-toast";
 import Dropdown from "react-dropdown";
 import {
   useFieldArray,
@@ -13,7 +13,7 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+
 
 export const Route = createFileRoute("/workflowadd")({
   component: () => <WorkFlowAddTemp />,
@@ -33,6 +33,7 @@ function WorkFlowAddTemp() {
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   function getDepartments() {
     var config = {
@@ -44,7 +45,7 @@ function WorkFlowAddTemp() {
     axios(config)
       .then(async function (response) {
         setDepartment(response.data);
-
+         console.log(response.data,'dep')
         // console.log(JSON.stringify(response.data));
       })
       .catch(function (error) {
@@ -228,9 +229,12 @@ function WorkFlowAddTemp() {
       .then(function (response) {
         console.log(JSON.stringify(response.data));
         toast.success("Successfully toasted!");
+      
+                  navigate({ to: "/workflowtemp" });
       })
       .catch(function (error) {
         console.log(error);
+        
         toast.error("please try again");
       });
 
@@ -600,7 +604,7 @@ function WorkFlowAddTemp() {
                                           {...register(
                                             `workflowtemp.stages.${index}.approverType`
                                           )}
-                                          value="committee"
+                                          value="Committee"
                                           onChange={(e) => {
                                             handleGroupChange(
                                               index,
@@ -614,7 +618,7 @@ function WorkFlowAddTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[index] == "committee" ? (
+                                {stageGroup[index] == "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
@@ -647,8 +651,11 @@ function WorkFlowAddTemp() {
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
-                                        <option value="reviewer">
+                                         <option>
                                           Select permission type
+                                        </option>
+                                        <option value="reviewer">
+                                          reviewer
                                         </option>
                                       </select>
                                     </div>
@@ -713,9 +720,13 @@ function WorkFlowAddTemp() {
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
-                                          <option value="reviewer">
-                                            Permission Type
-                                          </option>
+                                           <option>
+                                          Select permission type
+                                        </option>
+                                        <option value="reviewer">
+                                          reviewer
+                                        </option>
+                                      
                                         </select>
                                       </div>
                                     </div>
