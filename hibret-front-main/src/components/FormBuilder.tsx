@@ -119,7 +119,7 @@ export const FormBuilder = ({
     // validate the size
     if (file.type === "application/pdf") {
     console.log(file)
-      setValue(title, file);
+      setValue(title, file.name);
       clearErrors(title);
     }
     if (file.type != "application/pdf") {
@@ -276,7 +276,7 @@ export const FormBuilder = ({
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `sections.${parentIndex}.content.${index}.value.${index}`,
+                    `sections.${parentIndex}.content.${index}.value`,
                     e.target.files[0]
                   )
                 }
