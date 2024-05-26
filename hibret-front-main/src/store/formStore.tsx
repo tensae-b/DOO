@@ -2,6 +2,12 @@ import { ReactElement } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+interface FormImageState {
+  formImage: FormData;
+  setFormImage: (data: Record<string, any>) => void;
+  clearFormImage: () => void;
+}
+
 const useStepFormStore = create(
   persist(
     (set) => ({
@@ -26,4 +32,28 @@ const useStepFormStore = create(
   )
 );
 
-export default useStepFormStore;
+const useFormImage = create(
+  persist(
+    (set) => ({
+      formImage: [],
+      setFormImage: (data: any) => 
+        set((state: any) => ({
+          formImage: [
+            ...state.formImage,
+            data,
+            
+          ],
+        })),
+      clearFormImage: () => {
+        set({ formImage: new FormData() });
+      },
+    }),
+    {
+      name: 'stepperImage',
+    }
+  )
+
+);
+
+
+export {useStepFormStore as default, useFormImage};
