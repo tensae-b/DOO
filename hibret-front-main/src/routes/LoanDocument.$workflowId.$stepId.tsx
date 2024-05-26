@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
@@ -60,18 +60,11 @@ function LoanDocument() {
     control,
     name: "sections",
   });
-  useEffect(()=>{
-    setStepData(
-      {
-      templateId: step.formated[step.stepId]._id,
-      title: step.formated[step.stepId].title,
-      sections: formdata,
-    });
-  },[formdata])
+
   const onSubmit = (data: any) => {
     // event?.preventDefault();
+
     
-    console.log(data)
     if (nextId) {
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
@@ -83,8 +76,12 @@ function LoanDocument() {
       // alert(JSON.stringify(content, null, 2));
     });
     // setForm(formdata);
-    
-   
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
@@ -98,7 +95,7 @@ function LoanDocument() {
         reqDoc: stepFormData,
       };
     
-     console.log(documentData, 'dd')
+     
       var config = {
         method: "post",
         maxBodyLength: Infinity,
