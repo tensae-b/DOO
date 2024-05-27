@@ -8,8 +8,22 @@ import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import useStepFormStore from "../store/formStore";
+import useStepFormStore, { useFiles } from "../store/formStore";
+import useStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+
+interface FormDataItem {
+  title: string;
+  content: {
+    title: string;
+    type: string;
+    isRequired: boolean;
+    _id: string;
+    value: string;
+  }[];
+  multiple: boolean;
+  _id: string;
+}
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
@@ -35,17 +49,30 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 });
 
 function LoanDocument() {
+  const [formdata, setFormData]= useState<FormDataItem[]>([])
+
+  useEffect(()=>{
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
+  },[formdata])
   const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
+  const files = useFiles();
+   console.log(files)
   const user: any=  localStorage.getItem('user');
   const userId = JSON.parse(user);
-  console.log(userId)
+
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
-  const formdata: any[] = [];
+  // const formdata: any[] = [];
+
   const step: any = Route.useLoaderData();
-     console.log(step)
+     
   
 
   const defaultValues = { sections: step.formated[step.stepId].sections };
@@ -60,51 +87,92 @@ function LoanDocument() {
     control,
     name: "sections",
   });
-  useEffect(()=>{
-    setStepData(
-      {
-      templateId: step.formated[step.stepId]._id,
-      title: step.formated[step.stepId].title,
-      sections: formdata,
-    });
-  },[formdata])
-  const onSubmit = (data: any) => {
+
+
+  const onSubmit = async (data: any) => {
     // event?.preventDefault();
+    const formData = new FormData();
+    // Get files from Zustand state
+   console.log(files)
+  
+
     
-    console.log(data)
     if (nextId) {
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
     }
+  
 
     data.sections.map((content: any, index: any) => {
-      formdata.push(content);
+       console.log(content)
+      setFormData([...formdata, content]);
+      
+      // content.content.map((item:any, index:any)=>{
+      //   console.log(item.value)
+      //   if(item.type == 'upload'){
+       
+      //   files.append('myfile',item.value)
+      //   }
+      // })
+      
+     
       // alert(JSON.stringify(content, null, 2));
     });
+    console.log()
+    files.forEach((file: any) => {
+      console.log(file)
+      formData.append('files', file);
+    });
+
+
+  
+  //  console.log(files)
     // setForm(formdata);
-    
-   
+    //  setStepData(
+    //   {
+    //   templateId: step.formated[step.stepId]._id,
+    //   title: step.formated[step.stepId].title,
+    //   sections: formdata,
+    // });
+    // formData.append('formdata', setStepData);
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
      
     // }));
+     console.log(formdata)
     console.log(stepFormData, "stepformdata")
+    
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
         reqDoc: stepFormData,
+        addDoc: []
+       
+     
       };
     
-     console.log(documentData, 'dd')
+      for (const key in documentData) {
+        if (documentData.hasOwnProperty(key)) {
+          console.log(documentData)
+          formData.append(key, documentData[key]);
+        }
+      }
+     console.log(formData, 'dd')
+
+   
       var config = {
         method: "post",
         maxBodyLength: Infinity,
         url: "http://localhost:5000/admin/workflows",
         headers: {},
-        data: documentData,
+        data: formData
+        
+
+        // params: documentData,
+       
       };
       
       axios(config)
@@ -112,7 +180,7 @@ function LoanDocument() {
           console.log(documentData, "document");
           console.log(JSON.stringify(response.data));
           toast.success("Successfully submited!");
-                  navigate({ to: "/document" });
+                  // navigate({ to: "/document" });
           clearStepData();
         })
         .catch(function (error) {

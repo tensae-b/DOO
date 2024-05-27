@@ -6,7 +6,7 @@ import { Key } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
-import useStepFormStore, { useFormImage } from "../store/formStore";
+import useStepFormStore, {  useStore } from "../store/formStore";
 
 export const FormBuilder = ({
   title,
@@ -100,7 +100,7 @@ export const FormBuilder = ({
     formState: { errors },
   } = useFormContext();
 
-  const setImage = useFormImage((state: any) => state.setFormImage);
+  const addFile = useStore((state:any) => state.addFile);
   
   useEffect(() => {
     register(`sections.${parentIndex}.content.${index}.value`, {
@@ -121,16 +121,10 @@ export const FormBuilder = ({
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
-      const formData = new FormData();
-      console.log(file)
-      formData.append("files",file);
-      console.log(formData)
-    //  setImage(
-    //     {
-    //      formData
-    //   });
-    
-      setValue(title, file);
+      
+      addFile(file);
+     
+      setValue(title, file.name);
       clearErrors(title);
     }
     if (file.type != "application/pdf") {
@@ -283,11 +277,11 @@ export const FormBuilder = ({
               </div>
               <input
                 type="file"
-                
+                name="myfile"
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `sections.${parentIndex}.content.${index}.value`,
+                    `sections.${parentIndex}.content.${index}.upload.${index}`,
                     e.target.files[0]
                   )
                 }

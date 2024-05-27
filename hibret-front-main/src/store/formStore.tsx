@@ -2,11 +2,6 @@ import { ReactElement } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-interface FormImageState {
-  formImage: FormData;
-  setFormImage: (data: Record<string, any>) => void;
-  clearFormImage: () => void;
-}
 
 const useStepFormStore = create(
   persist(
@@ -32,28 +27,23 @@ const useStepFormStore = create(
   )
 );
 
-const useFormImage = create(
+const useStore = create(
   persist(
     (set) => ({
-      formImage: [],
-      setFormImage: (data: any) => 
-        set((state: any) => ({
-          formImage: [
-            ...state.formImage,
-            data,
-            
-          ],
+      files: [], // Initial state with empty files array
+      addFile: (file:any) =>
+        set((state :any) => ({
+          files: [...state.files, file], // Add the file to the files array
         })),
-      clearFormImage: () => {
-        set({ formImage: new FormData() });
-      },
     }),
+
     {
-      name: 'stepperImage',
+      name: "files",
     }
   )
-
+ 
+ 
 );
+export const useFiles = () => useStore((state:any) => state.files);
 
-
-export {useStepFormStore as default, useFormImage};
+export {useStepFormStore as default, useStore};
