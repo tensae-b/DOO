@@ -1,7 +1,7 @@
-import pdf from '/asset/icons/pdf.svg';
-import copy from '/asset/icons/copy.svg';
-import edit from '/asset/icons/edit.svg';
-import trash from '/asset/icons/delete.svg';
+import pdf from '../../public/asset/icons/pdf.svg';
+import copy from '../../public/asset/icons/copy.svg';
+import edit from '../../public/asset/icons/edit.svg';
+import trash from '../../public/asset/icons/delete.svg';
 import { Link } from '@tanstack/react-router';
 
 interface AssignedToMeCardProps {
@@ -10,6 +10,7 @@ interface AssignedToMeCardProps {
   dateCreated: string;
   type: string;
   status: string;
+  w_id: string;
 }
 
 const AssignedByMeCard: React.FC<AssignedToMeCardProps> = (props) => {
@@ -21,7 +22,9 @@ const AssignedByMeCard: React.FC<AssignedToMeCardProps> = (props) => {
           className="w-4 h-4 text-teal-600 bg-teal-100 border-teal-300 rounded focus:ring-teal-500"
         />
       </div>
-      <Link to={`${props.link}`} className='py-3 flex items-center gap-4 text-xs text-gray-600 w-96'>
+      <Link to={`/assignedbymedetails/${props.w_id}`} className='py-3 flex items-center gap-4 text-xs text-gray-600 w-96'>
+
+
         <img src={pdf} alt="" />
         <p>{props.name}</p>
       </Link>

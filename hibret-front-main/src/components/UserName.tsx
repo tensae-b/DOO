@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import upArrow from "/asset/icons/upArrow.svg";
-import downArrow from "/asset/icons/down-arrow.svg";
+import upArrow from "../../public/asset/icons/upload-icon.svg";
+import downArrow from "/asset/icons/downArrow.svg";
 import notifcation from "/asset/icons/notification.svg";
 import avatar from "/asset/icons/avatar.svg";
 import { Button } from "@mui/material";

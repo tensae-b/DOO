@@ -4,32 +4,43 @@ import filter from '/asset/icons/filter.svg';
 import minus from '/asset/icons/minus.svg';
 import downArrow from '/asset/icons/down-arrow.svg';
 import AssignedByMeCard from '../components/AssignedByMeCard';
+import {ownerWork} from '../services/api/ownerWorkApi'
 
 import UserName from '../components/UserName';
 import SideBar2 from '../components/SideBar2';
+import { useEffect } from 'react';
+
 
 export const Route = createLazyFileRoute('/assignedbyme')({
   component: () => {
-    const [workflows, setWorkflows] = useState([
-      {
-        name: "Loan Approval Workflow with Condition",
-        dateCreated: new Date().toISOString(),
-        type: 'Loan',
-        status: 'Approved'
-      },
-      {
-        name: "Loan Approval",
-        dateCreated: new Date().toISOString(),
-        type: 'Loan',
-        status: 'Pending'
-      },
-      {
-        name: "Workflow with Condition",
-        dateCreated: new Date().toISOString(),
-        type: 'Loan',
-        status: 'Rejected'
-      }
-    ]);
+
+    const userId='663c92732358e4d0b92c9288'
+    const [workflowData, setWorkflowData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
+    
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await ownerWork(userId);
+            setWorkflowData(result.data);
+            setIsLoading(result.isLoading);
+            setIsError(result.isError);
+        };
+
+        fetchData();
+    }, [userId]);
+
+    if (isLoading) {
+        return  <div className="flex justify-center items-center h-screen bg-green-100">
+        <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
+      </div>;
+    }
+
+    if (isError) {
+        return <div>Error loading data.</div>;
+    }
+    
 
     return (
       <div>
@@ -62,11 +73,11 @@ export const Route = createLazyFileRoute('/assignedbyme')({
                 <img src={downArrow} alt="" />
               </div>
               <div className="py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96">
-                <p>Date Created</p>
+                <p>Category</p>
                 <img src={downArrow} alt="" />
               </div>
               <div className="py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96">
-                <p>Type</p>
+                <p>Sub category</p>
                 <img src={downArrow} alt="" />
               </div>
               <div className="py-3 px-6 flex items-center gap-1 text-xs text-gray-600 w-96">
@@ -77,14 +88,15 @@ export const Route = createLazyFileRoute('/assignedbyme')({
                 <p></p>
               </div>
             </div>
-            {workflows.map((workflow, index) => (
+            {workflowData.map((workflow) => (
               <AssignedByMeCard
-                key={index}
+                key={workflow._id}
                 link="/assignedbymedetails"
-                name={workflow.name}
-                dateCreated={workflow.dateCreated}
-                type={workflow.type}
+                name={workflow.workflowName}
+                dateCreated={workflow.categoryName}
+                type={workflow.subCategoryName}
                 status={workflow.status}
+                w_id={workflow._id}
               />
             ))}
           </div>
