@@ -121,10 +121,9 @@ export const FormBuilder = ({
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
-      
       addFile(file);
-     
       setValue(title, file.name);
+    
       clearErrors(title);
     }
     if (file.type != "application/pdf") {
@@ -281,7 +280,7 @@ export const FormBuilder = ({
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `sections.${parentIndex}.content.${index}.upload.${index}`,
+                    `sections.${parentIndex}.content.${index}.value`,
                     e.target.files[0]
                   )
                 }
@@ -292,6 +291,53 @@ export const FormBuilder = ({
             <ErrorMessage
               errors={errors}
               name={`sections.${parentIndex}.content.${index}.value`}
+            />
+          </span>
+        </>
+      );
+    }else if (type === "add-data") {
+      return (
+        <>
+          <div
+            className={clsx("flex items-center justify-center w-full", {
+              [errorClassNames.join(" ")]: errors?.[title],
+            })}
+          >
+            <label
+              htmlFor="dropzone-file"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 "
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <img
+                  src="/asset/icons/upload-icon.svg"
+                  className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                />
+
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  PDF, CSV, and JPEG (MAX. 800x400px)
+                </p>
+              </div>
+              <input
+                type="file"
+                name="myfile"
+                // accept="image/png, image/gif, image/jpeg"
+                onChange={(e) =>
+                  validateDocumentImage(
+                    `sections.${parentIndex}.addDoc.${index}.value`,
+                    e.target.files[0]
+                  )
+                }
+              />
+            </label>
+          </div>
+          <span className="label-text-alt text-[hsl(var(--er))]">
+            <ErrorMessage
+              errors={errors}
+              name={`addDoc`}
             />
           </span>
         </>

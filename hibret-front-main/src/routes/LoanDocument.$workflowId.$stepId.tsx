@@ -34,13 +34,59 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
       url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
       headers: {},
     };
-
+     
     const res = await axios(config);
     const data = await res.data;
+    const addField=   {
+
+      _id: '',
+  
+      title: 'Additional Data',
+  
+     
+  
+      sections: [
+  
+        {
+  
+          multiple: false,
+  
+          title: 'Additional info',
+  
+          content: [
+  
+            {
+  
+              title: 'Additional data',
+  
+              type: 'add-data',
+  
+              isRequired: false,
+  
+              _id: ''
+  
+            },
+  
+  
+          ],
+  
+          _id: ''
+  
+        }
+  
+      ],
+  
+      
+  
+    }
     
     const formated = data.documents.flat();
-
-    return { workflowId, stepId, formated };
+   
+    const additional= data.additional
+if (additional){
+    formated.push(addField)
+}
+    return { workflowId, stepId, formated, additional };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -72,9 +118,9 @@ function LoanDocument() {
   // const formdata: any[] = [];
 
   const step: any = Route.useLoaderData();
-     
   
-
+  
+  
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -91,13 +137,14 @@ function LoanDocument() {
 
   const onSubmit = async (data: any) => {
     // event?.preventDefault();
+   
     const formData = new FormData();
     // Get files from Zustand state
    console.log(files)
   
 
     
-    if (nextId) {
+    if (nextId ) {
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
@@ -144,22 +191,24 @@ function LoanDocument() {
      console.log(formdata)
     console.log(stepFormData, "stepformdata")
     
-    if (!nextId) {
+    if (!nextId ) {
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
         reqDoc: stepFormData,
-        addDoc: []
+        addDoc: {}
        
      
       };
+
+      formData.append('documentData', JSON.stringify(documentData));
     
-      for (const key in documentData) {
-        if (documentData.hasOwnProperty(key)) {
-          console.log(documentData)
-          formData.append(key, documentData[key]);
-        }
-      }
+      // for (const key in documentData) {
+      //   if (documentData.hasOwnProperty(key)) {
+      //     console.log(documentData)
+      //     formData.append(key, documentData[key]);
+      //   }
+      // }
      console.log(formData, 'dd')
 
    
@@ -168,7 +217,7 @@ function LoanDocument() {
         maxBodyLength: Infinity,
         url: "http://localhost:5000/admin/workflows",
         headers: {},
-        data: formData
+        formData
         
 
         // params: documentData,
@@ -187,11 +236,12 @@ function LoanDocument() {
           console.log(documentData, "document");
           toast.error("Please try again");
           console.log(error);
+          clearStepData();
         });
       
 
       console.log(stepFormData, "persistent");
-      // clearStepData();
+      
     }
   };
 
@@ -207,7 +257,7 @@ function LoanDocument() {
     remove(sectionIndex);
   }
   let nextId: boolean;
-  if (Number(step.stepId) < step.formated.length - 1) {
+  if (Number(step.stepId) < step.formated.length - 1 ||(Number(step.stepId) ==step.formated.length && step.additonal) ) {
     nextId = true;
   } else {
     nextId = false;
@@ -340,7 +390,7 @@ function LoanDocument() {
                     type="submit"
                     className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
                   >
-                    {nextId ? "continue" : "submit"}
+                    {nextId || step.additional ? "continue" : "submit"}
                   </button>
 
                   <DevTool control={control} />
