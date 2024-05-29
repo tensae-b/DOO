@@ -27,6 +27,7 @@ const useStepFormStore = create(
   )
 );
 
+
 const useStore = create(
   persist(
     (set) => ({
@@ -47,3 +48,4 @@ const useStore = create(
 export const useFiles = () => useStore((state:any) => state.files);
 
 export {useStepFormStore as default, useStore};
+

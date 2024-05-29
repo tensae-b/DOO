@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import useStepFormStore, { useFiles } from "../store/formStore";
 import useStore from "../store/formStore";
@@ -135,6 +135,7 @@ function LoanDocument() {
   });
 
 
+
   const onSubmit = async (data: any) => {
     // event?.preventDefault();
    
@@ -145,6 +146,7 @@ function LoanDocument() {
 
     
     if (nextId ) {
+
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
@@ -176,13 +178,14 @@ function LoanDocument() {
   
   //  console.log(files)
     // setForm(formdata);
-    //  setStepData(
-    //   {
-    //   templateId: step.formated[step.stepId]._id,
-    //   title: step.formated[step.stepId].title,
-    //   sections: formdata,
-    // });
-    // formData.append('formdata', setStepData);
+
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
+
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
@@ -203,6 +206,7 @@ function LoanDocument() {
 
       formData.append('documentData', JSON.stringify(documentData));
     
+
       // for (const key in documentData) {
       //   if (documentData.hasOwnProperty(key)) {
       //     console.log(documentData)
@@ -212,6 +216,7 @@ function LoanDocument() {
      console.log(formData, 'dd')
 
    
+
       var config = {
         method: "post",
         maxBodyLength: Infinity,
