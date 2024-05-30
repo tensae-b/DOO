@@ -6,7 +6,9 @@ import { Key } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
+
 import useStepFormStore, {  useStore } from "../store/formStore";
+
 
 export const FormBuilder = ({
   title,
@@ -100,8 +102,10 @@ export const FormBuilder = ({
     formState: { errors },
   } = useFormContext();
 
+
   const addFile = useStore((state:any) => state.addFile);
   
+
   useEffect(() => {
     register(`sections.${parentIndex}.content.${index}.value`, {
       required: true,
@@ -121,9 +125,11 @@ export const FormBuilder = ({
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
+
       addFile(file);
       setValue(title, file.name);
     
+
       clearErrors(title);
     }
     if (file.type != "application/pdf") {
@@ -138,9 +144,9 @@ export const FormBuilder = ({
 
   const onEditorStateChange = (title, editorState) => {
    
-    // const text= convertToPlainText(editorState)
+    const text= convertToPlainText(editorState)
     
-    setValue(title, editorState);
+    setValue(title, text);
   };
 
   const handleInput = () => {
