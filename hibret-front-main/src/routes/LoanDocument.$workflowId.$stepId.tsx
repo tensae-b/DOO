@@ -188,7 +188,7 @@ function LoanDocument() {
     // useStepFormStore.setState((state: any) => ({
      
     // }));
-     console.log(formdata)
+     
     console.log(stepFormData, "stepformdata")
     
     if (!nextId ) {
@@ -239,8 +239,7 @@ function LoanDocument() {
           clearStepData();
         });
       
-
-      console.log(stepFormData, "persistent");
+//persistenet data deleted
       
     }
   };
