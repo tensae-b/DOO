@@ -5,6 +5,10 @@ import clsx from "clsx";
 import { Key } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
+import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
+
+import useStepFormStore, {  useStore } from "../store/formStore";
+
 
 export const FormBuilder = ({
   title,
@@ -98,11 +102,22 @@ export const FormBuilder = ({
     formState: { errors },
   } = useFormContext();
 
+
+  const addFile = useStore((state:any) => state.addFile);
+  
+
   useEffect(() => {
     register(`sections.${parentIndex}.content.${index}.value`, {
       required: true,
     });
   }, [type]);
+
+   
+  const convertToPlainText = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
 
   const editorContent = watch(`sections.${parentIndex}.content.${index}.value`);
   const errorClassNames = ["input-error", "textarea-error"];
@@ -110,7 +125,11 @@ export const FormBuilder = ({
   const validateDocumentImage = (title, file) => {
     // validate the size
     if (file.type === "application/pdf") {
-      setValue(title, file);
+
+      addFile(file);
+      setValue(title, file.name);
+    
+
       clearErrors(title);
     }
     if (file.type != "application/pdf") {
@@ -124,7 +143,10 @@ export const FormBuilder = ({
   };
 
   const onEditorStateChange = (title, editorState) => {
-    setValue(title, editorState);
+   
+    const text= convertToPlainText(editorState)
+    
+    setValue(title, text);
   };
 
   const handleInput = () => {
@@ -260,7 +282,7 @@ export const FormBuilder = ({
               </div>
               <input
                 type="file"
-                required={required}
+                name="myfile"
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
@@ -275,6 +297,53 @@ export const FormBuilder = ({
             <ErrorMessage
               errors={errors}
               name={`sections.${parentIndex}.content.${index}.value`}
+            />
+          </span>
+        </>
+      );
+    }else if (type === "add-data") {
+      return (
+        <>
+          <div
+            className={clsx("flex items-center justify-center w-full", {
+              [errorClassNames.join(" ")]: errors?.[title],
+            })}
+          >
+            <label
+              htmlFor="dropzone-file"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 "
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <img
+                  src="/asset/icons/upload-icon.svg"
+                  className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                />
+
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  PDF, CSV, and JPEG (MAX. 800x400px)
+                </p>
+              </div>
+              <input
+                type="file"
+                name="myfile"
+                // accept="image/png, image/gif, image/jpeg"
+                onChange={(e) =>
+                  validateDocumentImage(
+                    `sections.${parentIndex}.addDoc.${index}.value`,
+                    e.target.files[0]
+                  )
+                }
+              />
+            </label>
+          </div>
+          <span className="label-text-alt text-[hsl(var(--er))]">
+            <ErrorMessage
+              errors={errors}
+              name={`addDoc`}
             />
           </span>
         </>

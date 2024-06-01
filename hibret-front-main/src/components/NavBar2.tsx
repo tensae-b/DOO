@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
+const user: any=  localStorage.getItem('user');
+const userData = JSON.parse(user);
 const NavBar2 = () => {
   const [username, setUsername] = useState('');
 
@@ -16,21 +17,20 @@ const NavBar2 = () => {
         <input type="text" placeholder="Search something...." />
         <img src="/asset/icons/search.svg" />
       </div>
-      <div>
-        <div className="flex gap-6 items-center">
-          <img src="/asset/icons/notification.svg" className="max-w-6" />
-          <hr className="border border-[#EFEFF4] h-11" />
-          <div className="flex gap-4 w-56 items-center">
-            <img src="/asset/icons/avatar.svg" />
-            <div className="flex gap-2">
-              <p>{username}</p>
-              <img src="/asset/icons/arrowDown.svg" className="max-w-4" />
-            </div>
+
+      <div className="flex gap-6 items-center">
+        <img src="/asset/icons/notification.svg" className=" max-w-6 " />
+        <hr className=" border border-[#EFEFF4] h-11" />
+        <div className="flex gap-4 w-56 items-center ">
+          {/* <img src="/asset/icons/avatar.svg" /> */}
+          <div className= "w-10 h-10 rounded-full border bg-slate-400 text-white flex justify-center items-center">{userData.username.charAt(0)}</div>
+
+          <div className="flex gap-2">
+            <p className="">{userData.username}</p>
+            <img src="/asset/icons/arrowDown.svg" className=" max-w-4" />
           </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default NavBar2;
+  )
+}

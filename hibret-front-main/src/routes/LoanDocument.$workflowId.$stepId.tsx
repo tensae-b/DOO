@@ -1,15 +1,29 @@
 import "quill/dist/quill.snow.css";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
-import { createFileRoute } from "@tanstack/react-router";
-
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+// import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useState } from "react";
 
-import useStepFormStore from "../store/formStore";
+import useStepFormStore, { useFiles } from "../store/formStore";
+import useStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+
+interface FormDataItem {
+  title: string;
+  content: {
+    title: string;
+    type: string;
+    isRequired: boolean;
+    _id: string;
+    value: string;
+  }[];
+  multiple: boolean;
+  _id: string;
+}
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
@@ -20,13 +34,59 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
       url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
       headers: {},
     };
-
+     
     const res = await axios(config);
     const data = await res.data;
+    const addField=   {
+
+      _id: '',
+  
+      title: 'Additional Data',
+  
+     
+  
+      sections: [
+  
+        {
+  
+          multiple: false,
+  
+          title: 'Additional info',
+  
+          content: [
+  
+            {
+  
+              title: 'Additional data',
+  
+              type: 'add-data',
+  
+              isRequired: false,
+  
+              _id: ''
+  
+            },
+  
+  
+          ],
+  
+          _id: ''
+  
+        }
+  
+      ],
+  
+      
+  
+    }
     
     const formated = data.documents.flat();
-
-    return { workflowId, stepId, formated };
+   
+    const additional= data.additional
+if (additional){
+    formated.push(addField)
+}
+    return { workflowId, stepId, formated, additional };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -35,15 +95,32 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 });
 
 function LoanDocument() {
+  const [formdata, setFormData]= useState<FormDataItem[]>([])
+
+  useEffect(()=>{
+    setStepData(
+      {
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    });
+  },[formdata])
+  const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
-  // const setData = useStepFormStore((state:any) => state.setStepFormData)
-  const formdata: any[] = [];
-  const step: any = Route.useLoaderData();
-     console.log(step)
-  
+  const files = useFiles();
+   console.log(files)
+  const user: any=  localStorage.getItem('user');
+  const userId = JSON.parse(user);
 
+  // const setData = useStepFormStore((state:any) => state.setStepFormData)
+  // const formdata: any[] = [];
+
+  const step: any = Route.useLoaderData();
+  
+  
+  
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -57,61 +134,118 @@ function LoanDocument() {
     name: "sections",
   });
 
-  const onSubmit = (data: any) => {
+
+
+  const onSubmit = async (data: any) => {
     // event?.preventDefault();
+   
+    const formData = new FormData();
+    // Get files from Zustand state
+   console.log(files)
+  
 
     
-    if (nextId) {
+    if (nextId ) {
+
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
     }
+  
 
     data.sections.map((content: any, index: any) => {
-      formdata.push(content);
+       console.log(content)
+      setFormData([...formdata, content]);
+      
+      // content.content.map((item:any, index:any)=>{
+      //   console.log(item.value)
+      //   if(item.type == 'upload'){
+       
+      //   files.append('myfile',item.value)
+      //   }
+      // })
+      
+     
       // alert(JSON.stringify(content, null, 2));
     });
+    console.log()
+    files.forEach((file: any) => {
+      console.log(file)
+      formData.append('files', file);
+    });
+
+
+  
+  //  console.log(files)
     // setForm(formdata);
+
     setStepData(
       {
       templateId: step.formated[step.stepId]._id,
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
+
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
      
     // }));
+     
     console.log(stepFormData, "stepformdata")
-    if (!nextId) {
+    
+    if (!nextId ) {
       const documentData = {
         workflowTemplateId: step.workflowId,
-        userId: "663c92732358e4d0b92c928b",
-        data: stepFormData,
+        userId: userId._id,
+        reqDoc: stepFormData,
+        addDoc: {}
+       
+     
       };
+
+      formData.append('documentData', JSON.stringify(documentData));
     
+
+      // for (const key in documentData) {
+      //   if (documentData.hasOwnProperty(key)) {
+      //     console.log(documentData)
+      //     formData.append(key, documentData[key]);
+      //   }
+      // }
+     console.log(formData, 'dd')
+
+   
 
       var config = {
         method: "post",
         maxBodyLength: Infinity,
         url: "http://localhost:5000/admin/workflows",
         headers: {},
-        data: documentData,
+        formData
+        
+
+        // params: documentData,
+       
       };
-      console.log(documentData, "document");
+      
       axios(config)
         .then(function (response) {
+          console.log(documentData, "document");
           console.log(JSON.stringify(response.data));
+          toast.success("Successfully submited!");
+                  // navigate({ to: "/document" });
           clearStepData();
         })
         .catch(function (error) {
+          console.log(documentData, "document");
+          toast.error("Please try again");
           console.log(error);
+          clearStepData();
         });
       
-
-      console.log(stepFormData, "persistent");
-      // clearStepData();
+//persistenet data deleted
+      
     }
   };
 
@@ -127,7 +261,7 @@ function LoanDocument() {
     remove(sectionIndex);
   }
   let nextId: boolean;
-  if (Number(step.stepId) < step.formated.length - 1) {
+  if (Number(step.stepId) < step.formated.length - 1 ||(Number(step.stepId) ==step.formated.length && step.additonal) ) {
     nextId = true;
   } else {
     nextId = false;
@@ -258,9 +392,9 @@ function LoanDocument() {
                   
                   <button
                     type="submit"
-                    className="text-base px-6 py-2 self-end bg-[#F0F3F6] text-[#9EA9C1]"
+                    className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
                   >
-                    {nextId ? "continue" : "submit"}
+                    {nextId || step.additional ? "continue" : "submit"}
                   </button>
 
                   <DevTool control={control} />

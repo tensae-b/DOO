@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-
+import toast, { Toaster } from "react-hot-toast";
 import Dropdown from "react-dropdown";
 import {
   useFieldArray,
@@ -14,43 +14,52 @@ import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
 
+
 export const Route = createFileRoute("/workflowadd")({
   component: () => <WorkFlowAddTemp />,
 });
 
 function WorkFlowAddTemp() {
   useEffect(() => {
-    getCategory();
-    getDepartments();
+    
+    getDepartment();
     getCommittees();
   }, []);
+
 
   const [category, setCategory] = useState([]);
   const [department, setDepartment] = useState([]);
   const [committee, setCommittee] = useState([]);
   const [role, setRoles] = useState([]);
+  const [depId, setDepId] = useState('')
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
+  const navigate = useNavigate();
 
-  function getDepartments() {
+  useEffect(() => {
+      console.log(depId)
+    getCategory();
+    getRoles();
+  }, [depId]);
+  
+  function getDepartment(){
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/deps",
+      url: " http://localhost:5000/admin/deps",
       headers: {},
     };
     axios(config)
-      .then(async function (response) {
-        setDepartment(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    .then(async function(response){
+       setDepartment(response.data)
+    })
+    .catch(function(error){
+      return error
+    })
   }
+
+
   function getCommittees() {
     var config = {
       method: "get",
@@ -70,11 +79,11 @@ function WorkFlowAddTemp() {
         // console.log(error);
       });
   }
-  function getRoles(value: any) {
+  function getRoles() {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/roles/dep/${value}`,
+      url: `http://localhost:5000/admin/roles/dep/${depId}`,
       headers: {},
     };
 
@@ -129,12 +138,13 @@ function WorkFlowAddTemp() {
         console.log(error);
       });
   }
+  
 
   function getCategory() {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/category",
+      url: `http://localhost:5000/admin/category/${depId}`,
       headers: {},
     };
     axios(config)
@@ -226,9 +236,14 @@ function WorkFlowAddTemp() {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        toast.success("Successfully toasted!");
+      
+                  navigate({ to: "/workflowtemp" });
       })
       .catch(function (error) {
         console.log(error);
+        
+        toast.error("please try again");
       });
 
     // const dataSent={
@@ -251,6 +266,7 @@ function WorkFlowAddTemp() {
 
   return (
     <FormProvider {...methods}>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="mx-3 mb-10 ">
         <div className="flex">
           <SideBar />
@@ -267,7 +283,7 @@ function WorkFlowAddTemp() {
               </div>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-5 w-[75%]"
+                className="flex flex-col gap-5 w-full"
               >
                 <div className="flex mt-10 gap-5">
                   <div className="mb-6 rounded-lg overflow-hidden flex flex-col gap-10 w-full">
@@ -296,6 +312,34 @@ function WorkFlowAddTemp() {
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                           required
                         />
+                      </div>
+                      <div className="mt-4">
+                        <label
+                          htmlFor="workflow.department"
+                          className="text-sm w-full"
+                        >
+                          Choose department*
+                        </label>
+                        <select
+                            
+                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                            {...register("workflowtemp.department", {
+                              required: true,
+                            })}
+                            onChange={(e: { target: { value: any } }) =>
+                              setDepId(e.target.value)
+                            }
+                            required
+                          >
+                            <option label="Select" value="" />
+                            {department?.map((option: any, index) => (
+                              <option
+                                key={option}
+                                label={option.name}
+                                value={option._id}
+                              />
+                            ))}
+                          </select>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
@@ -596,7 +640,7 @@ function WorkFlowAddTemp() {
                                           {...register(
                                             `workflowtemp.stages.${index}.approverType`
                                           )}
-                                          value="committee"
+                                          value="Committee"
                                           onChange={(e) => {
                                             handleGroupChange(
                                               index,
@@ -610,7 +654,7 @@ function WorkFlowAddTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[index] == "committee" ? (
+                                {stageGroup[index] == "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
@@ -643,15 +687,18 @@ function WorkFlowAddTemp() {
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
-                                        <option value="reviewer">
+                                         <option>
                                           Select permission type
+                                        </option>
+                                        <option value="reviewer">
+                                          reviewer
                                         </option>
                                       </select>
                                     </div>
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
-                                    <div className="w-full flex flex-col gap-2">
+                                    {/* <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
                                         Select Department*
                                       </label>
@@ -677,7 +724,7 @@ function WorkFlowAddTemp() {
                                           )
                                         )}
                                       </select>
-                                    </div>
+                                    </div> */}
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
@@ -709,9 +756,13 @@ function WorkFlowAddTemp() {
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
-                                          <option value="reviewer">
-                                            Permission Type
-                                          </option>
+                                           <option>
+                                          Select permission type
+                                        </option>
+                                        <option value="reviewer">
+                                          reviewer
+                                        </option>
+                                      
                                         </select>
                                       </div>
                                     </div>

@@ -1,71 +1,21 @@
-import React, { useState, lazy } from "react";
+import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import Dropdown from "react-dropdown";
+
 import "react-dropdown/style.css";
 export const Route = createFileRoute("/documentemp")({
   component: () => <DocumentTemp />,
 });
 const DocumentAddTemp = lazy(() => import("./documenttempadd.lazy"));
 import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
-
-// import {
-//   getAllUser,
-//   verifyUser,
-//   useCreateNewUser,
-//   filterUsers,
-// } from "../services/queries/userQuery";
+import axios from "axios";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "name", headerName: "name", width: 230 },
-  { field: "Type", headerName: "Type", width: 130 },
-  {
-    field: "status",
-    headerName: "status",
-    width: 150,
-    type: "actions",
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onActive = () => {
-        // Handle edit functionality for the specific row
-        console.log("Edit button clicked for row:", params.id);
-        // Implement logic to open an edit form or modal here (consider passing data)
-      };
+  { field: "_id", headerName: "ID", width: 270 },
+  { field: "documentTitle", headerName: "Title", width: 230 },
 
-      const onInActive = () => {
-        // Handle delete functionality for the specific row
-        console.log("Delete button clicked for row:", params.id);
-        // Implement logic to confirm and delete the row (consider user confirmation)
-      };
-      const imageSrc =
-        params.row.status === "Active"
-          ? "/asset/icons/dot.png"
-          : "/asset/icons/dot2.png";
-
-      return (
-        <div className="flex gap-4 justify-center items-center">
-          <button
-            onClick={() => {
-              if (params.row.status === "Active") {
-                onActive();
-              } else {
-                onInActive();
-              }
-            }}
-            className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg  ${
-              params.row.status === "Active"
-                ? "text-[#00B0AD]"
-                : "text-[#4A176D]"
-            }`}
-          >
-            <img src={imageSrc} className="w-5" />
-            {params.row.status}
-          </button>
-        </div>
-      );
-    },
-  },
   {
     field: "actions",
     headerName: "Action",
@@ -104,40 +54,26 @@ const columns: GridColDef[] = [
   },
 ];
 
-const userData = [
-  {
-    id: 1,
-    name: "John Doe",
-    Type: "johndoe",
-    status: "Active",
-    Action: "Admin",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    Type: "janesmith",
-    status: "Inactive",
-    Action: "Editor",
-  },
-  {
-    id: 3,
-    name: "Michael Brown",
-    Type: "michaelbrown",
-    status: "Active",
-    Action: "Member",
-  },
-  {
-    id: 4,
-    name: "Alice Garcia",
-    Type: "alicegarcia",
-    status: "Active",
-    Action: "Member",
-  },
-];
-
 function DocumentTemp() {
   // const userData: any = [];
-  const [user, setUser] = useState(userData);
+  useEffect(() => {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/documentTemplate",
+      headers: {},
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(response.data, "document temp data");
+        setUser(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+  const [user, setUser] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const options = ["Template one", "Template two", "Template three"];
   const defaultOption = options[0];
@@ -182,11 +118,7 @@ function DocumentTemp() {
               </a>
             </div>
           </div>
-          {showAddTemplate && (
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <DocumentAddTemp onClose={closeAddTemplate} />
-            </React.Suspense>
-          )}
+         
           <div
             className={`h-full w-full mt  ${
               showAddTemplate ? "opacity-20" : "opacity-100"
@@ -194,6 +126,7 @@ function DocumentTemp() {
           >
             <DataGrid
               rows={user}
+              getRowId={(row) => row._id}
               columns={columns}
               initialState={{
                 pagination: {

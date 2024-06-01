@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+
 const useStepFormStore = create(
   persist(
     (set) => ({
@@ -26,4 +27,25 @@ const useStepFormStore = create(
   )
 );
 
-export default useStepFormStore;
+
+const useStore = create(
+  persist(
+    (set) => ({
+      files: [], // Initial state with empty files array
+      addFile: (file:any) =>
+        set((state :any) => ({
+          files: [...state.files, file], // Add the file to the files array
+        })),
+    }),
+
+    {
+      name: "files",
+    }
+  )
+ 
+ 
+);
+export const useFiles = () => useStore((state:any) => state.files);
+
+export {useStepFormStore as default, useStore};
+
