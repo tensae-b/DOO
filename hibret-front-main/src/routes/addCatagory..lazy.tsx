@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useFieldArray, useForm } from "react-hook-form";
 import "react-dropdown/style.css";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { createcatag } from '../services/api/catagoryApi';
 import { createsubcatag } from '../services/api/subcatagApi';
+import axios from "axios";
 
 export const Route = createFileRoute("/addCatagory")({
   component: () => <CatagAdd />,
@@ -15,16 +16,38 @@ interface Props {
 }
 
 function CatagAdd({ onClose }: Props) {
+  const [depId, setDepId] = useState('');
+  const [department, setDepartment] = useState([]);
   const { register, control, handleSubmit } = useForm();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "subcategories",
   });
-
-  const onSubmit = async (data) => {
+  useEffect(() => {
+    
+    getDepartment();
+  
+  }, []);
+  
+  function getDepartment(){
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: " http://localhost:5000/admin/deps",
+      headers: {},
+    };
+    axios(config)
+    .then(async function(response){
+       setDepartment(response.data)
+    })
+    .catch(function(error){
+      return error
+    })
+  }
+  const onSubmit = async (data: any) => {
     try {
       console.log(data);
-      const categoryResponse = await createcatag(data.categoryName, data.categoryDescription); // changed to categoryName and categoryDescription
+      const categoryResponse = await createcatag(data.categoryName, data.categoryDescription, data.department); // changed to categoryName and categoryDescription
       console.log("Category Response:", categoryResponse);
 
       // Extract category ID from the category response
@@ -51,6 +74,7 @@ function CatagAdd({ onClose }: Props) {
           onClick={onClose}
           className="flex items-center text-gray-600 hover:text-gray-800 focus:outline-none"
         >
+          
           <img src="/asset/icons/back-arrow.svg" className="w-8 h-8 mr-2" />
           <h2 className="text-[#4A176D] text-3xl font-bold">
             Add New Category
@@ -58,6 +82,29 @@ function CatagAdd({ onClose }: Props) {
         </button>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="mb-4">
+      <label htmlFor="depatment" className="text-[#00B0AD] block font-medium mb-1">Choose department <span className="text-red-500">*</span></label>
+                        <select
+                            
+                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                            {...register("department", {
+                              required: true,
+                            })}
+                            onChange={(e: { target: { value: any } }) =>
+                              setDepId(e.target.value)
+                            }
+                            required
+                          >
+                            <option label="Select" value="" />
+                            {department?.map((option: any, index) => (
+                              <option
+                                key={option}
+                                label={option.name}
+                                value={option._id}
+                              />
+                            ))}
+                          </select>
+                      </div>
         <div className="mb-4">
           <label htmlFor="categoryName" className="text-[#00B0AD] block font-medium mb-1">Category Name <span className="text-red-500">*</span></label>
           <input type="text" id="categoryName" {...register("categoryName", { required: true })} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />

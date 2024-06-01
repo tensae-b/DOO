@@ -48,6 +48,7 @@ function DocumentAddTemp() {
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+  const [department, setDepartment] = useState([]);
 
   function getSubCategory(value: any) {
     var config = {
@@ -67,7 +68,13 @@ function DocumentAddTemp() {
         console.log(error);
       });
   }
-  function getCategory(config: any) {
+  function getCategory(id: any) {
+    var config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `http://localhost:5000/admin/category/${id}`,
+      headers: {},
+    };
     axios(config)
       .then(async function (response) {
         console.log(response.data);
@@ -80,15 +87,27 @@ function DocumentAddTemp() {
         // console.log(error);
       });
   }
+
+  function getDepartment(config:any){
+    axios(config)
+    .then(async function(response){
+       setDepartment(response.data)
+    })
+    .catch(function(error){
+      return error
+    })
+  }
+
   useEffect(() => {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/category",
+      url: " http://localhost:5000/admin/deps",
       headers: {},
     };
+   
 
-    getCategory(config);
+    getDepartment(config);
   }, []);
   return (
     <div className="mx-3 mb-10 ">
@@ -123,7 +142,7 @@ function DocumentAddTemp() {
             {({ values }) => (
               <div className="">
                 <div className="flex  mb-4">
-                  <a href="/documenttemp">
+                  <a href="/documentemp">
                     <img
                       src="/asset/icons/back-arrow.svg"
                       className="w-8 h-8 mr-2"
@@ -158,6 +177,33 @@ function DocumentAddTemp() {
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                           required
                         />
+                      </div>
+                      {/* Department */}
+                      <div className="mt-4">
+                        <label
+                          htmlFor="documentvalue.title"
+                          className="text-sm w-full"
+                        >
+                          Choose department*
+                        </label>
+                        <Field
+                            name="documentvalue.department"
+                            as="select"
+                            className="border rounded-md p-2 mt-1 w-full"
+                            onChange={(e: { target: { value: any } }) =>
+                              getCategory(e.target.value)
+                            }
+                            required
+                          >
+                            <option label="Select" value="" />
+                            {department?.map((option: any, index) => (
+                              <option
+                                key={option}
+                                label={option.name}
+                                value={option._id}
+                              />
+                            ))}
+                          </Field>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
