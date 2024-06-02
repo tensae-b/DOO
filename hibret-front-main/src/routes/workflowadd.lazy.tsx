@@ -13,6 +13,7 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
+import { fetchCatag, fetchDepartment, fetchRequiredDocument, fetchRole, fetchSubCatag, fetchtCommittee } from "../services/api/fetchDataApi";
 
 
 export const Route = createFileRoute("/workflowadd")({
@@ -44,120 +45,84 @@ function WorkFlowAddTemp() {
   }, [depId]);
   
   function getDepartment(){
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: " http://localhost:5000/admin/deps",
-      headers: {},
-    };
-    axios(config)
-    .then(async function(response){
-       setDepartment(response.data)
-    })
-    .catch(function(error){
-      return error
-    })
+    fetchDepartment().then(result => {
+      if(!result.isError){
+        setDepartment(result.data)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+ 
   }
 
 
   function getCommittees() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/committee",
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data, "getCommittes");
-        setCommittee(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    fetchtCommittee().then(result => {
+      if(!result.isError){
+    
+        setCommittee(result.data);
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+    
   }
   function getRoles() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/roles/dep/${depId}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setRoles(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+    fetchRole(depId).then(result => {
+      if(!result.isError){
+        console.log(result.data)
+        setRoles(result.data);
+      }else{
+       console.log(result.data)
+      }
+      
+     })
+    
   }
 
   function getSubCategory(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/subCategory/cat/${value}`,
+    fetchSubCatag(value).then(result => {
+     if(!result.isError){
+      setSubCategory(result.data);
+     }else{
+      toast.error("error fetching");
+     }
+     
+    })
 
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setSubCategory(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+   
+  
   }
 
   function setRequiredDocument(title: any, value: any) {
     setValue(title, value);
   }
   function requriedDocument(subCategoryId: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/documentTemplate/sub/${subCategoryId}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: any) {
-        setRequiredDocuments(response.data.templates);
-        console.log(response.data.templates, "documenttemplate");
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+    fetchRequiredDocument(subCategoryId).then(result => {
+      if(!result.isError){
+        console.log(result.data.templates)
+        setRequiredDocuments(result.data.templates)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+ 
   }
   
 
   function getCategory() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/category/${depId}`,
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data);
-        setCategory(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    fetchCatag(depId).then(result => {
+      if(!result.isError){
+       setCategory(result.data);
+      }else{
+        console.log(result)
+       
+      }
+    })
+    
   }
   const handleDeleteDocument = (title: any) => {
     setChosenDocument((prevDocuments) =>
