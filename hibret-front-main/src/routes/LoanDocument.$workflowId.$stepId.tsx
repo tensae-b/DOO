@@ -7,9 +7,9 @@ import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { initiateWorkflow } from '../services/api/documentApi';
+import useStepFormStore from "../store/formStore";
 
-import useStepFormStore, { useFiles } from "../store/formStore";
-import useStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
 
 interface FormDataItem {
@@ -111,13 +111,11 @@ function LoanDocument() {
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
   // const clearFile= useStore((state: any) => state.clearFile);
 
-  const files = useFiles();
-   console.log(files)
+  
   const user: any=  localStorage.getItem('user');
   const userId = JSON.parse(user);
 
-  // const setData = useStepFormStore((state:any) => state.setStepFormData)
-  // const formdata: any[] = [];
+
 
   const step: any = Route.useLoaderData();
   
@@ -140,13 +138,7 @@ function LoanDocument() {
 
   const onSubmit = async (data: any) => {
     // event?.preventDefault();
-     console.log('data',data)
-    const formData = new FormData();
-    // Get files from Zustand state
-   console.log(files)
   
-    
-    
     if (nextId ) {
 
       location.replace(
@@ -157,34 +149,22 @@ function LoanDocument() {
     additionalDoc.push(data.addDoc)
     data.sections.map((content: any, index: any) => {
       console.log(content)
-       if(content.title != 'Additional info'){
+       if(content.title != 'Additional info' && content.content.length > 0){
         console.log(content)
         setFormData([...formdata, content]);
        }
   
       
-      // content.content.map((item:any, index:any)=>{
-      //   console.log(item.value)
-      //   if(item.type == 'upload'){
-       
-      //   files.append('myfile',item.value)
-      //   }
-      // })
       
-     
-      // alert(JSON.stringify(content, null, 2));
     });
-    console.log()
-    files.forEach((file: any) => {
-      console.log(file)
-      formData.append('files', file);
-    });
+    console.log(formdata.length)
+   
 
 
   
-  //  console.log(files)
-    // setForm(formdata);
+
   if(formdata.length > 0){
+    console.log(formdata)
     setStepData(  
       {
       templateId: step.formated[step.stepId]._id,
@@ -194,71 +174,44 @@ function LoanDocument() {
 
   }
    
-    // setStepData(
-    //   ,)
-    // useStepFormStore.setState((state: any) => ({
-     
-    // }));
+    
      
     console.log(stepFormData, "stepformdata")
     
     if (!nextId ) {
+      const filteredData = stepFormData.filter(entry => entry.sections.length > 0);
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
-        reqDoc: stepFormData,
+        reqDoc: filteredData,
         addDoc: additionalDoc
        
      
       };
       
-       console.log(documentData,'documentData')
-
-      formData.append('documentData', JSON.stringify(documentData));
+      
     
-
-      // for (const key in documentData) {
-      //   if (documentData.hasOwnProperty(key)) {
-      //     console.log(documentData)
-      //     formData.append(key, documentData[key]);
-      //   }
-      // }
-     console.log(formData, 'dd')
 
    
 
-      var config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "http://localhost:5000/admin/workflows",
-        headers: {},
-        data: formData
-        
-
-        // params: documentData,
-       
-      };
-      
-      axios(config)
-        .then(function (response) {
-          console.log(documentData, "document");
-          console.log(JSON.stringify(response.data));
-          toast.success("Successfully submited!");
-                  // navigate({ to: "/document" });
+     initiateWorkflow(documentData).then(result => {
+     
+      if (result.isError){
+            toast.error("Please try again");
+            
           clearStepData();
-          // clearFile()
-        })
-        .catch(function (error) {
-          console.log(documentData, "document");
-          toast.error("Please try again");
-          console.log(error);
-          clearStepData();
-          // clearFile();
+         
           navigate({ to: `/document`});
-
-        });
+      }else {
+               toast.success("Successfully submited!");
+                  navigate({ to: "/document" });
+          clearStepData();
+          
+          
+      }
       
-//persistenet data deleted
+    });
+     
       
     }
   };
@@ -373,6 +326,7 @@ function LoanDocument() {
                                 {...content}
                                 index={idx}
                                 parentIndex={parentIndex}
+                                templateId={ step.formated[step.stepId]._id}
                               />
                             </div>
                           );
