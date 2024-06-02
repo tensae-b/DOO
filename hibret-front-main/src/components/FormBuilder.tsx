@@ -111,9 +111,9 @@ export const FormBuilder = ({
       required: true,
     });
   }, [type]);
-
+   console.log(watch('addDoc'))
    
-  const convertToPlainText = (html) => {
+  const convertToPlainText = (html:any) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     return doc.body.textContent || "";
@@ -122,7 +122,7 @@ export const FormBuilder = ({
   const editorContent = watch(`sections.${parentIndex}.content.${index}.value`);
   const errorClassNames = ["input-error", "textarea-error"];
 
-  const validateDocumentImage = (title, file) => {
+  const validateDocumentImage = (title:any, file:any) => {
     // validate the size
     if (file.type === "application/pdf") {
 
@@ -144,9 +144,9 @@ export const FormBuilder = ({
 
   const onEditorStateChange = (title, editorState) => {
    
-    const text= convertToPlainText(editorState)
+    // const text= convertToPlainText(editorState)
     
-    setValue(title, text);
+    setValue(title, editorContent);
   };
 
   const handleInput = () => {
@@ -305,9 +305,9 @@ export const FormBuilder = ({
       return (
         <>
           <div
-            className={clsx("flex items-center justify-center w-full", {
-              [errorClassNames.join(" ")]: errors?.[title],
-            })}
+            // className={clsx("flex items-center justify-center w-full", {
+            //   [errorClassNames.join(" ")]: errors?.[title],
+            // })}
           >
             <label
               htmlFor="dropzone-file"
@@ -329,11 +329,11 @@ export const FormBuilder = ({
               </div>
               <input
                 type="file"
-                name="myfile"
+                name="AddDoc"
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
                   validateDocumentImage(
-                    `sections.${parentIndex}.addDoc.${index}.value`,
+                    `addDoc`,
                     e.target.files[0]
                   )
                 }

@@ -36,7 +36,12 @@ const useStore = create(
         set((state :any) => ({
           files: [...state.files, file], // Add the file to the files array
         })),
+        clearFile: () =>
+          set(() => ({
+               files: [],
+          })),
     }),
+
 
     {
       name: "files",
