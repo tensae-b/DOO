@@ -14,7 +14,7 @@ import "react-dropdown/style.css";
 import axios from "axios";
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
-
+import { fetchCatag, fetchDepartment, fetchSubCatag } from "../services/api/fetchDataApi";
 export const Route = createFileRoute("/documenttempadd")({
   component: () => <DocumentAddTemp />,
 });
@@ -36,7 +36,7 @@ const addSection = [
         options: ["true", "Optional"],
       },
       {
-        title: "Eligible-as-condition-criteria",
+        title: "conditionLogic",
         type: "checkbox",
       },
     ],
@@ -49,65 +49,55 @@ function DocumentAddTemp() {
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [department, setDepartment] = useState([]);
+  const [depId, setDepId] = useState('')
 
   function getSubCategory(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/subCategory/cat/${value}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setSubCategory(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
-  }
-  function getCategory(id: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/category/${id}`,
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data);
-        setCategory(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    fetchSubCatag(value).then(result => {
+      if(!result.isError){
+       setSubCategory(result.data);
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+    
   }
 
-  function getDepartment(config:any){
-    axios(config)
-    .then(async function(response){
-       setDepartment(response.data)
+  
+  useEffect(() => {
+    console.log(depId)
+  getCategory();
+
+}, [depId]);
+
+  function getCategory() {
+    
+    fetchCatag(depId).then(result => {
+      if(!result.isError){
+       
+       setCategory(result.data);
+      }else{
+        console.log(result)
+       
+      }
     })
-    .catch(function(error){
-      return error
-    })
+    
+  }
+
+  function getDepartment(){
+    fetchDepartment().then(result => {
+      if(!result.isError){
+        setDepartment(result.data)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+  
   }
 
   useEffect(() => {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: " http://localhost:5000/admin/deps",
-      headers: {},
-    };
-   
-
-    getDepartment(config);
+    getDepartment();
   }, []);
   return (
     <div className="mx-3 mb-10 ">
@@ -121,11 +111,13 @@ function DocumentAddTemp() {
               content: addSection,
             }}
             onSubmit={async (values: { documentvalue: any }) => {
+              console.log(values)
               await new Promise((r) => setTimeout(r, 500));
               // console.log(values);
               axios
                 .post("http://localhost:5000/admin/documentTemplate", {
                   ...values.documentvalue,
+                  depId: depId
                 })
                 .then(function (response) {
                   console.log(response);
@@ -181,17 +173,18 @@ function DocumentAddTemp() {
                       {/* Department */}
                       <div className="mt-4">
                         <label
-                          htmlFor="documentvalue.title"
+                          htmlFor="documentvalue.depId"
                           className="text-sm w-full"
                         >
                           Choose department*
                         </label>
                         <Field
-                            name="documentvalue.department"
+                            name="documentvalue.depId"
                             as="select"
                             className="border rounded-md p-2 mt-1 w-full"
                             onChange={(e: { target: { value: any } }) =>
-                              getCategory(e.target.value)
+                              setDepId(e.target.value)
+                               
                             }
                             required
                           >
@@ -239,6 +232,7 @@ function DocumentAddTemp() {
                             as="select"
                             className="border rounded-md p-2 mt-1 w-full"
                             required
+                           
                           >
                             <option label="Select" value="" />
                             {subCategory?.map((option: any, index) => (

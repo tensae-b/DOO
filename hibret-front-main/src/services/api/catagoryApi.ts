@@ -2,11 +2,12 @@ import axios from 'axios';
 import axiosInst from './axiosInst';
 
 
-export const createcatag = async (name:any,description:any, department: any) => { // Pass selectedUsers as a parameter
+export const createcatag = async (categoryData:any) => { 
+    console.log(categoryData)// Pass selectedUsers as a parameter
     try {
-        const response = await axiosInst.post('admin/category', { name, description, department }); // Include selectedUsers in the request body
+        const response = await axiosInst.post('admin/category', categoryData); // Include selectedUsers in the request body
         const { data } = response;
-        
+        console.log(data)
         return { data, isLoading: false, isError: false };
     } catch (error) {
         console.error('Error fetching user:', error);
