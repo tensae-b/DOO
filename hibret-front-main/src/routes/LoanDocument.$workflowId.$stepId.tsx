@@ -6,10 +6,10 @@ import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { initiateWorkflow } from '../services/api/documentApi';
+import useStepFormStore from "../store/formStore";
 
-import useStepFormStore, { useFiles } from "../store/formStore";
-import useStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
 
 interface FormDataItem {
@@ -96,7 +96,7 @@ if (additional){
 
 function LoanDocument() {
   const [formdata, setFormData]= useState<FormDataItem[]>([])
-
+  var additionalDoc: any[]= []
   useEffect(()=>{
     setStepData(
       {
@@ -109,13 +109,13 @@ function LoanDocument() {
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
-  const files = useFiles();
-   console.log(files)
+  // const clearFile= useStore((state: any) => state.clearFile);
+
+  
   const user: any=  localStorage.getItem('user');
   const userId = JSON.parse(user);
 
-  // const setData = useStepFormStore((state:any) => state.setStepFormData)
-  // const formdata: any[] = [];
+
 
   const step: any = Route.useLoaderData();
   
@@ -138,13 +138,7 @@ function LoanDocument() {
 
   const onSubmit = async (data: any) => {
     // event?.preventDefault();
-   
-    const formData = new FormData();
-    // Get files from Zustand state
-   console.log(files)
   
-
-    
     if (nextId ) {
 
       location.replace(
@@ -152,99 +146,72 @@ function LoanDocument() {
       );
     }
   
-
+    additionalDoc.push(data.addDoc)
     data.sections.map((content: any, index: any) => {
-       console.log(content)
-      setFormData([...formdata, content]);
+      console.log(content)
+       if(content.title != 'Additional info' && content.content.length > 0){
+        console.log(content)
+        setFormData([...formdata, content]);
+       }
+  
       
-      // content.content.map((item:any, index:any)=>{
-      //   console.log(item.value)
-      //   if(item.type == 'upload'){
-       
-      //   files.append('myfile',item.value)
-      //   }
-      // })
       
-     
-      // alert(JSON.stringify(content, null, 2));
     });
-    console.log()
-    files.forEach((file: any) => {
-      console.log(file)
-      formData.append('files', file);
-    });
+    console.log(formdata.length)
+   
 
 
   
-  //  console.log(files)
-    // setForm(formdata);
 
-    setStepData(
+  if(formdata.length > 0){
+    console.log(formdata)
+    setStepData(  
       {
       templateId: step.formated[step.stepId]._id,
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
 
-    // setStepData(
-    //   ,)
-    // useStepFormStore.setState((state: any) => ({
-     
-    // }));
+  }
+   
+    
      
     console.log(stepFormData, "stepformdata")
     
     if (!nextId ) {
+      const filteredData = stepFormData.filter(entry => entry.sections.length > 0);
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
-        reqDoc: stepFormData,
-        addDoc: {}
+        reqDoc: filteredData,
+        addDoc: additionalDoc
        
      
       };
-
-      formData.append('documentData', JSON.stringify(documentData));
+      
+      
     
-
-      // for (const key in documentData) {
-      //   if (documentData.hasOwnProperty(key)) {
-      //     console.log(documentData)
-      //     formData.append(key, documentData[key]);
-      //   }
-      // }
-     console.log(formData, 'dd')
 
    
 
-      var config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "http://localhost:5000/admin/workflows",
-        headers: {},
-        formData
-        
-
-        // params: documentData,
-       
-      };
-      
-      axios(config)
-        .then(function (response) {
-          console.log(documentData, "document");
-          console.log(JSON.stringify(response.data));
-          toast.success("Successfully submited!");
-                  // navigate({ to: "/document" });
+     initiateWorkflow(documentData).then(result => {
+     
+      if (result.isError){
+            toast.error("Please try again");
+            
           clearStepData();
-        })
-        .catch(function (error) {
-          console.log(documentData, "document");
-          toast.error("Please try again");
-          console.log(error);
+         
+          navigate({ to: `/document`});
+      }else {
+               toast.success("Successfully submited!");
+                  navigate({ to: "/document" });
           clearStepData();
-        });
+          
+          
+      }
       
-//persistenet data deleted
+    });
+     
       
     }
   };
@@ -359,6 +326,7 @@ function LoanDocument() {
                                 {...content}
                                 index={idx}
                                 parentIndex={parentIndex}
+                                templateId={ step.formated[step.stepId]._id}
                               />
                             </div>
                           );
@@ -394,7 +362,7 @@ function LoanDocument() {
                     type="submit"
                     className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
                   >
-                    {nextId || step.additional ? "continue" : "submit"}
+                    {nextId  ? "continue" : "submit"}
                   </button>
 
                   <DevTool control={control} />

@@ -249,14 +249,14 @@ any) => {
       );
     } else if (type == "checkbox") {
       return (
-        <label>
+      
           <Field
             type="checkbox"
             name={`documentvalue.sections[0].content.${index}.${title}`}
-            label="condition"
+           
           />
-          condition
-        </label>
+         
+     
       );
     }
     //     else {
