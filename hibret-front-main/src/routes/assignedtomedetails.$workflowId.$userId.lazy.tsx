@@ -19,18 +19,17 @@ function AssignedToMeDetails() {
   const workflowId = params.workflowId;
   const userId = params.userId;
   const [workflowDetail, setWorkflowDetail] = useState<any>(null);
-  const [butons, setButtons] = useState<any>(null);
+  const [buttons, setButtons] = useState<any>({});
   const [comment, setComment] = useState<string>("");
   const [approveStatus, setApproveStatus] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/initiate//workflows/${workflowId}/user/${userId}`);
-        console.log(data.workflow._id)
-        console.log(data.buttons)
+        const { data } = await axios.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
         setWorkflowDetail(data.workflow);
-        setButtons(data.buttons)
+        console.log(data)
+        setButtons(data.buttons || {});
       } catch (error) {
         console.error("Error fetching detail:", error);
       }
@@ -70,10 +69,6 @@ function AssignedToMeDetails() {
             </div>
             <div className="py-3 px-6 grid grid-cols-1 gap-4">
               <div>
-                {/* <div className="flex justify-between mb-2">
-                  <p className="text-teal-600">Owner/Initiator:</p>
-                  <p className="text-gray-600">{workflowDetail?.user?.name}</p>
-                </div> */}
                 <div className="flex justify-between mb-2">
                   <p className="text-teal-600">Status:</p>
                   <p className="text-gray-600">{workflowDetail?.status}</p>
@@ -101,12 +96,7 @@ function AssignedToMeDetails() {
             setComment={setComment}
             approveStatus={approveStatus}
             setApproveStatus={setApproveStatus}
-            buttons={{
-              canApprove: butons.canApprove,
-              canReject: butons.canReject,
-              canMoveForward: butons.canMoveForward,
-              canMoveBackward: butons.canMoveBackward
-            }}
+            buttons={buttons}
           />
         </div>
       </div>

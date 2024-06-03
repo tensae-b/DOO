@@ -1,166 +1,146 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import { fetchUser, sendUser,resendUser,activateUser,deactivateUser,fetchWorkflow} from "../services/api/usersApi";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import axios from 'axios';
+import { fetchUser, sendUser, resendUser, activateUser, deactivateUser } from "../services/api/usersApi";
+import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 
 export const Route = createFileRoute("/invite-user")({
   component: () => <InviteNewUser />,
 });
 
-const columns: GridColDef[] = [
+const useActivationButton = (initialStatus) => {
+  const [buttonText, setButtonText] = useState(initialStatus === "Activated" ? "Deactivate" : "Activate");
+  const [buttonColor, setButtonColor] = useState(initialStatus === "Activated" ? "#00B0AD" : "#00B0AD");
+
+  useEffect(() => {
+    setButtonText(initialStatus === "Activated" ? "Deactivate" : "Activate");
+    setButtonColor(initialStatus === "Activated" ? "#00B0AD" : "#00B0AD");
+  }, [initialStatus]);
+
+  return { buttonText, buttonColor };
+};
+
+const columns = (handleStatusChange, handleAction) => [
   { field: "username", headerName: "Username", headerClassName: 'field-header', width: 150 },
   { field: "email", headerName: "Email", headerClassName: 'field-header', width: 300 },
   { field: "role_id", headerName: "Role ID", headerClassName: 'field-header', width: 150 },
   {
-    field: 'status',
+    field: 'activationStatus',
     headerName: 'Status',
     width: 150,
-    type: 'actions',
     renderCell: (params: GridActionsCellParams<any>) => {
-      const [buttonText, setButtonText] = useState(params.row.status === "Activated" ? "Deactivated" : "Activated");
-      const buttonColor = params.row.status === "Activated" ? "#00B0AD" : "#4A176D";
-      const [button, setButtonCol] = useState( params.row.status === "Activated" ? "#00B0AD" : "#4A176D");
-      const [isLoading, setIsLoading] = useState(false);
-     const onActive = async () => {
-  try {
-    const userId = params.row.id;
-    console.log('Activating user:', userId);
-    const { data } = await activateUser(userId);
-    console.log({ data });
-    setButtonText("Deactivated"); // Update state directly
-  } catch (error) {
-    console.error('Error activating user:', error);
-  }
-};
-
-const onInActive = async () => {
-  try {
-    const userId = params.row.id;
-    console.log('Deactivating user:', userId);
-    const { data } = await deactivateUser(userId);
-    console.log({ data });
-    setButtonText("Activated"); // Update state directly
-  } catch (error) {
-    console.error('Error deactivating user:', error);
-  }
-};
-
-      const imageSrc =  "/asset/icons/dot.png" ;
+      const { buttonText, buttonColor } = useActivationButton(params.row.activationStatus);
 
       return (
         <div className="flex gap-4 justify-center items-center">
           <button
-            onClick={() => {
-              params.row.status === "Activated" ? onInActive() : onActive();
-            }}
+            onClick={() => handleStatusChange(params.row)}
             className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg text-white`}
-            style={{ color: "#00B0AD"}}
+            style={{ color: buttonColor }}
           >
-            <img src={imageSrc} className="w-5"   style={{ color: "#00B0AD"}}/>
+            <img src="/asset/icons/dot.png" className="w-5" style={{ color: buttonColor }} />
             {buttonText}
           </button>
         </div>
       );
     },
   },
-  //
-  // New column for Action
   {
     field: 'action',
     headerName: 'Action',
     width: 180,
     sortable: false,
     renderCell: (params) => {
-      const onClick = async () => {
-        try {
-          const username = params.row.username;
-          console.log('Sending invitation to user:', username);
-
-          // Call either resendUser or sendUser based on accountCreationStatus
-          if (params.row.accountCreationStatus === "Sent") {
-            const { data } = await resendUser(username);
-            console.log({ data });
-          } else {
-            const { data } = await sendUser([username]);
-            console.log({ data });
-          }
-        } catch (error) {
-          console.error('Error sending invitation:', error);
-        }
-      };
-
       const buttonText = params.row.accountCreationStatus === "Sent" ? "Resend" : "Send";
 
       return (
-        <button className='border border-red-500 px-9 rounded-md text-red-500 mr-3' onClick={onClick}>{buttonText}</button>
+        <button className='border border-red-500 px-9 rounded-md text-red-500 mr-3' onClick={() => handleAction(params.row)}>
+          {buttonText}
+        </button>
       );
     },
   },
 ];
 
 function InviteNewUser() {
-  const [user, setUser] = useState([]); 
+  const [users, setUsers] = useState([]);
   const [refreshButtonText, setRefreshButtonText] = useState("Refresh");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-        const { data, isError } = await fetchUser();
-        if (!isError && data && data.users) {
-            const updatedData = data.users.map((user) => ({
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                role_id: user.role_id,
-                status: user.activationStatus,
-                isSelected: false,
-                accountCreationStatus: user.accountCreationStatus
-            }));
-            setUser(updatedData);
-        } else {
-            // Handle case where response data is null or missing users property
-            console.error('Invalid response data:', data);
-        }
+      const { data, isError } = await fetchUser();
+      if (!isError && data && data.users) {
+        const updatedData = data.users.map((user) => ({
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role_id: user.role_id,
+          activationStatus: user.activationStatus,
+          isSelected: false,
+          accountCreationStatus: user.accountCreationStatus,
+        }));
+        setUsers(updatedData);
+      } else {
+        console.error('Invalid response data:', data);
+      }
     } catch (error) {
-        // Handle error from fetchUser function
-        console.error('Error fetching user:', error);
-        // Handle error gracefully, e.g., display error message to user
+      console.error('Error fetching user:', error);
     }
-};
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
-  
-  // Other functions like toggleSelection and sendCheckedUsers remain the same
+  }, [fetchData]);
+
+  const handleStatusChange = async (row) => {
+    try {
+      if (row.activationStatus === "Activated") {
+        await deactivateUser(row.id);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === row.id ? { ...user, activationStatus: "Deactivated" } : user
+          )
+        );
+      } else {
+        await activateUser(row.id);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === row.id ? { ...user, activationStatus: "Activated" } : user
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error changing user status:', error);
+      console.error('Request details:', error.config);
+    }
+  };
+
+  const handleAction = async (row) => {
+    try {
+      if (row.accountCreationStatus === "Sent") {
+        await resendUser(row.username);
+      } else {
+        await sendUser([row.username]);
+      }
+      fetchData(); // Refresh data to get updated statuses
+    } catch (error) {
+      console.error('Error sending invitation:', error);
+    }
+  };
+
   const sendCheckedUsers = async () => {
     try {
-      const selectedUsernames = user
+      const selectedUsernames = users
         .filter((row) => row.isSelected)
         .map((row) => row.username);
-      console.log(selectedUsernames); // Extract usernames of selected users
-
-      // Check if "accountCreation" property exists
-      const isAccountCreationExist = user.some((row) => row.accountCreation);
-
-      if (isAccountCreationExist) {
-        // If "accountCreation" exists, change button text to "Resend"
-        console.log("Resend functionality to be implemented...");
-      } else {
-        // If "accountCreation" doesn't exist, proceed with "Send" functionality
-        const { data } = await sendUser(selectedUsernames);
-        console.log({ data });
-      }
+      await sendUser(selectedUsernames);
     } catch (error) {
       console.error('Error sending invitations:', error);
     }
   };
-  
 
   return (
-    //integrated
     <div className="mx-3">
       <div className="flex">
         <SideBar />
@@ -171,17 +151,17 @@ function InviteNewUser() {
               <h2 className="text-[#4A176D] text-3xl font-bold">User Management</h2>
               <p className="text-[#667085] text-base"> placeholder</p>
             </div>
-            <div className="flex gap-4 justify-center items-center ">
+            <div className="flex gap-4 justify-center items-center">
               <button className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white" onClick={sendCheckedUsers}>
                 <img src="/asset/icons/export.svg" className="w-5" />
                 invite
               </button>
             </div>
           </div>
-          <div className=" h-full w-full mt">
+          <div className="h-full w-full mt-3">
             <DataGrid
-              rows={user}
-              columns={columns}
+              rows={users}
+              columns={columns(handleStatusChange, handleAction)}
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 5 },
@@ -191,8 +171,8 @@ function InviteNewUser() {
               checkboxSelection
               onRowSelectionModelChange={(selectionModel) => {
                 const selectedIds = new Set(selectionModel);
-                setUser((prevUser) =>
-                  prevUser.map((user) => ({
+                setUsers((prevUsers) =>
+                  prevUsers.map((user) => ({
                     ...user,
                     isSelected: selectedIds.has(user.id),
                   }))
