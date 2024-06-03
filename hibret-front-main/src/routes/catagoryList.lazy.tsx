@@ -5,7 +5,7 @@ import SideBar from "../components/SideBar";
 import { fetchCatag } from "../services/api/catagoryApi";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import CatagAdd from "./addCatagory..lazy";
+import CatagAdd from "../components/addCatagory..lazy";
 export const Route = createFileRoute("/catagoryList")({
   component: () => <CatagoryList />,
 });
@@ -111,13 +111,14 @@ function CatagoryList() {
     },
   ];
   const [user, setUser] = useState([]);
+  const [reload, setReload] = useState(true);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
   console.log(modalData);
   useEffect(() => {
     async function fetchCategories() {
       const { data, isError } = await fetchCatag();
       if (!isError) {
-        const updatedUserData = data.map((category, index) => ({
+        const updatedUserData = data.map((category: any, index: any) => ({
           id: category._id,
           catagoryname: category.name,
         }));
@@ -125,13 +126,14 @@ function CatagoryList() {
       }
     }
     fetchCategories();
-  }, []);
+  }, [reload]);
   const openAddTemplate = () => {
     setShowAddTemplate(true);
   };
 
   const closeAddTemplate = () => {
     setShowAddTemplate(false);
+    setReload(!reload);
   };
 
   return (
@@ -162,11 +164,7 @@ function CatagoryList() {
               </button>
             </div>
           </div>
-          {showAddTemplate && (
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <CatagAdd onClose={closeAddTemplate} />
-            </React.Suspense>
-          )}
+          {showAddTemplate && <CatagAdd closePopup={closeAddTemplate} />}
           <Modal
             open={open}
             onClose={handleClose}
