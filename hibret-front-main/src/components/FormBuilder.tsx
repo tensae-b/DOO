@@ -6,21 +6,18 @@ import { Key } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import { cleanFilterItem } from "@mui/x-data-grid/hooks/features/filter/gridFilterUtils";
-import { uploadFile } from '../services/api/fetchDataApi';
-
+import { uploadFile } from "../services/api/fetchDataApi";
 
 import toast from "react-hot-toast";
 
-
 export const FormBuilder = ({
-
   title,
   type,
   options,
   index,
   required,
   parentIndex,
-  templateId
+  templateId,
 }: any) => {
   var modules = {
     toolbar: [
@@ -106,46 +103,39 @@ export const FormBuilder = ({
     formState: { errors },
   } = useFormContext();
 
-
-  
-  
-
   useEffect(() => {
-    register(`sections.${parentIndex}.content.${index}.value`, 
-    // {
-    //   required: true,
-    // }
-  );
+    register(
+      `sections.${parentIndex}.content.${index}.value`
+      // {
+      //   required: true,
+      // }
+    );
   }, [type]);
-  
-   
-  const convertToPlainText = (html:any) => {
+
+  const convertToPlainText = (html: any) => {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+    const doc = parser.parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
 
   const editorContent = watch(`sections.${parentIndex}.content.${index}.value`);
   const errorClassNames = ["input-error", "textarea-error"];
   const formData = new FormData();
-  const validateDocumentImage = (title:any, file:any) => {
+  const validateDocumentImage = (title: any, file: any) => {
     // validate the size
     if (file.type === "application/pdf") {
-        formData.append('file',file)
-        
+      formData.append("file", file);
+
       // addFile(file);
-      uploadFile(formData).then(result => {
-        if(!result.isError){
-         console.log(result.data)
-         setValue(title, result.data);
-        }else{
-          console.log(result.data)
-         toast.error("error fetching");
+      uploadFile(formData).then((result) => {
+        if (!result.isError) {
+          console.log(result.data);
+          setValue(title, result.data);
+        } else {
+          console.log(result.data);
+          toast.error("error fetching");
         }
-        
-       })
-     
-    
+      });
 
       // clearErrors(title);
     }
@@ -159,10 +149,9 @@ export const FormBuilder = ({
     }
   };
 
-  const onEditorStateChange = (title:any, editorState:any) => {
-   
+  const onEditorStateChange = (title: any, editorState: any) => {
     // const text= convertToPlainText(editorState)
-    
+
     setValue(title, editorState);
   };
 
@@ -220,12 +209,11 @@ export const FormBuilder = ({
           </span>
         </>
       );
-    }
-    else if (type === "number") {
+    } else if (type === "number") {
       return (
         <>
           <input
-          type="number"
+            type="number"
             {...register(`sections.${parentIndex}.content.${index}.value`, {
               required: `${title} is Required`,
             })}
@@ -250,7 +238,7 @@ export const FormBuilder = ({
       return (
         <>
           <input
-          type='date'
+            type="date"
             {...register(`sections.${parentIndex}.content.${index}.value`, {
               required: `${title} is Required`,
             })}
@@ -271,7 +259,7 @@ export const FormBuilder = ({
           </span>
         </>
       );
-    }else if (type === "upload") {
+    } else if (type === "upload") {
       return (
         <>
           <div
@@ -318,13 +306,13 @@ export const FormBuilder = ({
           </span>
         </>
       );
-    }else if (type === "add-data") {
+    } else if (type === "add-data") {
       return (
         <>
           <div
-            // className={clsx("flex items-center justify-center w-full", {
-            //   [errorClassNames.join(" ")]: errors?.[title],
-            // })}
+          // className={clsx("flex items-center justify-center w-full", {
+          //   [errorClassNames.join(" ")]: errors?.[title],
+          // })}
           >
             <label
               htmlFor="dropzone-file"
@@ -349,19 +337,13 @@ export const FormBuilder = ({
                 name="addDoc"
                 // accept="image/png, image/gif, image/jpeg"
                 onChange={(e) =>
-                  validateDocumentImage(
-                    `addDoc`,
-                    e.target.files[0]
-                  )
+                  validateDocumentImage(`addDoc`, e.target.files[0])
                 }
               />
             </label>
           </div>
           <span className="label-text-alt text-[hsl(var(--er))]">
-            <ErrorMessage
-              errors={errors}
-              name={`addDoc`}
-            />
+            <ErrorMessage errors={errors} name={`addDoc`} />
           </span>
         </>
       );
