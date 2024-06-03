@@ -34,3 +34,4 @@ const NavBar2 = () => {
     </div>
   )
 }
+export default NavBar2

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, } from "@tanstack/react-router";
 import downArrow from "../../public/asset/icons/down-arrow.svg";
+import uparrow from "../../public/asset/icons/uparrow.svg";
 import notifcation from "../../public/asset/icons/notification.svg";
 import avatar from "../../public/asset/icons/avatar.svg";
 import { logoutUser } from "../services/api/authApi";
@@ -71,13 +72,13 @@ const UserName: React.FC = () => {
 
         <hr className="border border-[#EFEFF4] h-11" />
         <div className="flex gap-4 w-56 items-center">
-          <img src={avatar} alt="Avatar" />
+        <div className= "w-10 h-10 rounded-full border bg-slate-400 text-white flex justify-center items-center">{username.charAt(0)}</div>
           <div onClick={toggle} className="flex relative gap-2 cursor-pointer">
             <div>
               <p>{username}</p>
               {/* <p className="text-sm text-gray-500">{role}</p> */}
             </div>
-            <img src={isOpen ? "uparrow" : downArrow} className="max-w-4" alt="Dropdown Arrow" />
+            <img src={isOpen ? uparrow : downArrow} className="max-w-4" alt="Dropdown Arrow" />
           </div>
           {isOpen ? (
             <div className="flex flex-col justify-center items-center gap-2 absolute top-14 right-2 h-auto w-44 py-4 border bg-white rounded-md shadow-lg">
