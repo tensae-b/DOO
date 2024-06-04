@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { workuser } from "../services/api/userworkApi";
-import NavBar from "../components/NavBar";
-import NavBar2 from "../components/NavBar2";
-import SideBarUser from "../components/sidebaruser";
-import SideBar from "../components/SideBar";
-
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import SideBar2 from "../components/SideBar2";
+import UserName from "../components/UserName";
+import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import axios from "axios";
 
 export const Route = createFileRoute("/assignedtome")({
@@ -15,17 +12,21 @@ export const Route = createFileRoute("/assignedtome")({
 });
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 230 },
   {
     field: "workflow_id",
-    headerName: "Workflow id",
+    headerName: "Workflow ID",
     width: 230,
     renderCell: (params) => (
-      <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
-        {params.value}
-      </Link>
+      params.value !== "Unknown" ? (
+        <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
+          {params.value}
+        </Link>
+      ) : (
+        <span>Unknown</span>
+      )
     ),
   },
+  { field: "name", headerName: "Name", width: 230 },
   { field: "status", headerName: "Status", width: 130 },
   {
     field: 'actions',
@@ -68,26 +69,13 @@ function AssignWork() {
     try {
       const response = await workuser('663c62145dd5d333dbdaaf00');
       console.log(response)
-      const updatedUserData = response.data.map((item) => {
-        console.log( item.workflows[0].workflowId._id)
-       
-        if (
-          item.workflows &&
-          item.workflows.length > 0 &&
-          item.workflows[0].workflowId
-        ) {
-          return {
-            id: item._id,
-            workflow_id:  item.workflows[0].workflowId._id,
-            status: item.workflows[0].workflowId ? item.workflows[0].workflowId.status : "Unknown",
-          };
-        } else {
-          return {
-            id: item._id,
-            workflow_id: "Unknown",
-            status: "Unknown",
-          };
-        }
+      const updatedUserData = response.data.map((item, index) => {
+        return {
+          id: item.workflowId || `unknown-${index}`,  // Ensure unique id for DataGrid
+          workflow_id: item.workflowId || "Unknown",
+          name: item.name || "Unnamed Workflow",
+          status: item.status || "Unknown",
+        };
       });
       setUser(updatedUserData);
     } catch (error) {
@@ -115,27 +103,26 @@ function AssignWork() {
   };
 
   return (
-    //integrated
     <div className="flex">
-      <SideBar/>
-      <div className="flex flex-col w-full ml-74"> {/* Added ml-64 to offset the sidebar width */}
-        <NavBar />
-        <div className="flex justify-between">
+      <SideBar2 />
+      <div className="flex flex-col w-full ml-64">
+        <UserName />
+        <div className="flex flex-col mt-16 ml-8">
           <div className="flex flex-col gap-3 my-5">
             <h2 className="text-[#4A176D] text-3xl font-bold">
               Assigned workflow
             </h2>
             <p className="text-[#667085] text-base"> placeholder</p>
           </div>
-        </div>
-        <div className="h-full w-full mt">
-          <DataGrid
-            rows={user}
-            columns={columns}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-            onRowClick={(row) => handleRowClick(row)}
-          />
+          <div className="h-full w-full mt-4">
+            <DataGrid
+              rows={user}
+              columns={columns}
+              pageSizeOptions={[5, 10]}
+              checkboxSelection
+              onRowClick={(row) => handleRowClick(row)}
+            />
+          </div>
         </div>
       </div>
     </div>

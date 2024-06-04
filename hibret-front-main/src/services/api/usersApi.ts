@@ -14,6 +14,7 @@ export const sendUser = async (selectedUsers) => { // Pass selectedUsers as a pa
     try {
         const response = await axiosInst.post('api/sendInvitation', {selectedUsers}); // Include selectedUsers in the request body
         const { data } = response;
+        console.log(data)
         return { data, isLoading: false, isError: false };
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -45,6 +46,7 @@ export const resendUser = async (selectedUser) => { // Pass selectedUsers as a p
     try {
         const response = await axiosInst.post('api/resendInvitation', { identifier: selectedUser}); // Include selectedUsers in the request body
         const { data } = response;
+        console.log(data)
         return { data, isLoading: false, isError: false };
     } catch (error) {
         console.error('Error fetching user:', error);

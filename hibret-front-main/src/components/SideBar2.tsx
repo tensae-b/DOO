@@ -16,7 +16,7 @@ const SideBar2 = () => {
         <div className=" flex flex-col mt-5 gap-3 justify-center">
           <div className="flex gap-2 ">
             <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-            <p className=" text-sm text-[#667085]">Dashboard</p>
+            <Link to="/userDashboard" className=" text-sm text-[#667085]">Dashboard</Link>
           </div>
           <div className="flex gap-2 ">
             <img

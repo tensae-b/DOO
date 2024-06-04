@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import AdminHead from '../components/adminHead';
 import AdminMiddle from '../components/adminMiddle';
 import AdminEnd from '../components/adminEnd';
-import NavBar2 from '../components/NavBar2';
+import NavBar2 from '../components/NavBar';
 import SideBar from '../components/SideBar';
 
 export const Route = createFileRoute('/adminDashboard')({
