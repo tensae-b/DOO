@@ -42,6 +42,7 @@ const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
 const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminreportLazyImport = createFileRoute('/adminreport')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
+const AddPermissionLazyImport = createFileRoute('/addPermission')()
 const AddCatagoryLazyImport = createFileRoute('/addCatagory')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -187,6 +188,11 @@ const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
   import('./routes/adminDashboard.lazy').then((d) => d.Route),
 )
 
+const AddPermissionLazyRoute = AddPermissionLazyImport.update({
+  path: '/addPermission',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/addPermission.lazy').then((d) => d.Route))
+
 const AddCatagoryLazyRoute = AddCatagoryLazyImport.update({
   path: '/addCatagory',
   getParentRoute: () => rootRoute,
@@ -259,6 +265,10 @@ declare module '@tanstack/react-router' {
     }
     '/addCatagory': {
       preLoaderRoute: typeof AddCatagoryLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/addPermission': {
+      preLoaderRoute: typeof AddPermissionLazyImport
       parentRoute: typeof rootRoute
     }
     '/adminDashboard': {
@@ -383,6 +393,7 @@ export const routeTree = rootRoute.addChildren([
   FolderHierarchyRouteRoute,
   AboutLazyRoute,
   AddCatagoryLazyRoute,
+  AddPermissionLazyRoute,
   AdminDashboardLazyRoute,
   AdminreportLazyRoute,
   AssignedbymeLazyRoute,
