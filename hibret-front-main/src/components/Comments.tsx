@@ -17,9 +17,9 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c62145dd5d333dbdaaf00';
       const workflowId = workflowDetail._id;
-
+      console.log(workflowDetail._id)
       const { data, isError } = await workapprove(workflowId, userId, comment);
       if (!isError) {
         setApproveStatus("Workflow approved successfully.");
@@ -40,7 +40,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c62145dd5d333dbdaaf00';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workareject(workflowId, userId, comment);
@@ -63,7 +63,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c62145dd5d333dbdaaf00';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workforward(workflowId, userId, comment);
@@ -86,7 +86,7 @@ const Comments = ({
     }
 
     try {
-      const userId = workflowDetail.assignedUsers[0]?.user;
+      const userId = '663c62145dd5d333dbdaaf00';
       const workflowId = workflowDetail._id;
 
       const { data, isError } = await workback(workflowId, userId, comment);
@@ -103,7 +103,6 @@ const Comments = ({
   };
 
   return (
-    //integrated
     <div className="h-96 w-80 border border-gray-500 border-opacity-10 my-9 flex flex-col p-4 gap-4">
       <h5 className="text-teal-600">Comments/Feedback</h5>
       <input
@@ -122,10 +121,6 @@ const Comments = ({
           >
             Approve
           </button>
-        </div>
-      )}
-      {buttons.canReject && (
-        <div className="flex gap-8">
           <button
             className="w-44 h-9 border border-red-500 rounded-md text-red-600 text-sm"
             onClick={handleReject}
@@ -156,8 +151,6 @@ const Comments = ({
           Back
         </button>
       </div>
-
-   
 
       {approveStatus && <p className="text-red-600 mt-4">{approveStatus}</p>}
     </div>

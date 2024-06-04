@@ -8,84 +8,46 @@ import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useState } from "react";
 
-import useStepFormStore, { useFiles } from "../store/formStore";
-import useStore from "../store/formStore";
+import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
-
-interface FormDataItem {
-  title: string;
-  content: {
-    title: string;
-    type: string;
-    isRequired: boolean;
-    _id: string;
-    value: string;
-  }[];
-  multiple: boolean;
-  _id: string;
-}
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
- 
     var config = {
       method: "get",
       maxBodyLength: Infinity,
       url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
       headers: {},
     };
-     
-    const res = await axios(config);
-    const data = await res.data;
-    const addField=   {
 
-      _id: '',
-  
-      title: 'Additional Data',
-  
-     
-  
+    const res = await axios(config);
+    console.log(res);
+    const data = await res.data;
+
+    const addField = {
+      _id: "",
+      title: "Additional Data",
       sections: [
-  
         {
-  
           multiple: false,
-  
-          title: 'Additional info',
-  
+          title: "Additional info",
           content: [
-  
             {
-  
-              title: 'Additional data',
-  
-              type: 'add-data',
-  
+              title: "Additional data",
+              type: "add-data",
               isRequired: false,
-  
-              _id: ''
-  
+              _id: "",
             },
-  
-  
           ],
-  
-          _id: ''
-  
-        }
-  
+          _id: "",
+        },
       ],
-  
-      
-  
-    }
-    
+    };
     const formated = data.documents.flat();
-   
-    const additional= data.additional
-if (additional){
-    formated.push(addField)
-}
+    const additional = data.additional;
+    if (additional) {
+      formated.push(addField);
+    }
     return { workflowId, stepId, formated, additional };
   },
   notFoundComponent: () => {
@@ -95,32 +57,17 @@ if (additional){
 });
 
 function LoanDocument() {
-  const [formdata, setFormData]= useState<FormDataItem[]>([])
-
-  useEffect(()=>{
-    setStepData(
-      {
-      templateId: step.formated[step.stepId]._id,
-      title: step.formated[step.stepId].title,
-      sections: formdata,
-    });
-  },[formdata])
   const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
-  const files = useFiles();
-   console.log(files)
-  const user: any=  localStorage.getItem('user');
+  const user: any = localStorage.getItem("user");
   const userId = JSON.parse(user);
-
+  console.log(userId);
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
-  // const formdata: any[] = [];
-
+  const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-  
-  
-  
+
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -134,118 +81,69 @@ function LoanDocument() {
     name: "sections",
   });
 
-
-
-  const onSubmit = async (data: any) => {
-    // event?.preventDefault();
-   
-    const formData = new FormData();
-    // Get files from Zustand state
-   console.log(files)
-  
-
-    
-    if (nextId ) {
-
+  const onSubmit = (data: any) => {
+    console.log({ data });
+    if (nextId) {
       location.replace(
         `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
     }
-  
 
     data.sections.map((content: any, index: any) => {
-       console.log(content)
-      setFormData([...formdata, content]);
-      
-      // content.content.map((item:any, index:any)=>{
-      //   console.log(item.value)
-      //   if(item.type == 'upload'){
-       
-      //   files.append('myfile',item.value)
-      //   }
-      // })
-      
-     
+      formdata.push(content);
       // alert(JSON.stringify(content, null, 2));
     });
-    console.log()
-    files.forEach((file: any) => {
-      console.log(file)
-      formData.append('files', file);
-    });
-
-
-  
-  //  console.log(files)
     // setForm(formdata);
-
-    setStepData(
-      {
+    setStepData({
+      stepId: step.stepId,
       templateId: step.formated[step.stepId]._id,
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
-
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
-     
+
     // }));
-     
-    console.log(stepFormData, "stepformdata")
-    
-    if (!nextId ) {
+    console.log(stepFormData, "stepformdata");
+    if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
         reqDoc: stepFormData,
-        addDoc: {}
-       
-     
+        addDoc: data.addDoc,
       };
-
-      formData.append('documentData', JSON.stringify(documentData));
-    
-
-      // for (const key in documentData) {
-      //   if (documentData.hasOwnProperty(key)) {
-      //     console.log(documentData)
-      //     formData.append(key, documentData[key]);
-      //   }
-      // }
-     console.log(formData, 'dd')
-
-   
 
       var config = {
         method: "post",
         maxBodyLength: Infinity,
-        url: "http://localhost:5000/admin/workflows",
+        url: "http://localhost:5000/initiate/workflows",
         headers: {},
-        formData
-        
-
-        // params: documentData,
-       
+        data: documentData,
       };
-      
+
       axios(config)
         .then(function (response) {
           console.log(documentData, "document");
           console.log(JSON.stringify(response.data));
           toast.success("Successfully submited!");
-                  // navigate({ to: "/document" });
           clearStepData();
+          setTimeout(function () {
+            navigate({ to: "/document" });
+          }, 3000);
         })
         .catch(function (error) {
           console.log(documentData, "document");
           toast.error("Please try again");
-          console.log(error);
           clearStepData();
+          setTimeout(function () {
+            navigate({ to: "/document" });
+          }, 3000);
+          console.log(error);
         });
-      
-//persistenet data deleted
-      
+
+      console.log(stepFormData, "persistent");
+      // clearStepData();
     }
   };
 
@@ -261,7 +159,10 @@ function LoanDocument() {
     remove(sectionIndex);
   }
   let nextId: boolean;
-  if (Number(step.stepId) < step.formated.length - 1 ||(Number(step.stepId) ==step.formated.length && step.additonal) ) {
+  if (
+    Number(step.stepId) < step.formated.length - 1 ||
+    (Number(step.stepId) == step.formated.length && step.additonal)
+  ) {
     nextId = true;
   } else {
     nextId = false;
@@ -292,6 +193,7 @@ function LoanDocument() {
                   </button>
                 </div>
               </div>
+              <Toaster position="top-center" reverseOrder={false} />
               <div className="steps-bar flex w-full justify-center my-10">
                 {step.formated.map((item: any, index: any) => (
                   <div className="flex flex-col gap-2" key={index}>
@@ -303,8 +205,8 @@ function LoanDocument() {
                             index == step.stepId
                               ? current
                               : index < step.stepId
-                              ? done
-                              : next
+                                ? done
+                                : next
                           }`}
                         >
                           <img
@@ -313,8 +215,8 @@ function LoanDocument() {
                               index < step.stepId
                                 ? "/asset/icons/tick.svg"
                                 : index == step.stepId
-                                ? "/asset/icons/dot.svg"
-                                : ""
+                                  ? "/asset/icons/dot.svg"
+                                  : ""
                             }`}
                           />
                         </a>
@@ -344,7 +246,6 @@ function LoanDocument() {
                         key={parentIndex}
                         className="section1 flex flex-col p-6 border border-[#EFEFF4] gap-4 rounded-lg"
                       >
-                       
                         <h3
                           id={`${item.title}`}
                           className="text-[#00B0AD] text-xl font-bold"
@@ -356,6 +257,8 @@ function LoanDocument() {
                           return (
                             <div className="" key={idx}>
                               <FormBuilder
+                                stepId={step.stepId}
+                                defaultValues={stepFormData}
                                 {...content}
                                 index={idx}
                                 parentIndex={parentIndex}
@@ -388,18 +291,16 @@ function LoanDocument() {
                     ))}
                   </div>
 
-                
-                  
                   <button
                     type="submit"
                     className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
                   >
-                    {nextId || step.additional ? "continue" : "submit"}
+                    {nextId ? "continue" : "submit"}
                   </button>
 
                   <DevTool control={control} />
                 </form>
-             
+
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-sm font-bold p-2">Quick Access</p>
                   {step.formated[step.stepId].sections.map(
@@ -412,7 +313,6 @@ function LoanDocument() {
                       </a>
                     )
                   )}
-                
                 </div>
               </div>
             </div>

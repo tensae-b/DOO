@@ -14,7 +14,7 @@ import "react-dropdown/style.css";
 import axios from "axios";
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
-
+import { fetchCatag, fetchDepartment, fetchSubCatag } from "../services/api/fetchDataApi";
 export const Route = createFileRoute("/documenttempadd")({
   component: () => <DocumentAddTemp />,
 });
@@ -36,7 +36,7 @@ const addSection = [
         options: ["true", "Optional"],
       },
       {
-        title: "Eligible-as-condition-criteria",
+        title: "conditionLogic",
         type: "checkbox",
       },
     ],
@@ -48,47 +48,56 @@ function DocumentAddTemp() {
   const navigate = useNavigate();
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+  const [department, setDepartment] = useState([]);
+  const [depId, setDepId] = useState('')
 
   function getSubCategory(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/subCategory/cat/${value}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setSubCategory(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+    fetchSubCatag(value).then(result => {
+      if(!result.isError){
+       setSubCategory(result.data);
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+    
   }
-  function getCategory(config: any) {
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data);
-        setCategory(response.data);
 
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
-  }
+  
   useEffect(() => {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/category",
-      headers: {},
-    };
+    console.log(depId)
+  getCategory();
 
-    getCategory(config);
+}, [depId]);
+
+  function getCategory() {
+    
+    fetchCatag(depId).then(result => {
+      if(!result.isError){
+       
+       setCategory(result.data);
+      }else{
+        console.log(result)
+       
+      }
+    })
+    
+  }
+
+  function getDepartment(){
+    fetchDepartment().then(result => {
+      if(!result.isError){
+        setDepartment(result.data)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+  
+  }
+
+  useEffect(() => {
+    getDepartment();
   }, []);
   return (
     <div className="mx-3 mb-10 ">
@@ -102,11 +111,13 @@ function DocumentAddTemp() {
               content: addSection,
             }}
             onSubmit={async (values: { documentvalue: any }) => {
+              console.log(values)
               await new Promise((r) => setTimeout(r, 500));
               // console.log(values);
               axios
                 .post("http://localhost:5000/admin/documentTemplate", {
                   ...values.documentvalue,
+                  depId: depId
                 })
                 .then(function (response) {
                   console.log(response);
@@ -123,7 +134,7 @@ function DocumentAddTemp() {
             {({ values }) => (
               <div className="">
                 <div className="flex  mb-4">
-                  <a href="/documenttemp">
+                  <a href="/documentemp">
                     <img
                       src="/asset/icons/back-arrow.svg"
                       className="w-8 h-8 mr-2"
@@ -159,6 +170,34 @@ function DocumentAddTemp() {
                           required
                         />
                       </div>
+                      {/* Department */}
+                      <div className="mt-4">
+                        <label
+                          htmlFor="documentvalue.depId"
+                          className="text-sm w-full"
+                        >
+                          Choose department*
+                        </label>
+                        <Field
+                            name="documentvalue.depId"
+                            as="select"
+                            className="border rounded-md p-2 mt-1 w-full"
+                            onChange={(e: { target: { value: any } }) =>
+                              setDepId(e.target.value)
+                               
+                            }
+                            required
+                          >
+                            <option label="Select" value="" />
+                            {department?.map((option: any, index) => (
+                              <option
+                                key={option}
+                                label={option.name}
+                                value={option._id}
+                              />
+                            ))}
+                          </Field>
+                      </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
                         <div className="w-full flex flex-col justify-center gap-2">
@@ -193,6 +232,7 @@ function DocumentAddTemp() {
                             as="select"
                             className="border rounded-md p-2 mt-1 w-full"
                             required
+                           
                           >
                             <option label="Select" value="" />
                             {subCategory?.map((option: any, index) => (

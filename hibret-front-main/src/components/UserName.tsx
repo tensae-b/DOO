@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import upArrow from "../../public/asset/icons/upload-icon.svg";
 import downArrow from "/asset/icons/downArrow.svg";
@@ -5,17 +6,21 @@ import notifcation from "/asset/icons/notification.svg";
 import avatar from "/asset/icons/avatar.svg";
 import axios from "axios";
 
+
 const UserName: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
+
   const user: any=  localStorage.getItem('user');
 const userData = JSON.parse(user);
+
 
   function toggle() {
     setIsOpen((prev) => !prev);
   }
 
   const handleLogout = async () => {
+
     try {
       // Send a POST request to the logout endpoint with credentials
       const response = await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
@@ -28,12 +33,15 @@ const userData = JSON.parse(user);
       }
     } catch (error) {
       console.error('An error occurred during logout:', error);
+
     }
   };
 
   return (
     <div className="search-bar flex justify-between mt-4 p-3 fixed top-0 left-80 right-0 bg-white">
+
       <div className="flex px-3 py-2 rounded-lg w-72 h-8 justify-between">
+
       </div>
 
       <div className="flex gap-6 items-center">
@@ -48,13 +56,16 @@ const userData = JSON.parse(user);
               <div className="flex gap-2 items-center p-2 border-b border-opacity-20">
                 <img src={avatar} className='h-8' />
                 <div>
+
                   <p className="text-sm text-gray-400"> <a className="text-teal-400">Workflow Name</a> was assigned to you</p>
+
                 </div>
               </div>
 
               <div className="flex gap-2 items-center p-2 border-b border-opacity-20">
                 <img src={avatar} className='h-8' />
                 <div>
+
                   <p className="text-sm text-gray-400"> <a className="text-teal-400">Workflow Name</a> was assigned to you</p>
                 </div>
               </div>
@@ -62,10 +73,12 @@ const userData = JSON.parse(user);
               <a href="/notification"><button className="border-npne h-8 text-teal-400 text-sm px-5">View all notification</button></a>
             </div>
           ) : <div> </div>}
+
         </div>
 
         <hr className="border border-[#EFEFF4] h-11" />
         <div className="flex gap-4 w-56 items-center">
+
         <div className= "w-10 h-10 rounded-full border bg-slate-400 text-white flex justify-center items-center">{userData.username.charAt(0)}</div>
           <div onClick={toggle} className="flex relative gap-2 cursor-pointer">
           <p className="">{userData.username}</p>
@@ -90,6 +103,7 @@ const userData = JSON.parse(user);
               </button>
             </div>
           ) : <div> </div>}
+
         </div>
       </div>
     </div>
