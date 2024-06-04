@@ -78,7 +78,7 @@ export const Route = createLazyFileRoute('/assignedbyme')({
 
     return (
       <div>
-        <UserName />
+        
         <SideBar2 />
         <div className="mt-24 ml-80 mr-8">
           <div className="flex gap-4 mb-9 ml-4 text-sm">
@@ -102,10 +102,7 @@ export const Route = createLazyFileRoute('/assignedbyme')({
             </p>
           </div>
           <div className="flex flex-row justify-between">
-            <div className="flex border border-[#667085] px-3 py-2 rounded-lg w-72 h-8 justify-between">
-              <input type="text" placeholder="Search something..." className="text-sm text-gray-400" />
-              <img src="/asset/icons/search.svg" alt="Search Icon" />
-            </div>
+            
             <div className="flex gap-1 items-center">
               <img src={filter} alt="Filter Icon" />
               <p className="text-md text-gray-600">Filters</p>

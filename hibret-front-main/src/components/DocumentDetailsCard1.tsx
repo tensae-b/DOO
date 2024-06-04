@@ -16,10 +16,7 @@ const DocumentDetailsCard: React.FC<DocumentDetailsCardProps> = (props) => {
         <img src={pdf} className='h-4' alt="PDF Icon"/>
         <h5 className="text-teal-600 text-sm">{props.name}</h5>
       </Link>
-      <div className="flex gap-6 items-center">
-        <img src={visible} className='h-4 w-4' alt="Visible Icon"/>
-        <img src={download} className='h-4 w-4' alt="Download Icon"/>
-      </div>
+    
     </div>
   );
 };

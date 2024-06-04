@@ -8,9 +8,10 @@ export const Route = createLazyFileRoute('/notification')({
     <div>
       <UserName />
       <SideBar2 />
-      <div className="mt-44 ml-80 mr-8 w-full h-full">
-        <div className="shadow-lg w-7/12 flex flex-col gap-4 px-12 py-6 border border-opacity-15">
-          <h1 className="text-teal-400 text-2xl">Notifications</h1>
+      <div className="mt-36 ml-80 mr-8 w-full h-full">
+      <h1 className="text-teal-400 text-2xl">Notifications</h1>
+        <div className="shadow-lg w-7/12 flex flex-col gap-4 px-12 py-6 border border-opacity-15 mt-6">
+          
           
           <div className="flex gap-2 items-center p-2 border-b border-opacity-20">
             <img src={avatar} className="h-8" alt="User avatar" />

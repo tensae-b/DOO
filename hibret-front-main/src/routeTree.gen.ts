@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as FolderHierarchyRouteImport } from './routes/FolderHierarchyRoute'
 import { Route as LoanDocumentWorkflowIdStepIdImport } from './routes/LoanDocument.$workflowId.$stepId'
 
 // Create Virtual Routes
@@ -199,6 +200,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
+const FolderHierarchyRouteRoute = FolderHierarchyRouteImport.update({
+  path: '/FolderHierarchyRoute',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
@@ -236,6 +242,10 @@ declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/FolderHierarchyRoute': {
+      preLoaderRoute: typeof FolderHierarchyRouteImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -365,6 +375,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  FolderHierarchyRouteRoute,
   AboutLazyRoute,
   AddCatagoryLazyRoute,
   AdminDashboardLazyRoute,
