@@ -133,7 +133,7 @@ export const Route = createLazyFileRoute('/setNewPassword')({
               className='mt-2 bg-teal-500 rounded-md w-full h-12'
               onClick={handleChangePassword}
             >
-              Change Password
+              Set new password
             </button>
           </div>
         </div>
