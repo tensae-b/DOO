@@ -36,7 +36,6 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
-const ComponentsLazyImport = createFileRoute('/components')()
 const ChangepasswordLazyImport = createFileRoute('/changepassword')()
 const CatagoryListLazyImport = createFileRoute('/catagoryList')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
@@ -156,11 +155,6 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
 
-const ComponentsLazyRoute = ComponentsLazyImport.update({
-  path: '/components',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/components.lazy').then((d) => d.Route))
-
 const ChangepasswordLazyRoute = ChangepasswordLazyImport.update({
   path: '/changepassword',
   getParentRoute: () => rootRoute,
@@ -276,10 +270,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChangepasswordLazyImport
       parentRoute: typeof rootRoute
     }
-    '/components': {
-      preLoaderRoute: typeof ComponentsLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/create-user': {
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
@@ -383,7 +373,6 @@ export const routeTree = rootRoute.addChildren([
   AssignedtomeLazyRoute,
   CatagoryListLazyRoute,
   ChangepasswordLazyRoute,
-  ComponentsLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
