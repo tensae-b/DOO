@@ -17,7 +17,8 @@ export const FormBuilder = ({
   index,
   required,
   parentIndex,
-  templateId,
+  defaultValues,
+  stepId,
 }: any) => {
   var modules = {
     toolbar: [
@@ -110,6 +111,13 @@ export const FormBuilder = ({
       //   required: true,
       // }
     );
+
+    if (defaultValues.length !== 0 && defaultValues[stepId]) {
+      setValue(
+        `sections.${parentIndex}.content.${index}.value`,
+        defaultValues[stepId].sections[parentIndex].content[index]?.value
+      );
+    }
   }, [type]);
 
   const convertToPlainText = (html: any) => {

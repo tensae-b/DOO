@@ -2,7 +2,7 @@ import "quill/dist/quill.snow.css";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-// import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
@@ -26,27 +26,19 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
 
     const addField = {
       _id: "",
-
       title: "Additional Data",
-
       sections: [
         {
           multiple: false,
-
           title: "Additional info",
-
           content: [
             {
               title: "Additional data",
-
               type: "add-data",
-
               isRequired: false,
-
               _id: "",
             },
           ],
-
           _id: "",
         },
       ],
@@ -75,7 +67,6 @@ function LoanDocument() {
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-  console.log(step);
 
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
@@ -104,6 +95,7 @@ function LoanDocument() {
     });
     // setForm(formdata);
     setStepData({
+      stepId: step.stepId,
       templateId: step.formated[step.stepId]._id,
       title: step.formated[step.stepId].title,
       sections: formdata,
@@ -213,8 +205,8 @@ function LoanDocument() {
                             index == step.stepId
                               ? current
                               : index < step.stepId
-                              ? done
-                              : next
+                                ? done
+                                : next
                           }`}
                         >
                           <img
@@ -223,8 +215,8 @@ function LoanDocument() {
                               index < step.stepId
                                 ? "/asset/icons/tick.svg"
                                 : index == step.stepId
-                                ? "/asset/icons/dot.svg"
-                                : ""
+                                  ? "/asset/icons/dot.svg"
+                                  : ""
                             }`}
                           />
                         </a>
@@ -265,6 +257,8 @@ function LoanDocument() {
                           return (
                             <div className="" key={idx}>
                               <FormBuilder
+                                stepId={step.stepId}
+                                defaultValues={stepFormData}
                                 {...content}
                                 index={idx}
                                 parentIndex={parentIndex}
