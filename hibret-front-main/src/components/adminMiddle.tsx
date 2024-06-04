@@ -2,7 +2,7 @@
 const adminMiddle = () => {
   return (
     <div className="graphs flex gap-12 items-center mt-8 w-full ">
-    <div className="flex  flex-col w-72 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
+    <div className="flex  flex-col w-60 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
       <h3 className="w-38 h-7 font-urbanist font-bold text-gray-600 text-sm leading-6">
         Document Created
       </h3>
@@ -51,7 +51,7 @@ const adminMiddle = () => {
         </div>
       </div>
     </div>
-    <div className="flex  flex-col w-72 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
+    <div className="flex  flex-col w-60 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
       <h3 className="w-38 h-7 font-urbanist font-bold text-gray-600 text-sm leading-6">
         Document Created
       </h3>
@@ -91,7 +91,7 @@ const adminMiddle = () => {
         </div>
       </div>
     </div>
-    <div className="flex  flex-col w-72 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
+    <div className="flex  flex-col w-60 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
       <h3 className="w-38 h-7 font-urbanist font-bold text-gray-600 text-sm leading-6">
         Document Created
       </h3>
@@ -140,7 +140,7 @@ const adminMiddle = () => {
         </div>
       </div>
     </div>
-    <div className="flex  flex-col w-72 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
+    <div className="flex  flex-col w-60 h-48 top-64 left-96 rounded-md border border-gray-200 bg-white p-6">
       <h3 className="w-38 h-7 font-urbanist font-bold text-gray-600 text-sm leading-6">
         Document Created
       </h3>

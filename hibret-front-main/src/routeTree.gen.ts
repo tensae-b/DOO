@@ -23,6 +23,7 @@ const UserDashboardLazyImport = createFileRoute('/userDashboard')()
 const SetNewPasswordLazyImport = createFileRoute('/setNewPassword')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
+const OtpLazyImport = createFileRoute('/otp')()
 const NotificationLazyImport = createFileRoute('/notification')()
 const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
@@ -35,6 +36,7 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const ComponentsLazyImport = createFileRoute('/components')()
 const ChangepasswordLazyImport = createFileRoute('/changepassword')()
 const CatagoryListLazyImport = createFileRoute('/catagoryList')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
@@ -84,6 +86,11 @@ const ProfileLazyRoute = ProfileLazyImport.update({
   path: '/profile',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
+
+const OtpLazyRoute = OtpLazyImport.update({
+  path: '/otp',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/otp.lazy').then((d) => d.Route))
 
 const NotificationLazyRoute = NotificationLazyImport.update({
   path: '/notification',
@@ -148,6 +155,11 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   path: '/create-user',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
+
+const ComponentsLazyRoute = ComponentsLazyImport.update({
+  path: '/components',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/components.lazy').then((d) => d.Route))
 
 const ChangepasswordLazyRoute = ChangepasswordLazyImport.update({
   path: '/changepassword',
@@ -264,6 +276,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChangepasswordLazyImport
       parentRoute: typeof rootRoute
     }
+    '/components': {
+      preLoaderRoute: typeof ComponentsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/create-user': {
       preLoaderRoute: typeof CreateUserLazyImport
       parentRoute: typeof rootRoute
@@ -310,6 +326,10 @@ declare module '@tanstack/react-router' {
     }
     '/notification': {
       preLoaderRoute: typeof NotificationLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/otp': {
+      preLoaderRoute: typeof OtpLazyImport
       parentRoute: typeof rootRoute
     }
     '/profile': {
@@ -363,6 +383,7 @@ export const routeTree = rootRoute.addChildren([
   AssignedtomeLazyRoute,
   CatagoryListLazyRoute,
   ChangepasswordLazyRoute,
+  ComponentsLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
@@ -375,6 +396,7 @@ export const routeTree = rootRoute.addChildren([
   ManageUserLazyRoute,
   MyDocumentsLazyRoute,
   NotificationLazyRoute,
+  OtpLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
   SetNewPasswordLazyRoute,

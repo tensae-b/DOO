@@ -26,9 +26,13 @@ interface Workflow {
 }
 
 interface Comment {
-  name: string;
-  time: string;
-  details: string;
+  stageIndex: number;
+  fromUser: { _id: string };
+  toUser: { _id: string };
+  comment: string;
+  visibleTo: { _id: string }[];
+  _id: string;
+  createdAt: string;
 }
 
 interface Buttons {
@@ -49,7 +53,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     const underlineRef = useRef<HTMLDivElement>(null);
     const params = Route.useParams();
     const workflowId = params.workflowId;
-    const userId = "663c92732358e4d0b92c9288";
+    const userId = "6663c62145dd5d333dbdaaf00";
     const [isOpen, setIsOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -109,10 +113,12 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     }
 
     const comments = workflowDetailData.workflow.comments;
-    const Documents= workflowDetailData.workflow.requiredDocuments
-    
+   
+    const Documents = workflowDetailData.workflow.requiredDocuments;
+    const Documents2 = workflowDetailData.workflow.additionalDocuments;
+    console.log(Document)
 
-    console.log(workflowDetailData);
+   
 
     return (
       <div>
@@ -165,56 +171,56 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
             />
           </div>
           <div className="flex flex-col gap-9 w-6/12 mt-7">
-            {activeTab === 1 && <div className="flex flex-col pb-9">
-      <div className={`${isOpen ? "" : "h-12"}  flex flex-col w-full  gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}>
-        <div className="flex flex-row justify-between ">
-          <h3 className="text-teal-600 ">Workflow information</h3>
-          <button onClick={() => setIsOpen((prev) => !prev)}>
-            <img
-              src={isOpen ? upArrow : downArrow}
-              alt={isOpen ? "Up Arrow" : "Down Arrow"}
-            />
-          </button>
-        </div>
-        {isOpen ? (
-          <div className="flex flex-col gap-8  ">
-            <div className="flex justify-between">
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                  Owner/initiator
-                </h5>
-                <p className="text-xs text-gray-600">Someone's Name</p>
-              </div>
-            </div>
+            {activeTab === 1 && (
+              <div className="flex flex-col pb-9">
+                <div className={`${isOpen ? "" : "h-12"} flex flex-col w-full gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}>
+                  <div className="flex flex-row justify-between">
+                    <h3 className="text-teal-600">Workflow information</h3>
+                    <button onClick={() => setIsOpen((prev) => !prev)}>
+                      <img
+                        src={isOpen ? upArrow : downArrow}
+                        alt={isOpen ? "Up Arrow" : "Down Arrow"}
+                      />
+                    </button>
+                  </div>
+                  {isOpen && (
+                    <div className="flex flex-col gap-8">
+                      <div className="flex justify-between">
+                        <div className="flex flex-col gap-2">
+                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                            Owner/initiator
+                          </h5>
+                          <p className="text-xs text-gray-600">Someone's Name</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                            Owner/initiator
+                          </h5>
+                          <p className="text-xs text-gray-600">Someone's Name</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${isOpen ? "mt-10" : "mt-9"}`}>
+                  <h3 className="text-lg text-teal-600">Documents</h3>
+                  {Documents.map((document, index) => (
+                    <DocumentDetailsCard1 key={index} name={document.name} link={document.filePath} />
+                  ))}
 
-        
-          </div>
-        ) : (
-          <div></div>
-        )}
-      </div>
-      <div className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${isOpen ? "mt-10" : "mt-9"}`}>
-        <h3 className="text-lg text-teal-600  ">Documents</h3>
-         {
-          Documents.map((document)=>{
-            return <DocumentDetailsCard1 name={document.name} link={document.filePath}/>
-
-          })
-         }
-       
-      </div>
-    </div>}
+{Documents2.map((document, index) => (
+                    <DocumentDetailsCard1 key={index} name={document.name} link={document.filePath} />
+                  ))}
+                </div>
+              </div>
+            )}
             {activeTab === 2 && (
               <div className="flex flex-col border p-6">
                 <div className="text-lg text-teal-600 mb-8">Audit Trial</div>
                 <div className="flex flex-col gap-4">
-                  <AuditTrial /> <AuditTrial /> <AuditTrial />
+                  <AuditTrial />
+                  <AuditTrial />
+                  <AuditTrial />
                 </div>
               </div>
             )}
@@ -222,10 +228,10 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
               <div className="flex flex-col border p-6">
                 <div className="text-lg text-teal-600 mb-8">Comments</div>
                 <div className="flex flex-col gap-4">
-                {comments.length > 0 ? (
-                  comments.map((comment, index) => (
-                    <Comm key={index} name={comment.name} time={comment.time} details={comment.details} />
-                  ))
+                  {comments.length > 0 ? (
+                    comments.map((comment, index) => (
+                      <Comm key={index} name={comment.fromUser._id} time={comment.createdAt} details={comment.comment} />
+                    ))
                   ) : (
                     <p>No comments available</p>
                   )}
