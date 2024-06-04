@@ -5,9 +5,9 @@ import SideBar2 from "../components/SideBar2";
 import Comm from "../components/Comm";
 
 import { useState, useEffect, useRef } from "react";
-import WorkflowInformation2 from "../components/WorkflowInformation2";
+
 import downArrow from "/asset/icons/downArrow.svg";
-import upArrow from "/asset/icons/upArrow.svg";
+import upArrow from "../../public/asset/icons/uparrow.svg";
 import DocumentDetailsCard1 from "../components/DocumentDetailsCard1";
 import { workflowDetail } from "../services/api/ownerWorkApi";
 
@@ -54,10 +54,11 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     const underlineRef = useRef<HTMLDivElement>(null);
     const params = Route.useParams();
     const workflowId = params.workflowId;
-    const userId = "6663c62145dd5d333dbdaaf00";
+    
     const [isOpen, setIsOpen] = useState(false);
     const user: any = localStorage.getItem("user");
     const userData = JSON.parse(user);
+    const userId = userData._id;
 
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
