@@ -1,28 +1,38 @@
-import { useState } from 'react'; // Import useState hook
+import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import lock from '../../public/asset/icons/lock.svg';
-import { forgot } from '../services/api/usersApi';
+import axios from 'axios';
+import Logo from '../components/logo';
 
 export const Route = createFileRoute('/forgotpassword')({
   component: () => {
-    const [email, setEmail] = useState(''); // State to hold email input value
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleResetPassword = async (e) => {
-      e.preventDefault(); // Prevent default form submission behavior
+      e.preventDefault();
 
-      // Call forgot function with the email input value
-      const result = await forgot(email);
+      try {
+        const response = await axios.post('http://localhost:5000/api/generateOTP', { email });
 
-      // Handle the result as needed
-      if (!result.isError) {
-        // Reset form or show success message
-      } else {
-        // Handle error
+        if (response.data.msg === "A reset password code is sent to your email!") {
+          setMessage(response.data.msg);
+          
+          setTimeout(() => {
+            window.location.href = '/otp';
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error sending reset password email');
       }
     };
 
     return (
-      //intergrated
+      <div>
+        <Logo/>
+      
+
       <div className='flex item-center justify-center pt-56'>
         <div className='w-[400px] h-[320px] flex items-center justify-center flex-col p-0'>
           <img src={lock} alt='Lock Icon' />
@@ -32,7 +42,6 @@ export const Route = createFileRoute('/forgotpassword')({
             No worries, we’ll send you reset password instructions.
           </p>
           <form className='flex flex-col gap-6 w-full pt-8'>
-            {/* Update input value and onChange handler */}
             <input
               type='email'
               placeholder='Enter Your email'
@@ -40,18 +49,19 @@ export const Route = createFileRoute('/forgotpassword')({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {/* Add onClick event handler */}
             <button
               className='bg-slate-100 text-gray-400 text-xs rounded-md w-full h-10'
-              onClick={handleResetPassword} // Call handleResetPassword function
+              onClick={handleResetPassword}
             >
               Reset Password
             </button>
           </form>
+          <p>{message}</p>
           <a className='text-gray-400 text-xs pt-3' href='/login'>
             Back to Login
           </a>
         </div>
+      </div>
       </div>
     );
   },

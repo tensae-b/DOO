@@ -23,6 +23,7 @@ const UserDashboardLazyImport = createFileRoute('/userDashboard')()
 const SetNewPasswordLazyImport = createFileRoute('/setNewPassword')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
+const OtpLazyImport = createFileRoute('/otp')()
 const NotificationLazyImport = createFileRoute('/notification')()
 const MyDocumentsLazyImport = createFileRoute('/my-documents')()
 const ManageUserLazyImport = createFileRoute('/manage-user')()
@@ -86,6 +87,11 @@ const ProfileLazyRoute = ProfileLazyImport.update({
   path: '/profile',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
+
+const OtpLazyRoute = OtpLazyImport.update({
+  path: '/otp',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/otp.lazy').then((d) => d.Route))
 
 const NotificationLazyRoute = NotificationLazyImport.update({
   path: '/notification',
@@ -313,6 +319,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationLazyImport
       parentRoute: typeof rootRoute
     }
+    '/otp': {
+      preLoaderRoute: typeof OtpLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/profile': {
       preLoaderRoute: typeof ProfileLazyImport
       parentRoute: typeof rootRoute
@@ -379,6 +389,7 @@ export const routeTree = rootRoute.addChildren([
   ManageUserLazyRoute,
   MyDocumentsLazyRoute,
   NotificationLazyRoute,
+  OtpLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
   SetNewPasswordLazyRoute,

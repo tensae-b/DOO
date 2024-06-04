@@ -63,7 +63,7 @@ const adminEnd = () => {
         <div> </div>
       </div>
        
-      <div className="w-[650px] left-[20.75rem] rounded-lg border border-gray-200 p-6 ">
+      <div className="w-[400px] left-[20.75rem] rounded-lg border border-gray-200 p-6 ">
           <div>Recent Notification</div>
 
           <div className="m-12 flex flex-col gap-6">
