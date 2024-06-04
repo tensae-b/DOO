@@ -182,14 +182,16 @@ function LoanDocument() {
                 </h2>
                 <div className="flex gap-4">
                   <button
-                    className={` text-base px-6 py-2  text-[#9EA9C1] border border-[#9EA9C1] border-dotted rounded-lg`}
-                  >
-                    Save as Draft
-                  </button>
-                  <button
                     className={` text-base px-6 py-2 border border-[#DC251C] border-dotted text-[#DC251C] font-semibold rounded-lg`}
+                    onClick={() => {
+                      toast.error("Intitation Cancelled");
+                      clearStepData();
+                      setTimeout(function () {
+                        navigate({ to: "/document" });
+                      }, 2000);
+                    }}
                   >
-                    Cancel {stepFormData.LoanType}
+                    Cancel
                   </button>
                 </div>
               </div>
