@@ -8,25 +8,26 @@ export default ({
   register,
   departmentData,
   committeeData,
+  role
 }: any) => {
-  const [role, setRoles] = useState([]);
-  function getRoles(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/roles/dep/${value}`,
-      headers: {},
-    };
+  // const [role, setRoles] = useState([]);
+  // function getRoles(value: any) {
+  //   var config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: `http://localhost:5000/admin/roles/dep/${value}`,
+  //     headers: {},
+  //   };
 
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setRoles(response.data);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
-  }
+  //   axios(config)
+  //     .then(function (response: { data: any }) {
+  //       console.log(response.data);
+  //       setRoles(response.data);
+  //     })
+  //     .catch(function (error: any) {
+  //       console.log(error);
+  //     });
+  // }
   const { fields, remove, append } = useFieldArray({
     control,
     name: `workflowtemp.${conditionIndex}.conditionvariants`,
@@ -131,7 +132,7 @@ export default ({
                 </select>
               </div>
 
-              <div className="w-full flex flex-col gap-2">
+              {/* <div className="w-full flex flex-col gap-2">
                 <label className="text-sm w-full">permission Type</label>
                 <select
                   {...register(
@@ -141,11 +142,11 @@ export default ({
                 >
                   <option value="reviewer">Select permission type</option>
                 </select>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="w-full flex flex-col gap-2">
-              <div className="w-full flex flex-col gap-2">
+              {/* <div className="w-full flex flex-col gap-2">
                 <label className="text-sm w-full">Select Department*</label>
                 <select
                   {...register(
@@ -165,7 +166,7 @@ export default ({
                     />
                   ))}
                 </select>
-              </div>
+              </div> */}
               <div className="w-full flex gap-6">
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm w-full">Select Role**</label>
@@ -176,7 +177,7 @@ export default ({
                     className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                   >
                     <option>Select Role</option>
-                    {role.map((option: any, index) => (
+                    {role.map((option: any, index:any) => (
                       <option
                         key={index}
                         label={option.roleName}
@@ -185,7 +186,7 @@ export default ({
                     ))}
                   </select>
                 </div>
-                <div className="w-full flex flex-col gap-2">
+                {/* <div className="w-full flex flex-col gap-2">
                   <label className="text-sm w-full">Permission Type*</label>
                   <select
                     {...register(
@@ -195,7 +196,7 @@ export default ({
                   >
                     <option>Permission Type</option>
                   </select>
-                </div>
+                </div> */}
               </div>
             </div>
           )}

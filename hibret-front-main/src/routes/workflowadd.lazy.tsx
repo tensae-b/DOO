@@ -288,7 +288,7 @@ function WorkFlowAddTemp() {
                         <select
                             
                             className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.department", {
+                            {...register("workflowtemp.depId", {
                               required: true,
                             })}
                             onChange={(e: { target: { value: any } }) =>
@@ -455,7 +455,7 @@ function WorkFlowAddTemp() {
                               ))} */}
 
                           {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
-                          {/* {chosenDocuments.map((item, index) => (
+                           {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
                               <p className="text-[#667085] text-sm">
@@ -473,7 +473,7 @@ function WorkFlowAddTemp() {
                                 />
                               </div>
                             </div>
-                          ))} */}
+                          ))} 
                           {/* </SortableContext>
                           </DndContext> */}
                         </div>
@@ -566,6 +566,7 @@ function WorkFlowAddTemp() {
                                 {...{ control, register }}
                                 departmentData={department}
                                 committeeData={committee}
+                                role={role}
                               />
                             )}
                             {!stageCondition[index] && (
@@ -642,7 +643,7 @@ function WorkFlowAddTemp() {
                                       </select>
                                     </div>
 
-                                    <div className="w-full flex flex-col gap-2">
+                                    {/* <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
                                         permission Type
                                       </label>
@@ -659,7 +660,7 @@ function WorkFlowAddTemp() {
                                           reviewer
                                         </option>
                                       </select>
-                                    </div>
+                                    </div> */}
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
@@ -711,14 +712,14 @@ function WorkFlowAddTemp() {
                                           ))}
                                         </select>
                                       </div>
-                                      <div className="w-full flex flex-col gap-2">
+                                      {/* <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
                                           Permission Type*
                                         </label>
                                         <select
                                           {...register(
                                             `workflowtemp.stages.${index}.single_permissions.permission`
-                                          )}
+                         S                 )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
                                            <option>
@@ -729,7 +730,7 @@ function WorkFlowAddTemp() {
                                         </option>
                                       
                                         </select>
-                                      </div>
+                                      </div> */}
                                     </div>
                                   </div>
                                 )}
