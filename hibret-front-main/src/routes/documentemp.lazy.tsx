@@ -118,11 +118,7 @@ function DocumentTemp() {
               </a>
             </div>
           </div>
-          {showAddTemplate && (
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <DocumentAddTemp onClose={closeAddTemplate} />
-            </React.Suspense>
-          )}
+         
           <div
             className={`h-full w-full mt  ${
               showAddTemplate ? "opacity-20" : "opacity-100"

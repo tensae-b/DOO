@@ -20,11 +20,13 @@ const SideBar2 = () => {
   return (
 
 
+
     
     <div className="flex flex-col w-64 mx-6 mt-11 h-full fixed left-0 top-0 ">
       <div className="flex flex-col gap-12 m-0 ">
         <img src="/asset/icons/hibret2.svg" className='h-16 justify-start' />
         <hr className="border border-[#EFEFF4]" />
+
       </div>
 
       <div className="flex flex-col mt-6 gap-5">

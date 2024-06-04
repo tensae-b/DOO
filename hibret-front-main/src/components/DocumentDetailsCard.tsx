@@ -1,57 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { Link } from "@tanstack/react-router";
-import download from '/asset/icons/download.svg';
 import pdf from '/asset/icons/pdf.svg';
 import visible from '/asset/icons/visible.svg';
-import { fetchdoc } from '../services/api/documentApi';
+import downloadIcon from '/asset/icons/download.svg';
 
-const DocumentDetailsCard = ({ docId }) => {
+const DocumentDetailsCard = ({ doc }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [document, setDocument] = useState(null);
-
-  useEffect(() => {
-    const fetchDocumentDetails = async () => {
-      const { data, isError } = await axios.get('http://localhost:5000/initiate/reqDoc/workflows/664a7c9a94faa8411ca2b0ef')
-      if (!isError) {
-        // setDocument(data);
-      } else {
-        console.error("Error fetching document details");
-      }
-    };
-
-    fetchDocumentDetails();
-  }, []);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
-  if (!document) {
+  const handleDownload = async () => {
+    if (!doc || !doc.filePath || doc.filePath.length === 0) {
+      console.error('Invalid document or file path');
+      return;
+    }
+
+    try {
+      const response = await fetch(doc.filePath[0]);
+      const blob = await response.blob();
+      const filename = `${doc.name}.pdf`;
+      if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+      } else {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const anchor = window.document.createElement('a');
+        anchor.download = filename;
+        anchor.href = blobUrl;
+        anchor.click();
+        window.URL.revokeObjectURL(blobUrl);
+      }
+    } catch (error) {
+      console.error('Error downloading document:', error);
+    }
+  };
+
+  if (!doc) {
     return <div>Loading...</div>;
   }
 
+  // Check if doc.filePath exists and has at least one element
+  const hasFilePath = doc.filePath && doc.filePath.length > 0;
+
   return (
-    //integration in progress
     <div className="flex justify-between items-center p-4 border rounded shadow">
       <div className="flex gap-6 items-center">
         <img src={pdf} alt="PDF Icon" className="w-8 h-8" />
-        <h5 className="text-teal-600">document</h5>
+        <h5 className="text-teal-600">{doc.name}</h5>
       </div>
       <div className="flex gap-6 items-center">
-        {isVisible && (
+        {isVisible && hasFilePath && (
           <div className="relative" style={{ width: '200px', height: '200px' }}>
             <iframe
-              src={}
+              src={doc.filePath[0]}
               style={{ width: '100%', height: '100%' }}
               frameBorder="0"
             ></iframe>
           </div>
         )}
-        <Link to="/fulldocument">
-          <img src={visible} style={{ cursor: 'pointer' }} alt="Visibility Icon" onClick={toggleVisibility} />
-        </Link>
-        <img src={download} alt="Download Icon" />
+        {hasFilePath && (
+          <Link to={`/fulldocument/${encodeURIComponent(doc.filePath[0])}`}>
+            <img src={visible} style={{ cursor: 'pointer' }} alt="Visibility Icon" onClick={toggleVisibility} />
+          </Link>
+        )}
+        {hasFilePath && (
+          <img src={downloadIcon} alt="Download Icon" style={{ cursor: 'pointer' }} onClick={handleDownload} />
+        )}
       </div>
     </div>
   );

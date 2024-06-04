@@ -22,7 +22,7 @@ const SideBar = () => {
                 className=" max-w-4"
                 src="/asset/icons/user-management.svg"
               />
-              <Link to="/manage-user" className=" text-sm text-[#667085] [&.active]:font-bold">User Management</Link>
+              <Link to="/invite-user" className=" text-sm text-[#667085] [&.active]:font-bold">User Management</Link>
               
             </div>
             <div className="flex gap-2 ">

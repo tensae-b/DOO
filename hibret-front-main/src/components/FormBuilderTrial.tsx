@@ -8,10 +8,13 @@ import {
   ReactElement,
   ReactNode,
   ReactPortal,
+  useState,
 } from "react";
-import { useFormContext } from "react-hook-form";
+import { set, useFormContext } from "react-hook-form";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useEffect } from "react";
+import { collapseClasses } from "@mui/material";
+import { useFormikContext } from "formik";
 
 export const FormBuilderTrial = ({
   title,
@@ -78,7 +81,9 @@ any) => {
       ],
     ],
   };
-
+  const [viewOptions, setViewOptions] = useState(false);
+  const formik = useFormikContext();
+  const [optionCount, setOptionCount] = useState([1]);
   var formats = [
     "header",
     "height",
@@ -96,43 +101,6 @@ any) => {
     "align",
     "size",
   ];
-  //   const {
-  //     register,
-  //     setError,
-  //     setValue,
-  //     clearErrors,
-  //     watch,
-  //     formState: { errors },
-  //   } = useFormContext();
-
-  //   useEffect(() => {
-  //     register(`section.${parentIndex}.content[${index}].value`, {
-  //       required: true,
-  //     });
-  //   }, [type]);
-
-  //   const editorContent = watch(`section.${parentIndex}.content[${index}].value`);
-  //   const errorClassNames = ["input-error", "textarea-error"];
-
-  //   const validateDocumentImage = (title: string | readonly string[] | undefined, file: File) => {
-  //     // validate the size
-  //     if (file.type === "application/pdf") {
-  //       setValue(title, file);
-  //       clearErrors(title);
-  //     }
-  //     if (file.type != "application/pdf") {
-  //       setError(title, {
-  //         type: "filetype",
-  //         message: "Only PDFs are valid.",
-  //       });
-
-  //       return;
-  //     }
-  //   };
-
-  //   const onEditorStateChange = (title: string, editorState: string) => {
-  //     setValue(title, editorState);
-  //   };
 
   const handleInput = () => {
     if (type === "select") {
@@ -143,12 +111,63 @@ any) => {
             name={`documentvalue.sections[0].content.${index}.${title}`}
             required
             className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+            onChange={(e) => {
+              if (e.target.value == "select") {
+                setViewOptions(true);
+                formik.setFieldValue(
+                  `documentvalue.sections[0].content.${index}.type`,
+                  "select"
+                );
+              } else {
+                setViewOptions(false);
+                formik.setFieldValue(
+                  `documentvalue.sections[0].content.${index}.type`,
+                  e.target.value
+                );
+              }
+            }}
           >
             <option label="Select" value="" />
             {options?.map((option: any) => (
               <option key={option} label={option} value={option} />
             ))}
           </Field>
+          {viewOptions && (
+            <div className="my-4 flex flex-col gap-4">
+              {optionCount.map((item, id) => (
+                <div className="flex gap-2">
+                  <Field
+                    type="text"
+                    placeholder="options"
+                    className="border rounded-md p-2"
+                    name={`documentvalue.sections[0].content.${index}.options.${id}`}
+                  />
+                  <div
+                    onClick={() => {
+                      formik.setFieldValue(
+                        `documentvalue.sections[0].content[${index}].options`,
+                        (prevOptions) =>
+                          prevOptions.filter((option) => option.id !== id)
+                      );
+                    }}
+                  >
+                    {" "}
+                    X{" "}
+                  </div>
+                </div>
+              ))}
+
+              <div
+                className="bg-[#00B0AD] text-white text-base p-2 rounded-lg"
+                onClick={() => {
+                  setOptionCount((prevArray) => [...prevArray, 2]);
+                  console.log(optionCount);
+                }}
+              >
+                add options
+              </div>
+            </div>
+          )}
         </>
       );
     } else if (type === "text") {
@@ -249,14 +268,10 @@ any) => {
       );
     } else if (type == "checkbox") {
       return (
-        <label>
-          <Field
-            type="checkbox"
-            name={`documentvalue.sections[0].content.${index}.${title}`}
-            label="condition"
-          />
-          condition
-        </label>
+        <Field
+          type="checkbox"
+          name={`documentvalue.sections[0].content.${index}.${title}`}
+        />
       );
     }
     //     else {

@@ -13,6 +13,7 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
+import { fetchCatag, fetchDepartment, fetchRequiredDocument, fetchRole, fetchSubCatag, fetchtCommittee } from "../services/api/fetchDataApi";
 
 
 export const Route = createFileRoute("/workflowadd")({
@@ -21,135 +22,107 @@ export const Route = createFileRoute("/workflowadd")({
 
 function WorkFlowAddTemp() {
   useEffect(() => {
-    getCategory();
-    getDepartments();
+    
+    getDepartment();
     getCommittees();
   }, []);
+
 
   const [category, setCategory] = useState([]);
   const [department, setDepartment] = useState([]);
   const [committee, setCommittee] = useState([]);
   const [role, setRoles] = useState([]);
+  const [depId, setDepId] = useState('')
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   const navigate = useNavigate();
 
-  function getDepartments() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/deps",
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        setDepartment(response.data);
-         console.log(response.data,'dep')
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+  useEffect(() => {
+      console.log(depId)
+    getCategory();
+    getRoles();
+  }, [depId]);
+  
+  function getDepartment(){
+    fetchDepartment().then(result => {
+      if(!result.isError){
+        setDepartment(result.data)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+ 
   }
+
+
   function getCommittees() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/committee",
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data, "getCommittes");
-        setCommittee(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    fetchtCommittee().then(result => {
+      if(!result.isError){
+    
+        setCommittee(result.data);
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+    
   }
-  function getRoles(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/roles/dep/${value}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setRoles(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+  function getRoles() {
+    fetchRole(depId).then(result => {
+      if(!result.isError){
+        console.log(result.data)
+        setRoles(result.data);
+      }else{
+       console.log(result.data)
+      }
+      
+     })
+    
   }
 
   function getSubCategory(value: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/subCategory/cat/${value}`,
+    fetchSubCatag(value).then(result => {
+     if(!result.isError){
+      setSubCategory(result.data);
+     }else{
+      toast.error("error fetching");
+     }
+     
+    })
 
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: { data: any }) {
-        console.log(response.data);
-        setSubCategory(response.data);
-        console.log(subCategory);
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+   
+  
   }
 
   function setRequiredDocument(title: any, value: any) {
     setValue(title, value);
   }
   function requriedDocument(subCategoryId: any) {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/documentTemplate/sub/${subCategoryId}`,
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response: any) {
-        setRequiredDocuments(response.data.templates);
-        console.log(response.data.templates, "documenttemplate");
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      });
+    fetchRequiredDocument(subCategoryId).then(result => {
+      if(!result.isError){
+        console.log(result.data.templates)
+        setRequiredDocuments(result.data.templates)
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+ 
   }
+  
 
   function getCategory() {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/category",
-      headers: {},
-    };
-    axios(config)
-      .then(async function (response) {
-        console.log(response.data);
-        setCategory(response.data);
-
-        // console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        return error;
-        // console.log(error);
-      });
+    fetchCatag(depId).then(result => {
+      if(!result.isError){
+       setCategory(result.data);
+      }else{
+        console.log(result)
+       
+      }
+    })
+    
   }
   const handleDeleteDocument = (title: any) => {
     setChosenDocument((prevDocuments) =>
@@ -275,7 +248,7 @@ function WorkFlowAddTemp() {
               </div>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-5 w-[75%]"
+                className="flex flex-col gap-5 w-full"
               >
                 <div className="flex mt-10 gap-5">
                   <div className="mb-6 rounded-lg overflow-hidden flex flex-col gap-10 w-full">
@@ -304,6 +277,34 @@ function WorkFlowAddTemp() {
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                           required
                         />
+                      </div>
+                      <div className="mt-4">
+                        <label
+                          htmlFor="workflow.department"
+                          className="text-sm w-full"
+                        >
+                          Choose department*
+                        </label>
+                        <select
+                            
+                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                            {...register("workflowtemp.department", {
+                              required: true,
+                            })}
+                            onChange={(e: { target: { value: any } }) =>
+                              setDepId(e.target.value)
+                            }
+                            required
+                          >
+                            <option label="Select" value="" />
+                            {department?.map((option: any, index) => (
+                              <option
+                                key={option}
+                                label={option.name}
+                                value={option._id}
+                              />
+                            ))}
+                          </select>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
@@ -662,7 +663,7 @@ function WorkFlowAddTemp() {
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
-                                    <div className="w-full flex flex-col gap-2">
+                                    {/* <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
                                         Select Department*
                                       </label>
@@ -688,7 +689,7 @@ function WorkFlowAddTemp() {
                                           )
                                         )}
                                       </select>
-                                    </div>
+                                    </div> */}
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">

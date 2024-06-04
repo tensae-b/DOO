@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 const user: any=  localStorage.getItem('user');
 const userData = JSON.parse(user);
 const NavBar2 = () => {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.username) {
+      setUsername(user.username);
+    }
+  }, []);
+
   return (
     <div className="search-bar flex justify-between mt-4 p-3 fixed top-0 left-80 right-0 bg-white">
       <div className="flex border border-[#667085] px-3 py-2 rounded-lg w-72 h-8 justify-between">
@@ -25,5 +34,4 @@ const NavBar2 = () => {
     </div>
   )
 }
-
 export default NavBar2
