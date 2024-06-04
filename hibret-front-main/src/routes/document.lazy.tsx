@@ -9,27 +9,24 @@ export const Route = createLazyFileRoute("/document")({
 
 import axios from "axios";
 import SideBar2 from "../components/SideBar2";
+import toast from "react-hot-toast";
+import { fetchWorkflowName } from "../services/api/workflowApi";
 
 function Document() {
   const data = [];
   const [showPopUp, setShowPopUp] = useState(false);
   const [workflow, setWorkflow] = useState([]);
   useEffect(() => {
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/workflow-templates",
-      headers: {},
-    };
-
-    axios(config)
-      .then(function (response) {
-        setWorkflow(response.data);
-        console.log(response.data, 'workflow');
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    fetchWorkflowName().then(result => {
+      if(!result.isError){
+        console.log(result.data)
+        setWorkflow(result.data);
+      }else{
+       toast.error("error fetching");
+      }
+      
+     })
+   
   }, []);
 
   const [selectedWorkflow, setSelectedWorkflow] = useState("");
@@ -50,7 +47,7 @@ function Document() {
   }
 
   function getDocument() {
-    console.log("hell0");
+    
     var config = {
       method: "get",
       maxBodyLength: Infinity,
