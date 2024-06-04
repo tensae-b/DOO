@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from '@tanstack/react-router';
 import filter from '/asset/icons/filter.svg';
-import emptyStateImage from '../../public/asset/nodocument.svg';
+
 import { ownerWork } from '../services/api/ownerWorkApi';
 
 import UserName from '../components/UserName';
@@ -81,8 +81,9 @@ export const Route = createLazyFileRoute('/assignedbyme')({
 
     return (
       <div>
-        <UserName/>
+        
         <SideBar2 />
+        <UserName/>
         <div className="mt-24 ml-80 mr-8">
           <div className="flex gap-4 mb-9 ml-4 text-sm">
             <p
@@ -114,7 +115,7 @@ export const Route = createLazyFileRoute('/assignedbyme')({
 
           {filteredRows.length === 0 ? (
             <div className="mt-9 w-full h-96 flex flex-col items-center justify-center">
-              <img src={emptyStateImage} alt="No Workflow Available" className="w-48 h-48" />
+              <img src='/asset/nodocument.svg' alt="No Workflow Available" className="w-48 h-48" />
               <p className="mt-4 text-gray-500">There is no workflow available</p>
             </div>
           ) : (
