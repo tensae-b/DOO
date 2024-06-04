@@ -28,18 +28,24 @@ const OTPInput: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(otp)
     try {
-      const response = await axios.post("http://localhost:5000/api/verifyOTP", {
-        code: otp,
-      });
+      // First, create the reset session
+    
+     const code= otp
+        // Proceed with OTP verification
+        const response = await axios.post("http://localhost:5000/api/verifyOTP", {
+          code
+        });
 
-      if (response.data.msg === "Verify Successfully!") { 
-        setMessage(response.data.msg); 
-        // Redirect to next page
-        history.push("/setnewpassword");
+        if (response.data.msg === "Verify Successfully!") { 
+          setMessage(response.data.msg); 
+          // Redirect to next page
+          history.push("/setnewpassword");
+       
+          setMessage(response.data.msg); 
+        
       } else {
-        setMessage(response.data.msg); 
+        setMessage("Session expired! Please resend OTP.");
       }
     } catch (error) {
       console.error("Error:", error);

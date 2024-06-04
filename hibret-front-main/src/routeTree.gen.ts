@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as FolderHierarchyRouteImport } from './routes/FolderHierarchyRoute'
 import { Route as LoanDocumentWorkflowIdStepIdImport } from './routes/LoanDocument.$workflowId.$stepId'
 
 // Create Virtual Routes
@@ -41,6 +42,7 @@ const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
 const AssignedbymeLazyImport = createFileRoute('/assignedbyme')()
 const AdminreportLazyImport = createFileRoute('/adminreport')()
 const AdminDashboardLazyImport = createFileRoute('/adminDashboard')()
+const AddPermissionLazyImport = createFileRoute('/addPermission')()
 const AddCatagoryLazyImport = createFileRoute('/addCatagory')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -186,6 +188,11 @@ const AdminDashboardLazyRoute = AdminDashboardLazyImport.update({
   import('./routes/adminDashboard.lazy').then((d) => d.Route),
 )
 
+const AddPermissionLazyRoute = AddPermissionLazyImport.update({
+  path: '/addPermission',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/addPermission.lazy').then((d) => d.Route))
+
 const AddCatagoryLazyRoute = AddCatagoryLazyImport.update({
   path: '/addCatagory',
   getParentRoute: () => rootRoute,
@@ -195,6 +202,11 @@ const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+
+const FolderHierarchyRouteRoute = FolderHierarchyRouteImport.update({
+  path: '/FolderHierarchyRoute',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -243,12 +255,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/FolderHierarchyRoute': {
+      preLoaderRoute: typeof FolderHierarchyRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
     '/addCatagory': {
       preLoaderRoute: typeof AddCatagoryLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/addPermission': {
+      preLoaderRoute: typeof AddPermissionLazyImport
       parentRoute: typeof rootRoute
     }
     '/adminDashboard': {
@@ -370,8 +390,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  FolderHierarchyRouteRoute,
   AboutLazyRoute,
   AddCatagoryLazyRoute,
+  AddPermissionLazyRoute,
   AdminDashboardLazyRoute,
   AdminreportLazyRoute,
   AssignedbymeLazyRoute,

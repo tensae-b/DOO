@@ -1,14 +1,14 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute } from "@tanstack/react-router";
 import backArrow from "/asset/icons/back-arrow.svg";
 import UserName from "../components/UserName";
 import SideBar2 from "../components/SideBar2";
 import Comm from "../components/Comm";
-import AuditTrial from "../components/AuditTrial";
+
 import { useState, useEffect, useRef } from "react";
 import WorkflowInformation2 from "../components/WorkflowInformation2";
 import downArrow from "/asset/icons/downArrow.svg";
 import upArrow from "/asset/icons/upArrow.svg";
-import DocumentDetailsCard1 from '../components/DocumentDetailsCard1';
+import DocumentDetailsCard1 from "../components/DocumentDetailsCard1";
 import { workflowDetail } from "../services/api/ownerWorkApi";
 
 interface Document {
@@ -19,6 +19,7 @@ interface Document {
 interface Workflow {
   _id: string;
   status: string;
+  name: string;
   currentStageIndex: number;
   requiredDocuments: Document[];
   additionalDocuments: Document[];
@@ -55,25 +56,28 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     const workflowId = params.workflowId;
     const userId = "6663c62145dd5d333dbdaaf00";
     const [isOpen, setIsOpen] = useState(false);
+    const user: any = localStorage.getItem("user");
+    const userData = JSON.parse(user);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const [workflowDetailData, setWorkflowDetailData] = useState<WorkflowDetailData>({
-      workflow: {
-        _id: "",
-        status: "",
-        currentStageIndex: 0,
-        requiredDocuments: [],
-        additionalDocuments: [],
-        comments: []
-      },
-      buttons: {
-        canMoveForward: false,
-        canMoveBackward: false,
-        isOwner: false,
-        canApprove: false
-      }
-    });
+    const [workflowDetailData, setWorkflowDetailData] =
+      useState<WorkflowDetailData>({
+        workflow: {
+          _id: "",
+          status: "",
+          currentStageIndex: 0,
+          requiredDocuments: [],
+          additionalDocuments: [],
+          comments: [],
+        },
+        buttons: {
+          canMoveForward: false,
+          canMoveBackward: false,
+          isOwner: false,
+          canApprove: false,
+        },
+      });
 
     useEffect(() => {
       const fetchData = async () => {
@@ -113,12 +117,12 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     }
 
     const comments = workflowDetailData.workflow.comments;
-   
+
     const Documents = workflowDetailData.workflow.requiredDocuments;
     const Documents2 = workflowDetailData.workflow.additionalDocuments;
-    console.log(Document)
+    const detail = workflowDetailData.workflow;
 
-   
+    console.log(detail);
 
     return (
       <div>
@@ -131,10 +135,9 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                 <img src={backArrow} alt="Back" />
               </a>
               <h1 className="text-teal-600 font-semibold text-2xl">
-                Workflow Name
+                {detail.name}
               </h1>
             </div>
-            <p className="text-gray-600 text-sm pl-12">Some Helper Text here</p>
           </div>
           <div className="flex relative mt-9">
             <div
@@ -146,15 +149,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
             >
               Details
             </div>
-            <div
-              id="tab-2"
-              className={`cursor-pointer py-2 px-4 ${
-                activeTab === 2 ? "text-purple-900" : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab(2)}
-            >
-              Audit Trial
-            </div>
+
             <div
               id="tab-3"
               className={`cursor-pointer py-2 px-4 ${
@@ -173,7 +168,11 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
           <div className="flex flex-col gap-9 w-6/12 mt-7">
             {activeTab === 1 && (
               <div className="flex flex-col pb-9">
-                <div className={`${isOpen ? "" : "h-12"} flex flex-col w-full gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}>
+                <div
+                  className={`${
+                    isOpen ? "" : "h-12"
+                  } flex flex-col w-full gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}
+                >
                   <div className="flex flex-row justify-between">
                     <h3 className="text-teal-600">Workflow information</h3>
                     <button onClick={() => setIsOpen((prev) => !prev)}>
@@ -190,47 +189,77 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                           <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
                             Owner/initiator
                           </h5>
-                          <p className="text-xs text-gray-600">Someone's Name</p>
+                          <p className="text-xs text-gray-600">
+                            {userData.username}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-2">
                           <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Owner/initiator
+                            Status
                           </h5>
-                          <p className="text-xs text-gray-600">Someone's Name</p>
+                          <p className="text-xs text-gray-600">
+                            {detail.status}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="flex flex-col gap-2">
+                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                            Current Stage
+                          </h5>
+                          <p className="text-xs text-gray-600">
+                            {detail.currentStageIndex + 1}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                            Status
+                          </h5>
+                          <p className="text-xs text-gray-600">
+                            {detail.status}
+                          </p>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
-                <div className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${isOpen ? "mt-10" : "mt-9"}`}>
+                <div
+                  className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${
+                    isOpen ? "mt-10" : "mt-9"
+                  }`}
+                >
                   <h3 className="text-lg text-teal-600">Documents</h3>
                   {Documents.map((document, index) => (
-                    <DocumentDetailsCard1 key={index} name={document.name} link={document.filePath} />
+                    <DocumentDetailsCard1
+                      key={index}
+                      name={document.name}
+                      link={document.filePath}
+                    />
                   ))}
 
-{Documents2.map((document, index) => (
-                    <DocumentDetailsCard1 key={index} name={document.name} link={document.filePath} />
+                  {Documents2.map((document, index) => (
+                    <DocumentDetailsCard1
+                      key={index}
+                      name={document.name}
+                      link={document.filePath}
+                    />
                   ))}
                 </div>
               </div>
             )}
-            {activeTab === 2 && (
-              <div className="flex flex-col border p-6">
-                <div className="text-lg text-teal-600 mb-8">Audit Trial</div>
-                <div className="flex flex-col gap-4">
-                  <AuditTrial />
-                  <AuditTrial />
-                  <AuditTrial />
-                </div>
-              </div>
-            )}
+
             {activeTab === 3 && (
               <div className="flex flex-col border p-6">
                 <div className="text-lg text-teal-600 mb-8">Comments</div>
                 <div className="flex flex-col gap-4">
                   {comments.length > 0 ? (
                     comments.map((comment, index) => (
-                      <Comm key={index} name={comment.fromUser._id} time={comment.createdAt} details={comment.comment} />
+                      <Comm
+                        key={index}
+                        name={comment.fromUser._id}
+                        time={comment.createdAt}
+                        details={comment.comment}
+                      />
                     ))
                   ) : (
                     <p>No comments available</p>
