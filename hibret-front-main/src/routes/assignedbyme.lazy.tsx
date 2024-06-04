@@ -11,7 +11,10 @@ import SideBar2 from '../components/SideBar2';
 
 export const Route = createLazyFileRoute('/assignedbyme')({
   component: () => {
-    const userId = '663c62145dd5d333dbdaaf00';
+     const user: any = localStorage.getItem("user");
+    const userData = JSON.parse(user);
+    
+    const userId = userData._id;
     const [workflowData, setWorkflowData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
@@ -78,7 +81,7 @@ export const Route = createLazyFileRoute('/assignedbyme')({
 
     return (
       <div>
-        
+        <UserName/>
         <SideBar2 />
         <div className="mt-24 ml-80 mr-8">
           <div className="flex gap-4 mb-9 ml-4 text-sm">
