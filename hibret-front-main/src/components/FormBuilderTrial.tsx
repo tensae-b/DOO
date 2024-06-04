@@ -259,7 +259,7 @@ any) => {
                     required
                     value={option}
                   />
-                  {option == "true" ? "required" : "optional"}
+                  {option == "true" ? "true" : "false"}
                 </label>
               )
             )}

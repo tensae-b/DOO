@@ -106,12 +106,13 @@ function LoanDocument() {
 
     // }));
     console.log(stepFormData, "stepformdata");
+    
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
         userId: userId._id,
         reqDoc: stepFormData,
-        addDoc: data.addDoc,
+        addDoc: data.addDoc|| [],
       };
 
       var config = {
