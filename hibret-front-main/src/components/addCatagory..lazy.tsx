@@ -7,7 +7,7 @@ import { createcatag } from "../services/api/catagoryApi";
 import { createsubcatag } from "../services/api/subcatagApi";
 import axios from "axios";
 import { fetchDepartment } from "../services/api/fetchDataApi";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/addCatagory")({
   component: () => <CatagAdd />,
