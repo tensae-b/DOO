@@ -10,6 +10,7 @@ import downArrow from "/asset/icons/downArrow.svg";
 import upArrow from "../../public/asset/icons/uparrow.svg";
 import DocumentDetailsCard1 from "../components/DocumentDetailsCard1";
 import { workflowDetail } from "../services/api/ownerWorkApi";
+import Actions from "../components/Actions";
 
 interface Document {
   name: string;
@@ -127,11 +128,14 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
 
     return (
       <div>
-        <UserName />
-        <SideBar2 />
-        <div className="mt-24 ml-80 mr-8 w-full h-full">
-          <div>
-            <div className="flex flex-row gap-6 font-bold items-center">
+      <UserName />
+      <SideBar2 />
+      <div className="mt-24 ml-80 mr-8 w-full h-full">
+        
+        <div className="flex gap-9">
+          <div className="w-6/12">
+        <div className="">
+        <div className="flex flex-row gap-6 font-bold items-center">
               <a href="/assignedbyme" className="items-center">
                 <img src={backArrow} alt="Back" />
               </a>
@@ -166,7 +170,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
               style={{ width: 0, left: 0 }}
             />
           </div>
-          <div className="flex flex-col gap-9 w-6/12 mt-7">
+          <div className="flex flex-col gap-9 w-full mt-7">
             {activeTab === 1 && (
               <div className="flex flex-col pb-9">
                 <div
@@ -191,8 +195,8 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                             Owner/initiator
                           </h5>
                           <p className="text-xs text-gray-600">
-                            {userData.username}
-                          </p>
+                           {userData.username}
+                           </p>
                         </div>
                         <div className="flex flex-col gap-2">
                           <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
@@ -212,14 +216,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                             {detail.currentStageIndex + 1}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-2">
-                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Status
-                          </h5>
-                          <p className="text-xs text-gray-600">
-                            {detail.status}
-                          </p>
-                        </div>
+                       
                       </div>
                     </div>
                   )}
@@ -235,8 +232,11 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                       key={index}
                       name={document.name}
                       link={document.filePath}
-                    />
-                  ))}
+                        />
+
+                        
+                  
+                     )) }
 
                   {Documents2.map((document, index) => (
                     <DocumentDetailsCard1
@@ -268,6 +268,13 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                 </div>
               </div>
             )}
+            </div>
+            </div>
+            <div className="mt-24">
+
+            <Actions/> 
+            </div>
+        
           </div>
         </div>
       </div>

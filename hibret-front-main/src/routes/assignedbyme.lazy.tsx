@@ -1,80 +1,78 @@
-import { createLazyFileRoute } from '@tanstack/react-router';
-import React, { useState, useEffect } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Link } from '@tanstack/react-router';
-import filter from '/asset/icons/filter.svg';
+import { createLazyFileRoute } from "@tanstack/react-router";
+import React, { useState, useEffect } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { Link } from "@tanstack/react-router";
 
-import { ownerWork } from '../services/api/ownerWorkApi';
+import { ownerWork } from "../services/api/ownerWorkApi";
 
-import UserName from '../components/UserName';
-import SideBar2 from '../components/SideBar2';
-import { fetchWorkflowName, getRequiredDocument } from '../services/api/workflowApi';
-import toast from 'react-hot-toast';
-import axios from 'axios';
+import UserName from "../components/UserName";
+import SideBar2 from "../components/SideBar2";
+import {
+  fetchWorkflowName,
+  getRequiredDocument,
+} from "../services/api/workflowApi";
+import toast from "react-hot-toast";
+import axios from "axios";
 
-
-export const Route = createLazyFileRoute('/assignedbyme')({
+export const Route = createLazyFileRoute("/assignedbyme")({
   component: () => {
-     const user: any = localStorage.getItem("user");
+    const user: any = localStorage.getItem("user");
     const userData = JSON.parse(user);
-    
-    const userId = userData._id;
+
+    const userId = "663c62145dd5d333dbdaaf00";
     const [workflowData, setWorkflowData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const [selectedTab, setSelectedTab] = useState('All'); // State to manage selected tab
+    const [selectedTab, setSelectedTab] = useState("All"); // State to manage selected tab
     const [showPopUp, setShowPopUp] = useState(false);
     const [workflow, setWorkflow] = useState([]);
     const [selectedWorkflow, setSelectedWorkflow] = useState("");
-    
+
     let opacity;
 
-  showPopUp ? (opacity = "opacity-30") : (opacity = "opacity-100");
+    showPopUp ? (opacity = "opacity-30") : (opacity = "opacity-100");
 
-  function openPopUp() {
-    setShowPopUp(true);
-  }
-  function closePopUp() {
-    setShowPopUp(false);
-  }
+    function openPopUp() {
+      setShowPopUp(true);
+    }
+    function closePopUp() {
+      setShowPopUp(false);
+    }
 
-  function handleChange(e: any) {
-    console.log(e.target.value);
-    setSelectedWorkflow(e.target.value);
-  }
+    function handleChange(e: any) {
+      console.log(e.target.value);
+      setSelectedWorkflow(e.target.value);
+    }
 
-  function getDocument() {
- 
-    var config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${selectedWorkflow}`,
-      headers: {},
-    };
+    function getDocument() {
+      var config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${selectedWorkflow}`,
+        headers: {},
+      };
 
-    axios(config)
-      .then(function (response) {
-        const dat = response.data;
-        const ress = dat.documents.flat();
-        console.log(JSON.stringify(ress));
-      })
-      .catch(function (error) {
-        console.log(error);
+      axios(config)
+        .then(function (response) {
+          const dat = response.data;
+          const ress = dat.documents.flat();
+          console.log(JSON.stringify(ress));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    useEffect(() => {
+      fetchWorkflowName().then((result) => {
+        if (!result.isError) {
+          console.log(result.data);
+          setWorkflow(result.data);
+        } else {
+          toast.error("error fetching");
+        }
       });
-  }
-  useEffect(() => {
-    fetchWorkflowName().then(result => {
-      if(!result.isError){
-        console.log(result.data)
-        setWorkflow(result.data);
-      }else{
-       toast.error("error fetching");
-      }
-      
-     })
-   
-  }, []);
-  
+    }, []);
+
     useEffect(() => {
       const fetchData = async () => {
         try {
@@ -100,9 +98,9 @@ export const Route = createLazyFileRoute('/assignedbyme')({
     }
 
     const columns = [
-      { 
-        field: 'workflowName', 
-        headerName: 'Name', 
+      {
+        field: "workflowName",
+        headerName: "Name",
         width: 200,
         renderCell: (params) => (
           <Link
@@ -113,17 +111,18 @@ export const Route = createLazyFileRoute('/assignedbyme')({
           </Link>
         ),
       },
-      { field: 'categoryName', headerName: 'Category', width: 200 },
-      { field: 'subCategoryName', headerName: 'Sub Category', width: 200 },
-      { field: 'status', headerName: 'Document Status', width: 200 },
+      { field: "categoryName", headerName: "Category", width: 200 },
+      { field: "subCategoryName", headerName: "Sub Category", width: 200 },
+      { field: "status", headerName: "Document Status", width: 200 },
+      { field: "date", headerName: "Creation Date", width: 200 },
     ];
 
     // Filter rows based on selected tab
     const filteredRows = workflowData
       .filter((workflow) => {
-        if (selectedTab === 'All') return true;
-        if (selectedTab === 'Ongoing') return workflow.status === 'Pending';
-        if (selectedTab === 'Completed') return workflow.status === 'Approved';
+        if (selectedTab === "All") return true;
+        if (selectedTab === "Ongoing") return workflow.status === "Pending";
+        if (selectedTab === "Completed") return workflow.status === "Approved";
         return true;
       })
       .map((workflow) => ({
@@ -132,53 +131,60 @@ export const Route = createLazyFileRoute('/assignedbyme')({
         categoryName: workflow.categoryName,
         subCategoryName: workflow.subCategoryName,
         status: workflow.status,
+        date: workflow.createdAt
+
       }));
 
     return (
       <div>
-        
         <SideBar2 />
-        <UserName/>
+        <UserName />
         <div className="mt-24 ml-80 mr-8">
           <div className="flex gap-4 mb-9 ml-4 text-sm">
-
             <p
-              className={`cursor-pointer ${selectedTab === 'All' ? 'border-b-4 rounded-xs border-gray-600' : ''}`}
-              onClick={() => setSelectedTab('All')}
+              className={`cursor-pointer ${
+                selectedTab === "All"
+                  ? "border-b-4 rounded-xs border-gray-600"
+                  : ""
+              }`}
+              onClick={() => setSelectedTab("All")}
             >
               All
             </p>
             <p
-              className={`cursor-pointer ${selectedTab === 'Ongoing' ? 'border-b-4 rounded-xs border-gray-600' : ''}`}
-              onClick={() => setSelectedTab('Ongoing')}
+              className={`cursor-pointer ${
+                selectedTab === "Ongoing"
+                  ? "border-b-4 rounded-xs border-gray-600"
+                  : ""
+              }`}
+              onClick={() => setSelectedTab("Ongoing")}
             >
               Ongoing
             </p>
             <p
-              className={`cursor-pointer ${selectedTab === 'Completed' ? 'border-b-4 rounded-xs border-gray-600' : ''}`}
-              onClick={() => setSelectedTab('Completed')}
+              className={`cursor-pointer ${
+                selectedTab === "Completed"
+                  ? "border-b-4 rounded-xs border-gray-600"
+                  : ""
+              }`}
+              onClick={() => setSelectedTab("Completed")}
             >
               Completed
             </p>
           </div>
           <div className={`flex flex-row justify-between ${opacity}`}>
-            
-            <div className="flex gap-1 items-center">
-              <img src={filter} alt="Filter Icon" />
-              <p className="text-md text-gray-600">Filters</p>
-            </div>
             <button
-                    className="flex gap-2  px-4 py-2 rounded-lg text-[#00B0AD] items-center border-2 border-[#00B0AD]"
-                    onClick={()=>{
-                        openPopUp()
-                      }}
-                  >
-                    Add
-                    <img
-                      src="/asset/icons/arrowDown.svg"
-                      className="w-5 text-white"
-                    />
-                  </button>
+              className="flex gap-2  px-4 py-2 rounded-lg text-[#00B0AD] items-center border-2 border-[#00B0AD]"
+              onClick={() => {
+                openPopUp();
+              }}
+            >
+              Add
+              <img
+                src="/asset/icons/arrowDown.svg"
+                className="w-5 text-white h-4"
+              />
+            </button>
           </div>
 
           {showPopUp && (
@@ -231,37 +237,43 @@ export const Route = createLazyFileRoute('/assignedbyme')({
             </div>
           )}
           <div className={opacity}>
-          {filteredRows.length === 0 ? (
-            <div className="mt-9 w-full h-96 flex flex-col items-center justify-center">
-              <img src='/asset/nodocument.svg' alt="No Workflow Available" className="w-48 h-48" />
-              <p className="mt-4 text-gray-500">There is no workflow available</p>
-            </div>
-          ) : (
-            <div className="mt-9 w-full h-96">
-              <DataGrid 
-                rows={filteredRows} 
-                columns={columns} 
-                pageSize={10} 
-                disableSelectionOnClick // Disable row selection on click
-                components={{
-                  NoRowsOverlay: () => (
-                    <div className="flex justify-center items-center h-full">
-                      <p className="text-gray-400">No rows</p>
-                    </div>
-                  )
-                }}
-                sx={{
-                  '& .MuiDataGrid-cell': {
-                    fontSize: '0.875rem', // 14px
-                    color: '#9CA3AF', // Gray-400
-                  },
-                  '& .MuiDataGrid-columnHeaders': {
-                    fontSize: '0.875rem', // 14px
-                  },
-                }}
-              />
-            </div>
-          )}
+            {filteredRows.length === 0 ? (
+              <div className="mt-9 w-full h-96 flex flex-col items-center justify-center">
+                <img
+                  src="/asset/nodocument.svg"
+                  alt="No Workflow Available"
+                  className="w-48 h-48"
+                />
+                <p className="mt-4 text-gray-500">
+                  There is no workflow available
+                </p>
+              </div>
+            ) : (
+              <div className="mt-9 w-full h-96">
+                <DataGrid
+                  rows={filteredRows}
+                  columns={columns}
+                  pageSize={10}
+                  disableSelectionOnClick // Disable row selection on click
+                  components={{
+                    NoRowsOverlay: () => (
+                      <div className="flex justify-center items-center h-full">
+                        <p className="text-gray-400">No rows</p>
+                      </div>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiDataGrid-cell": {
+                      fontSize: "0.875rem", // 14px
+                      color: "#9CA3AF", // Gray-400
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      fontSize: "0.875rem", // 14px
+                    },
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

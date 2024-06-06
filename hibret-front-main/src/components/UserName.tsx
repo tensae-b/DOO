@@ -45,7 +45,7 @@ const UserName: React.FC = () => {
   };
 
   return (
-    <div className="search-bar flex justify-between mt-4 p-3 fixed top-0 left-80 right-0 bg-white">
+    <div className="search-bar flex justify-between pt-4 p-3 fixed top-0 left-80 right-0 bg-white">
       <div className="flex px-3 py-2 rounded-lg w-72 h-8 justify-between"></div>
       <div className="flex gap-6 items-center">
         <div className="relative">
@@ -56,7 +56,7 @@ const UserName: React.FC = () => {
             </div>
           )}
           {isNotification && (
-            <div className="max-h-72 w-80 shadow-lg absolute bg-white right-2 flex flex-col gap-4 p-4 border border-opacity-15">
+            <div className="max-h-72 w-80 shadow-lg absolute bg-white  right-2 flex flex-col gap-4 p-4 border border-opacity-15 z-10">
               {notifications.length === 0 ? (
                 <div className="text-center text-sm text-teal-500">No notifications</div>
               ) : (
