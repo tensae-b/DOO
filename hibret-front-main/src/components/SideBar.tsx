@@ -47,6 +47,11 @@ const SideBar = () => {
               <img className=" max-w-4" src="/asset/icons/category-list.svg" />
               <Link to="/catagoryList" className=" text-sm text-[#667085]">Category List</Link>
             </div>
+
+            <div className="flex gap-2 ">
+              <img className=" max-w-4" src="/asset/icons/category-list.svg" />
+              <Link to="/commitee" className=" text-sm text-[#667085]">Commitee</Link>
+            </div>
           </div>
         </div>
 

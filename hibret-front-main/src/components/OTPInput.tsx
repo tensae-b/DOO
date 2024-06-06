@@ -28,28 +28,35 @@ const OTPInput: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(otp);
     try {
-      // First, create the reset session
-    
-     const code= otp
-        // Proceed with OTP verification
-        const response = await axios.post("http://localhost:5000/api/verifyOTP", {
-          code
-        });
+      const response = await axios.post("http://localhost:5000/api/verifyOTP", {
+        code: otp,
+      });
 
-        if (response.data.msg === "Verify Successfully!") { 
-          setMessage(response.data.msg); 
-          // Redirect to next page
-          history.push("/setnewpassword");
-       
-          setMessage(response.data.msg); 
-        
+      if (response.data.msg === "Verify Successfully!") {
+        setMessage(response.data.msg);
+        // Reset session
+        resetSession();
+        // Redirect to next page
+        history.push("/setnewpassword");
       } else {
-        setMessage("Session expired! Please resend OTP.");
+        setMessage(response.data.msg);
       }
     } catch (error) {
       console.error("Error:", error);
       setMessage("Error verifying OTP");
+    }
+  };
+
+  const resetSession = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/resetSession");
+      console.log(response.data);
+      // Handle success response
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error
     }
   };
 
@@ -66,8 +73,7 @@ const OTPInput: React.FC = () => {
           Enter OTP
         </h2>
         <h5 className="w-full text-center font-urbanist font-normal text-base text-gray-400">
-          Please enter the verification code we sent to the email
-          example@gmail.com
+          Please enter the verification code we sent to the email example@gmail.com
         </h5>
         <div className="flex justify-center mb-4 w-80">
           <input
@@ -79,10 +85,7 @@ const OTPInput: React.FC = () => {
             onChange={handleChange}
           />
         </div>
-        <button
-          onClick={handleSubmit}
-          className="bg-teal-500 text-white w-full text-sm px-4 py-2 rounded-lg"
-        >
+        <button onClick={handleSubmit} className="bg-teal-500 text-white w-full text-sm px-4 py-2 rounded-lg">
           Verify OTP
         </button>
         {message && <p className="text-red-500 mt-2">{message}</p>}
