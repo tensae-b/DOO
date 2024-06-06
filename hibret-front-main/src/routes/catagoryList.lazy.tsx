@@ -2,85 +2,29 @@ import React, { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import { fetchCatag } from '../services/api/catagoryApi';
+import { fetchCatag, updateCatag } from '../services/api/catagoryApi';
 import CatagAdd from "./addCatagory..lazy";
 import SubcategoryList from "../components/SubCatagoryList";
+import EditCategory from "../components/EditCatagory";
 import { DataGrid, GridColDef, GridActionsCellParams } from '@mui/x-data-grid';
 
 export const Route = createFileRoute("/catagoryList")({
-  component: () => <CatagoryList />,
+  component: () => <CategoryList />,
 });
 
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 230 },
-  { field: 'catagoryname', headerName: 'Category Name', width: 230, editable: true },
-  {
-    field: 'actions',
-    headerName: 'Action',
-    width: 150,
-    type: 'actions',
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onEdit = () => {
-        console.log('Edit button clicked for row:', params.id);
-      };
-
-      const onDelete = () => {
-        console.log('Delete button clicked for row:', params.id);
-      };
-
-      return (
-        <div className="flex justify-around">
-          <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
-            <img src="/asset/icons/edit.png" className="w-5" />
-          </button>
-          <button onClick={onDelete} className="text-red-500 hover:text-red-700 mr-4">
-            <img src="/asset/icons/delete.svg" className="w-5" />
-          </button>
-        </div>
-      );
-    },
-  },
-  {
-    field: 'subcategories',
-    headerName: 'Subcategories',
-    width: 150,
-    renderCell: (params: GridActionsCellParams<any>) => {
-      return (
-        <SubcategoryButton
-          categoryId={params.id}
-          categoryName={params.row.catagoryname}
-          openSubCatModal={openSubCatModal}
-        />
-      );
-    },
-  },
-];
-
-const SubcategoryButton = ({ categoryId, categoryName, openSubCatModal }) => {
-  const handleShowSubCat = () => {
-    openSubCatModal(categoryId, categoryName);
-  };
-
-  return (
-    <div>
-      <button onClick={handleShowSubCat} className="text-[#00B0AD] hover:text-green-700">
-        Show Subcategories
-      </button>
-    </div>
-  );
-};
-
-function CatagoryList() {
+function CategoryList() {
   const [user, setUser] = useState([]);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
   const [showSubCatModal, setShowSubCatModal] = useState(false);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [editCategoryId, setEditCategoryId] = useState('');
+  const [editCategoryName, setEditCategoryName] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categoryName, setCategoryName] = useState('');
 
   useEffect(() => {
     async function fetchCategories() {
       const { data, isError } = await fetchCatag();
-      console.log(data)
       if (!isError) {
         const updatedUserData = data.map((category) => ({
           id: category._id,
@@ -108,6 +52,81 @@ function CatagoryList() {
 
   const closeSubCatModal = () => {
     setShowSubCatModal(false);
+  };
+
+  const openEditCategoryModal = (id: string, name: string) => {
+    setEditCategoryId(id);
+    setEditCategoryName(name);
+    setShowEditCategoryModal(true);
+  };
+
+  const closeEditCategoryModal = () => {
+    setShowEditCategoryModal(false);
+  };
+
+  const handleUpdateCategory = async (id: string, newName: string) => {
+    await updateCatag(id, { name: newName });
+    fetchCategories();
+    closeEditCategoryModal();
+  };
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 230 },
+    { field: 'catagoryname', headerName: 'Category Name', width: 230, editable: true },
+    {
+      field: 'actions',
+      headerName: 'Action',
+      width: 150,
+      type: 'actions',
+      renderCell: (params: GridActionsCellParams<any>) => {
+        const onEdit = () => {
+          openEditCategoryModal(params.id, params.row.catagoryname);
+        };
+
+        const onDelete = () => {
+          console.log('Delete button clicked for row:', params.id);
+        };
+
+        return (
+          <div className="flex justify-around">
+            <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
+              <img src="/asset/icons/edit.png" className="w-5" />
+            </button>
+            <button onClick={onDelete} className="text-red-500 hover:text-red-700 mr-4">
+              <img src="/asset/icons/delete.svg" className="w-5" />
+            </button>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'subcategories',
+      headerName: 'Subcategories',
+      width: 150,
+      renderCell: (params: GridActionsCellParams<any>) => {
+        return (
+          <SubcategoryButton
+            categoryId={params.id}
+            categoryName={params.row.catagoryname}
+            openSubCatModal={openSubCatModal}
+          />
+        );
+      },
+    },
+  ];
+
+  const SubcategoryButton = ({ categoryId, categoryName, openSubCatModal }) => {
+    const handleShowSubCat = () => {
+      openSubCatModal(categoryId, categoryName);
+    };
+
+    return (
+      <div>
+        <button onClick={handleShowSubCat} className="text-[#00B0AD] hover:text-green-700">
+          Show Subcategories
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -169,10 +188,18 @@ function CatagoryList() {
               onClose={closeSubCatModal}
             />
           )}
+          {showEditCategoryModal && (
+            <EditCategory
+              categoryId={editCategoryId}
+              categoryName={editCategoryName}
+              onClose={closeEditCategoryModal}
+              onUpdate={handleUpdateCategory}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default CatagoryList;
+export default CategoryList;

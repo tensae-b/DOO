@@ -24,3 +24,13 @@ export const fetchCatag = async () => {
         return { data: null, isLoading: false, isError: true };
     }
 };
+export const updateCatag = async (catagid) => {
+    try {
+        const response = await axiosInst.put(`admin/category/${catagid}`)
+        const { data } = response;
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        console.error('Error fetching catagory:', error);
+        return { data: null, isLoading: false, isError: true };
+    }
+};
