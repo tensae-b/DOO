@@ -4,8 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { workuser } from "../services/api/userworkApi";
 import SideBar2 from "../components/SideBar2";
 import UserName from "../components/UserName";
-import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
-import axios from "axios";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const Route = createFileRoute("/assignedtome")({
   component: () => <AssignWork />,
@@ -13,47 +12,19 @@ export const Route = createFileRoute("/assignedtome")({
 
 const columns: GridColDef[] = [
   {
-    field: "workflow_id",
-    headerName: "Workflow ID",
+    field: "name",
+    headerName: "Name",
     width: 230,
     renderCell: (params) => (
-      params.value !== "Unknown" ? (
-        <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
-          {params.value}
-        </Link>
-      ) : (
-        <span>Unknown</span>
-      )
+      <Link to={`/assignedtomedetails/${params.row.workflow_id}`}>
+        {params.value}
+      </Link>
     ),
   },
-  { field: "name", headerName: "Name", width: 230 },
   { field: "status", headerName: "Status", width: 130 },
-  {
-    field: 'actions',
-    headerName: 'Action',
-    width: 150,
-    type: 'actions',
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onEdit = () => {
-        console.log('Edit button clicked for row:', params.id);
-      };
+ 
 
-      const onDelete = () => {
-        console.log('Delete button clicked for row:', params.id);
-      };
-
-      return (
-        <div className="flex justify-around">
-          <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
-            <img src="/asset/icons/edit.png" className="w-5 h-5" />
-          </button>
-          <button onClick={onDelete} className="text-red-500 hover:text-red-700">
-            <img src="/asset/icons/delete.svg" className="w-5 h-5" />
-          </button>
-        </div>
-      );
-    },
-  },
+  { field: "date", headerName: "Creation Date", width: 200 },
 ];
 
 function AssignWork() {
@@ -67,24 +38,20 @@ function AssignWork() {
 
   const fetchData = async () => {
     try {
-      const response = await workuser('663c62145dd5d333dbdaaf00');
-      console.log(response)
-      const updatedUserData = response.data.map((item, index) => {
-        return {
-          id: item.workflowId || `unknown-${index}`,  // Ensure unique id for DataGrid
-          workflow_id: item.workflowId || "Unknown",
-          name: item.name || "Unnamed Workflow",
-          status: item.status || "Unknown",
-        };
-      });
+      const response = await workuser("663c62145dd5d333dbdaaf00");
+      console.log(response);
+      const updatedUserData = response.data.map((item, index) => ({
+        id: item.workflowId || `unknown-${index}`, // Ensure unique id for DataGrid
+        workflow_id: item.workflowId || "Unknown",
+        name: item.name || "Unnamed Workflow",
+        status: item.status || "Unknown",
+       
+        date:item.createdAt
+      }));
       setUser(updatedUserData);
     } catch (error) {
       console.error("Error fetching user workflow data:", error);
     }
-  };
-
-  const handleRowClick = (row) => {
-    setAcceptanceStatus(null);
   };
 
   const handleAccept = () => {
@@ -109,9 +76,7 @@ function AssignWork() {
         <UserName />
         <div className="flex flex-col mt-16 ml-8">
           <div className="flex flex-col gap-3 my-5">
-            <h2 className="text-[#4A176D] text-3xl font-bold">
-              Assigned workflow
-            </h2>
+            <h2 className="text-[#4A176D] text-3xl font-bold">Assigned workflow</h2>
             <p className="text-[#667085] text-base"> placeholder</p>
           </div>
           <div className="h-full w-full mt-4">
@@ -120,7 +85,7 @@ function AssignWork() {
               columns={columns}
               pageSizeOptions={[5, 10]}
               checkboxSelection
-              onRowClick={(row) => handleRowClick(row)}
+              getRowId={(row) => row.workflow_id} // Use workflow_id as row identifier
             />
           </div>
         </div>
