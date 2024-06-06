@@ -3,10 +3,16 @@ export const Route = createLazyFileRoute("/manage-user")({
   component: () => <ManageUser />,
 });
 import { getUsers, useActivate } from "../services/queries/userQuery";
-import { DataGrid, GridApi, GridColDef, GridRow, GridRowParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridApi,
+  GridColDef,
+  GridRow,
+  GridRowParams,
+} from "@mui/x-data-grid";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import UserTabs from '../components/UserTabs'
+import UserTabs from "../components/UserTabs";
 import { Button, Stack } from "@mui/material";
 
 const columns: GridColDef[] = [
@@ -16,68 +22,72 @@ const columns: GridColDef[] = [
   { field: "activated", headerName: "activated", width: 230 },
 
   {
-    field: 'action',
-    headerName: 'Action',
+    field: "action",
+    headerName: "Action",
     width: 180,
     sortable: false,
-    
+
     renderCell: (params) => {
-        const onClick = (e) => {
-          console.log(params.row)
-          
-        };
-        
-        return (
-          <div className=''>
- {params.row.activated == true ? (
-  <button className=' border border-[#00B0AD] px-5 rounded-md text-[#00B0AD] ' onClick={onClick}> Deactivate</button>
- ) : (
-  <button className=' border border-[#00B0AD] px-5  rounded-md text-[#00B0AD] ' onClick={onClick}> activate</button>
- )
- }
-            
-            </div>
-        );
+      const onClick = (e) => {
+        console.log(params.row);
+      };
+
+      return (
+        <div className="">
+          {params.row.activated == true ? (
+            <button
+              className=" border border-[#00B0AD] px-5 rounded-md text-[#00B0AD] "
+              onClick={onClick}
+            >
+              {" "}
+              Deactivate
+            </button>
+          ) : (
+            <button
+              className=" border border-[#00B0AD] px-5  rounded-md text-[#00B0AD] "
+              onClick={onClick}
+            >
+              {" "}
+              activate
+            </button>
+          )}
+        </div>
+      );
     },
-  }
+  },
 ];
 function ManageUser() {
   const { mutateAsync: activate }: any = useActivate();
   async function deactivate() {
-    let data= removeDuplicates(deactivatedList)
-  
-    for(let i=0 ; i< data.length; i++){
-      let id=  data[i].id;
-      let active= data[i].activated
-       
-      const res = await activate({id, active });
-    console.log(res);
-     
+    let data = removeDuplicates(deactivatedList);
+
+    for (let i = 0; i < data.length; i++) {
+      let id = data[i].id;
+      let active = data[i].activated;
+
+      const res = await activate({ id, active });
+      console.log(res);
     }
-  
   }
 
-  function removeDuplicates(array:any) {
-   
-    const uniqueMap :any = {};
+  function removeDuplicates(array: any) {
+    const uniqueMap: any = {};
 
- 
     const uniqueArray = array.filter((item: any) => {
-      
-        const serialized = JSON.stringify(item);
+      const serialized = JSON.stringify(item);
 
-        if (!uniqueMap[serialized]) {
-            uniqueMap[serialized] = true;
-            return true;
-        }
+      if (!uniqueMap[serialized]) {
+        uniqueMap[serialized] = true;
+        return true;
+      }
 
-        return false;
+      return false;
     });
 
     return uniqueArray;
-}
+  }
   const { data } = getUsers();
-  let deactivatedList:any= []
+  let deactivatedList: any = [];
 
   return (
     <div className="mx-3">
@@ -85,7 +95,6 @@ function ManageUser() {
         <SideBar />
         <div className="w-full flex flex-col">
           <NavBar />
-          
 
           <div className="flex justify-between">
             <div className="flex flex-col gap-3 my-5">
@@ -106,35 +115,33 @@ function ManageUser() {
               </button>
             </div>
           </div>
-          <UserTabs/>
-      {data && <div className=" h-full w-full mt">
-          <DataGrid
-            rows={data.docs}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-            
-            onRowSelectionModelChange={(ids) => {
-              const selectedIDs = new Set(ids);
-              const selectedRowData = data.docs.filter((row :any) =>
-                selectedIDs.has(row.id.toString())
-              );
-              for(let i=0; i<selectedRowData.length; i++){
-            
-                deactivatedList.push(selectedRowData[i])
-              }
-             
-              
-              
-            }}
-          />
-        </div>}
-      {/* <div className="mt-32 mx-10 flex flex-col gap-10">
+          <UserTabs />
+          {data && (
+            <div className=" h-full w-full mt">
+              <DataGrid
+                rows={data.docs}
+                columns={columns}
+                getRowId={(row) => row._id}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                  },
+                }}
+                pageSizeOptions={[5, 10]}
+                checkboxSelection
+                onRowSelectionModelChange={(ids) => {
+                  const selectedIDs = new Set(ids);
+                  const selectedRowData = data.docs.filter((row: any) =>
+                    selectedIDs.has(row.id.toString())
+                  );
+                  for (let i = 0; i < selectedRowData.length; i++) {
+                    deactivatedList.push(selectedRowData[i]);
+                  }
+                }}
+              />
+            </div>
+          )}
+          {/* <div className="mt-32 mx-10 flex flex-col gap-10">
         {data &&
           data.docs.map((item: any) => (
             <div className="flex gap-10">
@@ -165,8 +172,8 @@ function ManageUser() {
             </div>
           ))}
       </div> */}
-    </div>
-    </div>
+        </div>
+      </div>
     </div>
   );
 }
