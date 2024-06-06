@@ -51,6 +51,12 @@ const SideBar2 = () => {
 
         <div className="category2 flex flex-col justify-center ">
           <h2 className=" text-sm text-[#667085] font-bold">Workflows</h2>
+        
+          <div className="flex gap-2 ">
+              <img className=" max-w-4" src="/asset/icons/report.svg" />
+              <Link to='/FolderHierarchyRoute' className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Repository</Link>
+            </div>
+        
           <div className=" flex flex-col justify-center mt-5 gap-3">
             {(hasGetAssignedPermission ) && (
               <div className="flex gap-2 ">
