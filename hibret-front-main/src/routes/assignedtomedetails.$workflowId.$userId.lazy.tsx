@@ -27,8 +27,21 @@ function AssignedToMeDetails() {
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
-        setWorkflowDetail(data.workflow);
+        const { workflow } = data;
         console.log(data)
+
+        // Ensure required documents have a name
+        const requiredDocuments = workflow.requiredDocuments.map((doc, index) => ({
+          ...doc,
+          name: doc.name || `Required Document ${index + 1}`
+        }));
+
+        const updatedWorkflowDetail = {
+          ...workflow,
+          requiredDocuments,
+        };
+
+        setWorkflowDetail(updatedWorkflowDetail);
         setButtons(data.buttons || {});
       } catch (error) {
         console.error("Error fetching detail:", error);

@@ -45,19 +45,31 @@ function CatagAdd({ onClose }: Props) {
     })
   }
   const onSubmit = async (data: any) => {
+    console.log(data)
     try {
       console.log(data);
-      const categoryResponse = await createcatag(data.categoryName, data.categoryDescription, data.department); // changed to categoryName and categoryDescription
+    const subcategory:any =[]
+      data.subcategories.map((item :any,index:any)=>{
+        subcategory.push(item.name)
+      })
+     
+      const categoryData= {
+        name: data.categoryName, 
+        subcategories: subcategory, 
+        depId: data.department,
+      
+      }
+      const categoryResponse = await createcatag(categoryData); // changed to categoryName and categoryDescription
       console.log("Category Response:", categoryResponse);
 
       // Extract category ID from the category response
       const categoryId = categoryResponse.data._id;
 
       // Create subcategories
-      for (const subcategory of data.subcategories) {
-        const subcategoryResponse = await createsubcatag(subcategory.name,  data.categoryDescription,categoryId); // removed subcategory.description and sent only name and categoryId
-        console.log("Subcategory Response:", subcategoryResponse);
-      }
+      // for (const subcategory of data.subcategories) {
+      //   const subcategoryResponse = await createsubcatag(subcategory.name,  data.categoryDescription,categoryId); // removed subcategory.description and sent only name and categoryId
+      //   console.log("Subcategory Response:", subcategoryResponse);
+      // }
 
       onClose();
     } catch (error) {

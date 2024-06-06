@@ -82,9 +82,10 @@ function InviteNewUser() {
   const fetchData = useCallback(async () => {
     try {
       const { data, isError } = await fetchUser();
+      console.log(data)
       if (!isError && data && data.users) {
         const updatedData = data.users.map((user) => ({
-          id: user._id,
+          id: user.userId,
           username: user.username,
           email: user.email,
           role_id: user.role_id,

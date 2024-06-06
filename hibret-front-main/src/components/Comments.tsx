@@ -113,7 +113,8 @@ const Comments = ({
         onChange={(e) => setComment(e.target.value)}
       />
 
-      {buttons.canApprove && (
+      {/* Conditionally render approve and reject buttons */}
+      {workflowDetail.status !== "Approved" && workflowDetail.status !== "Rejected" && buttons.canApprove && (
         <div className="flex gap-8">
           <button
             className="w-44 h-9 border border-teal-500 rounded-md text-teal-500 text-sm"
@@ -135,7 +136,7 @@ const Comments = ({
         <button
           onClick={handleForward}
           className={`w-44 h-9 border border-gray-400 rounded-md text-sm ${
-            buttons.canMoveForward ? "text-gray-400" : "text-gray-200 cursor-not-allowed"
+            buttons.canMoveForward ? "text-gray-500" : "text-gray-200 cursor-not-allowed"
           }`}
           disabled={!buttons.canMoveForward}
         >
@@ -144,7 +145,7 @@ const Comments = ({
         <button
           onClick={handleBack}
           className={`w-44 h-9 border border-gray-400 rounded-md text-sm ${
-            buttons.canMoveBackward ? "text-gray-400" : "text-gray-200 cursor-not-allowed"
+            buttons.canMoveBackward ? "text-gray-500" : "text-gray-200 cursor-not-allowed"
           }`}
           disabled={!buttons.canMoveBackward}
         >

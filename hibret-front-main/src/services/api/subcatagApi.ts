@@ -13,7 +13,8 @@ export const createsubcatag = async (name,description,categoryId) => { // Pass s
         return { data: null, isLoading: false, isError: true };
     }
 };
-export const fetchCatag = async (catagId) => {
+export const fetchsubCatag = async (catagId) => {
+    console.log(catagId)
     try {
         const response = await axiosInst.get(`admin/subCategory/cat/${catagId}`)
         const { data } = response;
