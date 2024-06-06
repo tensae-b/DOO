@@ -12,28 +12,31 @@ export const Route = createLazyFileRoute('/changepassword')({
     const [isOldPasswordVisible, setIsOldPasswordVisible] = useState<boolean>(false);
     const [isNewPasswordVisible, setIsNewPasswordVisible] = useState<boolean>(false);
 
-    const validatePassword = (password: string): string[] => {
+    const validatePassword = (oldPassword: string, newPassword: string): string[] => {
       const errors: string[] = [];
-      if (password.length < 8) {
+      if (newPassword.length < 8) {
         errors.push('Minimum 8 characters');
       }
-      if (!/[A-Z]/.test(password)) {
+      if (!/[A-Z]/.test(newPassword)) {
         errors.push('At least one uppercase letter');
       }
-      if (!/[a-z]/.test(password)) {
+      if (!/[a-z]/.test(newPassword)) {
         errors.push('At least one lowercase letter');
       }
-      if (!/[0-9]/.test(password)) {
+      if (!/[0-9]/.test(newPassword)) {
         errors.push('At least one number');
       }
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
         errors.push('At least one symbol');
+      }
+      if (oldPassword === newPassword) {
+        errors.push('New password cannot be the same as the old password');
       }
       return errors;
     };
 
     const handleChangePassword = async () => {
-      const errors = validatePassword(newPassword);
+      const errors = validatePassword(oldPassword, newPassword);
       setValidationErrors(errors);
       if (errors.length > 0) {
         return; // If there are validation errors, do not proceed
@@ -48,7 +51,7 @@ export const Route = createLazyFileRoute('/changepassword')({
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           console.log(response.data.msg); // Log success message
           alert("Password changed successfully.");
         }

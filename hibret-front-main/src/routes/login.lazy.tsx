@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "../hooks/useSession";
 import axiosInst from '../services/api/axiosInst';
 import Logo from "../components/logo";
@@ -17,6 +17,17 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  useEffect(() => {
+    // Hide the forward arrow
+    
+
+    // Prevent navigation through browser history
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener('popstate', function(event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
