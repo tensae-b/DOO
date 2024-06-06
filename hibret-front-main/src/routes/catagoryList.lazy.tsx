@@ -2,7 +2,12 @@ import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-import { fetchCatag } from "../services/api/catagoryApi";
+import SubCatagoryView from "../components/subCatagoryView";
+import {
+  DeleteCatag,
+  EditCatag,
+  fetchCatag,
+} from "../services/api/catagoryApi";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import CatagAdd from "../components/addCatagory..lazy";
@@ -15,27 +20,18 @@ import { fetchSubCatag } from "../services/api/fetchDataApi";
 import toast from "react-hot-toast";
 import { Box, Modal, Typography } from "@mui/material";
 
-// import {
-//   getAllUser,
-//   verifyUser,
-//   useCreateNewUser,
-//   filterUsers,
-// } from "../services/queries/userQuery";
-
-const userData = [
-  { id: 1, catagoryname: "John Doe", Action: "Admin" },
-  { id: 2, catagoryname: "Jane Smith", Action: "Editor" },
-  { id: 3, catagoryname: "Michael Brown", Action: "Member" },
-  { id: 4, catagoryname: "Alice Garcia", Action: "Member" },
-];
-
 function CatagoryList() {
   const [modalData, setModalData] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [editCatagory, setEditCatagory] = useState(false);
+  const [catagoryName, setCatagoryName] = useState("");
+  const [catagoryId, setCatagoryId] = useState("");
   const handleOpen = () => {
     setOpen(true);
   };
+  const [newCatagory, setNewCatagory] = useState("");
   const handleClose = () => setOpen(false);
+  const catagoryClose = () => setEditCatagory(false);
   const columns: GridColDef[] = [
     // { field: "id", headerName: "ID", width: 230 },
     { field: "catagoryname", headerName: "catagoryname", width: 230 },
@@ -50,14 +46,24 @@ function CatagoryList() {
       renderCell: (params: GridActionsCellParams<any>) => {
         const onEdit = () => {
           // Handle edit functionality for the specific row
-          console.log("Edit button clicked for row:", params.id);
-          // Implement logic to open an edit form or modal here (consider passing data)
+          console.log({ params });
+
+          setCatagoryName(params.row.catagoryname);
+          setCatagoryId(params.id);
+          setEditCatagory(true);
         };
 
         const onDelete = () => {
           // Handle delete functionality for the specific row
-          console.log("Delete button clicked for row:", params.id);
-          // Implement logic to confirm and delete the row (consider user confirmation)
+          DeleteCatag(params.id).then((result) => {
+            if (!result.isError) {
+              console.log("deleted");
+              setReload(!reload);
+              toast.success("Deleted");
+            } else {
+              toast.error("no subcatagories");
+            }
+          });
         };
 
         return (
@@ -114,6 +120,7 @@ function CatagoryList() {
   const [reload, setReload] = useState(true);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
   console.log(modalData);
+
   useEffect(() => {
     async function fetchCategories() {
       const { data, isError } = await fetchCatag();
@@ -171,17 +178,55 @@ function CatagoryList() {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box className="bg-white items-center justify-center absolute top-[20%] left-[60%] p-10 rounded-md">
+            <Box className="bg-white items-center justify-center absolute top-[20%] left-[30%] h-[300px] p-10 rounded-md">
               <div className="text-[#36d7b7] text-xl font-semibold ">
                 SubCatagories
               </div>
-              {modalData.map((item: any, index: any) => {
+
+              <SubCatagoryView data={modalData} />
+              {/* {modalData.map((item: any, index: any) => {
                 return (
                   <div className="mx-5 my-2" key={index}>
                     {item.name}
                   </div>
                 );
-              })}
+              })} */}
+            </Box>
+          </Modal>
+
+          <Modal
+            open={editCatagory}
+            onClose={catagoryClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box className="bg-white items-center justify-center absolute top-[20%] left-[30%] p-10 rounded-md">
+              <div className=" flex gap-4">
+                <input
+                  type="text"
+                  placeholder={catagoryName}
+                  className="border"
+                  onChange={(e) => {
+                    setNewCatagory(e.target.value);
+                  }}
+                />
+                <button
+                  className="bg-[#00B0AD] p-2 rounded-lg text-white"
+                  onClick={() => {
+                    EditCatag(catagoryId, newCatagory).then((result) => {
+                      if (!result.isError) {
+                        console.log("deleted");
+                        setReload(!reload);
+                        toast.success("Deleted");
+                      } else {
+                        toast.error("no subcatagories");
+                      }
+                    });
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
             </Box>
           </Modal>
           <div

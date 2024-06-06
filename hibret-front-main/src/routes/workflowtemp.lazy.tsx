@@ -13,62 +13,10 @@ import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import NoData from "../components/NoData";
 import axios from "axios";
 
-// import {
-//   getAllUser,
-//   verifyUser,
-//   useCreateNewUser,
-//   filterUsers,
-// } from "../services/queries/userQuery";
-
 const columns: GridColDef[] = [
   { field: "_id", headerName: "ID", width: 270 },
   { field: "workflowName", headerName: "name", width: 330 },
-  // { field: "Type", headerName: "Type", width: 130 },
-  // {
-  //   field: "status",
-  //   headerName: "status",
-  //   width: 150,
-  //   type: "actions",
-  //   renderCell: (params: GridActionsCellParams<any>) => {
-  //     const onActive = () => {
-  //       // Handle edit functionality for the specific row
-  //       console.log("Edit button clicked for row:", params.id);
-  //       // Implement logic to open an edit form or modal here (consider passing data)
-  //     };
 
-  //     const onInActive = () => {
-  //       // Handle delete functionality for the specific row
-  //       console.log("Delete button clicked for row:", params.id);
-  //       // Implement logic to confirm and delete the row (consider user confirmation)
-  //     };
-  //     const imageSrc =
-  //       params.row.status === "Active"
-  //         ? "/asset/icons/dot.png"
-  //         : "/asset/icons/dot2.png";
-
-  //     return (
-  //       <div className="flex gap-4 justify-center items-center">
-  //         <button
-  //           onClick={() => {
-  //             if (params.row.status === "Active") {
-  //               onActive();
-  //             } else {
-  //               onInActive();
-  //             }
-  //           }}
-  //           className={`flex gap-2 px-4 py-2 bg-[#EEE4E0] rounded-lg  ${
-  //             params.row.status === "Active"
-  //               ? "text-[#00B0AD]"
-  //               : "text-[#4A176D]"
-  //           }`}
-  //         >
-  //           <img src={imageSrc} className="w-5" />
-  //           {params.row.status}
-  //         </button>
-  //       </div>
-  //     );
-  //   },
-  // },
   {
     field: "actions",
     headerName: "Action",
@@ -106,37 +54,6 @@ const columns: GridColDef[] = [
     },
   },
 ];
-
-// const userData = [
-//   {
-//     id: 1,
-//     name: "John Doe",
-//     Type: "johndoe",
-//     status: "Active",
-//     Action: "Admin",
-//   },
-//   {
-//     id: 2,
-//     name: "Jane Smith",
-//     Type: "janesmith",
-//     status: "Inactive",
-//     Action: "Editor",
-//   },
-//   {
-//     id: 3,
-//     name: "Michael Brown",
-//     Type: "michaelbrown",
-//     status: "Active",
-//     Action: "Member",
-//   },
-//   {
-//     id: 4,
-//     name: "Alice Garcia",
-//     Type: "alicegarcia",
-//     status: "Active",
-//     Action: "Member",
-//   },
-// ];
 
 function WorkflowTemp() {
   useEffect(() => {
