@@ -62,12 +62,14 @@ const Login = () => {
 
         // Store user details in localStorage
         localStorage.setItem('user', JSON.stringify({ _id, username, role }));
+        const user:any= localStorage.getItem("user")
+        const userdata = JSON.parse(user);
 
         // Optionally, set session
         // setSession({ userId: _id, username, role });
 
         // Check the role and redirect accordingly
-        if (role === "66374bd0fdfae8633a05d11e") {
+        if (userdata.role.name === "DooAdmin") {
           // Redirect to admin dashboard
           window.location.href = "/adminDashboard";
         } else {
