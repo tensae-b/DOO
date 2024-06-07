@@ -5,7 +5,7 @@ import backArrow from "/asset/icons/back-arrow.svg";
 import downArrow from "/asset/icons/downArrow.svg";
 import DocumentDetailsCard1 from "../components/DocumentDetailsCard1";
 
-import axios from 'axios';
+import axios from "axios";
 import Comments from "../components/Comments";
 import SideBar2 from "../components/SideBar2";
 import UserName from "../components/UserName";
@@ -49,7 +49,7 @@ interface WorkflowDetailData {
 }
 
 export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId")({
-  component: AssignedToMeDetails
+  component: AssignedToMeDetails,
 });
 
 function AssignedToMeDetails() {
@@ -62,50 +62,52 @@ function AssignedToMeDetails() {
   const userData = JSON.parse(user);
   const userId = userData._id;
   const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
-    const [workflowDetailData, setWorkflowDetailData] =
-      useState<WorkflowDetailData>({
-        workflow: {
-          _id: "",
-          status: "",
-          currentStageIndex: 0,
-          requiredDocuments: [],
-          additionalDocuments: [],
-          comments: [],
-        },
-        buttons: {
-          canMoveForward: false,
-          canMoveBackward: false,
-          isOwner: false,
-          canApprove: false,
-        },
-      });
-      if (isError) {
-        return <div>Error loading data. Please try again later.</div>;
-      }
-     
-  
-      const comments = workflowDetailData.workflow.comments;
-  
-      const Documents = workflowDetailData.workflow.requiredDocuments;
-      const Documents2 = workflowDetailData.workflow.additionalDocuments;
-      console.log(Documents)
-      const detail = workflowDetailData.workflow;
-      const Button= workflowDetailData.buttons
-      const Astatus=Button.canApprove
+  const [isError, setIsError] = useState(false);
+  const [workflowDetailData, setWorkflowDetailData] =
+    useState<WorkflowDetailData>({
+      workflow: {
+        _id: "",
+        status: "",
+        currentStageIndex: 0,
+        requiredDocuments: [],
+        additionalDocuments: [],
+        comments: [],
+      },
+      buttons: {
+        canMoveForward: false,
+        canMoveBackward: false,
+        isOwner: false,
+        canApprove: false,
+      },
+    });
+  if (isError) {
+    return <div>Error loading data. Please try again later.</div>;
+  }
 
-      const [buttons, setButtons] = useState<any>({Button});
-      const [comment, setComment] = useState<string>("");
-      const [approveStatus, setApproveStatus] = useState<Boolean>(Astatus);
+  const comments = workflowDetailData.workflow.comments;
+
+  const Documents = workflowDetailData.workflow.requiredDocuments;
+  const Documents2 = workflowDetailData.workflow.additionalDocuments;
+  console.log(Documents);
+  const detail = workflowDetailData.workflow;
+  const Button = workflowDetailData.buttons;
+  const Astatus = Button.canApprove;
+
+  const [buttons, setButtons] = useState<any>({ Button });
+  const [comment, setComment] = useState<string>("");
+  const [approveStatus, setApproveStatus] = useState<Boolean>(Astatus);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get<WorkflowDetailData>(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        const result = await axios.get(
+          `http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`
+        );
+        console.log(result.data);
         setWorkflowDetailData(result.data);
-     
+
         setIsLoading(false);
-          setIsError(false);
+        setIsError(false);
       } catch (error) {
         console.error("Error fetching detail:", error);
       }
@@ -117,9 +119,11 @@ function AssignedToMeDetails() {
   }, [workflowId, userId]);
 
   if (isLoading) {
-    return   <div className="flex justify-center items-center h-screen bg-green-100">
-    <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
-  </div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-green-100">
+        <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
+      </div>
+    );
   }
 
   return (
@@ -127,169 +131,162 @@ function AssignedToMeDetails() {
       <UserName />
       <SideBar2 />
       <div className="mt-24 ml-80 mr-8 w-full h-full">
-        
         <div className="flex gap-9">
           <div className="w-6/12">
-        <div className="">
-        <div className="flex flex-row gap-6 font-bold items-center">
-              <a href="/assignedbyme" className="items-center">
-                <img src={backArrow} alt="Back" />
-              </a>
-              <h1 className="text-teal-600 font-semibold text-2xl">
-                {detail.name}
-              </h1>
+            <div className="">
+              <div className="flex flex-row gap-6 font-bold items-center">
+                <a href="/assignedbyme" className="items-center">
+                  <img src={backArrow} alt="Back" />
+                </a>
+                <h1 className="text-teal-600 font-semibold text-2xl">
+                  {detail.name}
+                </h1>
+              </div>
             </div>
-          </div>
-          <div className="flex relative mt-9">
-            <div
-              id="tab-1"
-              className={`cursor-pointer py-2 px-4 ${
-                activeTab === 1 ? "text-purple-900" : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab(1)}
-            >
-              Details
-            </div>
+            <div className="flex relative mt-9">
+              <div
+                id="tab-1"
+                className={`cursor-pointer py-2 px-4 ${
+                  activeTab === 1 ? "text-purple-900" : "text-gray-500"
+                }`}
+                onClick={() => setActiveTab(1)}
+              >
+                Details
+              </div>
 
-            <div
-              id="tab-3"
-              className={`cursor-pointer py-2 px-4 ${
-                activeTab === 3 ? "text-purple-900" : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab(3)}
-            >
-              Comments({comments.length})
+              <div
+                id="tab-3"
+                className={`cursor-pointer py-2 px-4 ${
+                  activeTab === 3 ? "text-purple-900" : "text-gray-500"
+                }`}
+                onClick={() => setActiveTab(3)}
+              >
+                Comments({comments.length})
+              </div>
+              <div
+                ref={underlineRef}
+                className="absolute bottom-0 h-0.5 bg-purple-900 transition-all duration-300 rounded-md"
+                style={{ width: 0, left: 0 }}
+              />
             </div>
-            <div
-              ref={underlineRef}
-              className="absolute bottom-0 h-0.5 bg-purple-900 transition-all duration-300 rounded-md"
-              style={{ width: 0, left: 0 }}
-            />
-          </div>
-          <div className="flex flex-col gap-9 w-full mt-7">
-            {activeTab === 1 && (
-              <div className="flex flex-col pb-9">
-                <div
-                  className={`${
-                    isOpen ? "" : "h-12"
-                  } flex flex-col w-full gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}
-                >
-                  <div className="flex flex-row justify-between">
-                    <h3 className="text-teal-600">Workflow information</h3>
-                    <button onClick={() => setIsOpen((prev) => !prev)}>
-                      <img
-                        src={isOpen ? upArrow : downArrow}
-                        alt={isOpen ? "Up Arrow" : "Down Arrow"}
-                      />
-                    </button>
-                  </div>
-                  {isOpen && (
-                    <div className="flex flex-col gap-8">
-                      <div className="flex justify-between">
-                        <div className="flex flex-col gap-2">
-                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Owner/initiator
-                          </h5>
-                          <p className="text-xs text-gray-600">
-                           Not sent from the back
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Status
-                          </h5>
-                          <p className="text-xs text-gray-600">
-                            {detail.status}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex justify-between">
-                        <div className="flex flex-col gap-2">
-                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Current Stage
-                          </h5>
-                          <p className="text-xs text-gray-600">
-                            {detail.currentStageIndex + 1}
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
-                            Status
-                          </h5>
-                          <p className="text-xs text-gray-600">
-                            {detail.status}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div
-                  className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${
-                    isOpen ? "mt-10" : "mt-9"
-                  }`}
-                >
-                  <h3 className="text-lg text-teal-600">Documents</h3>
-                  {Documents.map((document, index) => (
-                    <DocumentDetailsCard1
-                      key={index}
-                      name={document.name}
-                      link={document.filePath}
+            <div className="flex flex-col gap-9 w-full mt-7">
+              {activeTab === 1 && (
+                <div className="flex flex-col pb-9">
+                  <div
+                    className={`${
+                      isOpen ? "" : "h-12"
+                    } flex flex-col w-full gap-9 border border-gray-500 border-opacity-10 px-6 py-3`}
+                  >
+                    <div className="flex flex-row justify-between">
+                      <h3 className="text-teal-600">Workflow information</h3>
+                      <button onClick={() => setIsOpen((prev) => !prev)}>
+                        <img
+                          src={isOpen ? upArrow : downArrow}
+                          alt={isOpen ? "Up Arrow" : "Down Arrow"}
                         />
-
-                        
-                  
-                     )) }
-
-                  {Documents2.map((document, index) => (
-                    <DocumentDetailsCard1
-                      key={index}
-                      name={document.name}
-                      link={document.filePath}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 3 && (
-              <div className="flex flex-col border p-6">
-                <div className="text-lg text-teal-600 mb-8">Comments</div>
-                <div className="flex flex-col gap-4">
-                  {comments.length > 0 ? (
-                    comments.map((comment, index) => (
-                      <Comm
+                      </button>
+                    </div>
+                    {isOpen && (
+                      <div className="flex flex-col gap-8">
+                        <div className="flex justify-between">
+                          <div className="flex flex-col gap-2">
+                            <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                              Owner/initiator
+                            </h5>
+                            <p className="text-xs text-gray-600">
+                              Not sent from the back
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                              Status
+                            </h5>
+                            <p className="text-xs text-gray-600">
+                              {detail.status}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex justify-between">
+                          <div className="flex flex-col gap-2">
+                            <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                              Current Stage
+                            </h5>
+                            <p className="text-xs text-gray-600">
+                              {detail.currentStageIndex + 1}
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                              Status
+                            </h5>
+                            <p className="text-xs text-gray-600">
+                              {detail.status}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={`flex flex-col gap-9 p-6 border border-gray-500 border-opacity-20 ${
+                      isOpen ? "mt-10" : "mt-9"
+                    }`}
+                  >
+                    <h3 className="text-lg text-teal-600">Documents</h3>
+                    {Documents.map((document, index) => (
+                      <DocumentDetailsCard1
                         key={index}
-                        name={comment.fromUser._id}
-                        time={comment.createdAt}
-                        details={comment.comment}
+                        name={document.name}
+                        link={document.filePath}
                       />
-                    ))
-                  ) : (
-                    <p>No comments available</p>
-                  )}
-                </div>
-              </div>
-            )}
-            </div>
-            </div>
-            <div className="mt-24">
+                    ))}
 
-            <Comments
-            workflowDetail={workflowDetailData}
-            setWorkflowDetail={setWorkflowDetailData}
-            comment={comments}
-            setComment={setComment}
-            approveStatus={Button.canApprove}
-            setApproveStatus={setApproveStatus}
-            buttons={Button}
-          /> 
+                    {Documents2.map((document, index) => (
+                      <DocumentDetailsCard1
+                        key={index}
+                        name={document.name}
+                        link={document.filePath}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 3 && (
+                <div className="flex flex-col border p-6">
+                  <div className="text-lg text-teal-600 mb-8">Comments</div>
+                  <div className="flex flex-col gap-4">
+                    {comments.length > 0 ? (
+                      comments.map((comment, index) => (
+                        <Comments
+                          key={index}
+                          name={comment.fromUser._id}
+                          time={comment.createdAt}
+                          details={comment.comment}
+                        />
+                      ))
+                    ) : (
+                      <p>No comments available</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-        
+          </div>
+          <div className="mt-24">
+            <Comments
+              workflowDetail={workflowDetailData}
+              setWorkflowDetail={setWorkflowDetailData}
+              comment={comments}
+              setComment={setComment}
+              approveStatus={Button.canApprove}
+              setApproveStatus={setApproveStatus}
+              buttons={Button}
+            />
           </div>
         </div>
       </div>
-   
+    </div>
   );
 }
 

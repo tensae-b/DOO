@@ -5,13 +5,15 @@ import arrowdown from "/asset/icons/arrowDown.svg";
 import downArrow from "/asset/icons/down-arrow.svg";
 import DocumentDetailsCard from "../components/DocumentDetailsCard";
 import { Link } from "@tanstack/react-router";
-import axios from 'axios';
+import axios from "axios";
 import Comments from "../components/Comments";
 import UserName from "../components/UserName";
 import SideBar2 from "../components/SideBar2";
 
-export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId/$userId")({
-  component: AssignedToMeDetails
+export const Route = createLazyFileRoute(
+  "/assignedtomedetails/$workflowId/$userId"
+)({
+  component: AssignedToMeDetails,
 });
 
 function AssignedToMeDetails() {
@@ -26,15 +28,19 @@ function AssignedToMeDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        const { data } = await axios.get(
+          `http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`
+        );
         const { workflow } = data;
-        console.log(data)
+        console.log(data);
 
         // Ensure required documents have a name
-        const requiredDocuments = workflow.requiredDocuments.map((doc, index) => ({
-          ...doc,
-          name: doc.name || `Required Document ${index + 1}`
-        }));
+        const requiredDocuments = workflow.requiredDocuments.map(
+          (doc, index) => ({
+            ...doc,
+            name: doc.name || `Required Document ${index + 1}`,
+          })
+        );
 
         const updatedWorkflowDetail = {
           ...workflow,
@@ -88,7 +94,9 @@ function AssignedToMeDetails() {
                 </div>
                 <div className="flex justify-between mb-2">
                   <p className="text-teal-600">Current Stage:</p>
-                  <p className="text-gray-600">{workflowDetail?.currentStageIndex}</p>
+                  <p className="text-gray-600">
+                    {workflowDetail?.currentStageIndex}
+                  </p>
                 </div>
               </div>
             </div>
@@ -97,9 +105,11 @@ function AssignedToMeDetails() {
                 <h4 className="text-teal-600">Documents</h4>
                 <img src={arrowdown} alt="Arrow Down" />
               </div>
-              {workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((doc, index) => (
-                <DocumentDetailsCard key={index} doc={doc} />
-              ))}
+              {workflowDetail.requiredDocuments
+                .concat(workflowDetail.additionalDocuments)
+                .map((doc, index) => (
+                  <DocumentDetailsCard key={index} doc={doc} />
+                ))}
             </div>
           </div>
           <Comments
