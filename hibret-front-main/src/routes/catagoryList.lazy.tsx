@@ -17,7 +17,7 @@ export const Route = createFileRoute("/catagoryList")({
 
 import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import { fetchSubCatag } from "../services/api/fetchDataApi";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { Box, Modal, Typography } from "@mui/material";
 
 function CatagoryList() {

@@ -2,7 +2,7 @@ import "quill/dist/quill.snow.css";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import toast, { Toaster } from "react-hot-toast";
+// import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";

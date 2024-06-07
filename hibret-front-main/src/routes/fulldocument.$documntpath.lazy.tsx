@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
-import SideBar from "../components/SideBar";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
-import NoData from "../components/NoData";
+import { createLazyFileRoute } from "@tanstack/react-router";
+
 export const Route = createLazyFileRoute("/fulldocument/$documntpath")({
   component: () => <FullPagePdfView />,
 });
@@ -10,6 +8,7 @@ export const Route = createLazyFileRoute("/fulldocument/$documntpath")({
 const FullPagePdfView = () => {
   const params = Route.useParams();
   const documentpath = params.documntpath;
+  
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <iframe
