@@ -6,10 +6,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+import toast, { Toaster } from "react-hot-toast";
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
@@ -96,6 +97,8 @@ function LoanDocument() {
       formdata.push(content);
       // alert(JSON.stringify(content, null, 2));
     });
+
+    console.log(formdata);
     // setForm(formdata);
     setStepData({
       stepId: step.stepId,
@@ -103,13 +106,35 @@ function LoanDocument() {
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
+    const newData = {
+      stepId: step.stepId,
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    };
+    // setStepData((prev) => {
+    //   const newData = {
+    //     stepId: step.stepId,
+    //     templateId: step.formated[step.stepId]._id,
+    //     title: step.formated[step.stepId].title,
+    //     sections: formdata,
+    //   };
+    //   console.log({ ...prev, newData }, "asdasdasd");
+    //   return { ...prev, newData };
+    // });
+
     // setStepData(
     //   ,)
     // useStepFormStore.setState((state: any) => ({
 
     // }));
-    console.log(stepFormData, "stepformdata");
 
+    console.log({ stepFormData, newData, stepFormData });
+    // const ss = stepFormData.filter(Boolean) ?? [stepFormData];
+    // console.log({ ...stepFormData, newData }, "jesus");
+    stepFormData.push(newData);
+    // const zen = cero.map((data) => data);
+    console.log(stepFormData, "demon");
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
@@ -117,6 +142,8 @@ function LoanDocument() {
         reqDoc: stepFormData,
         addDoc: data.addDoc || [],
       };
+
+      console.log({ stepFormData });
 
       var config = {
         method: "post",
