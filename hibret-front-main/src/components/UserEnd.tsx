@@ -24,26 +24,13 @@ interface User {
 
 const UserEnd = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [user, setUser] = useState<User | null>(null);
+
   const [assignedByMeRows, setAssignedByMeRows] = useState<Workflow[]>([]);
   const [assignedToMeRows, setAssignedToMeRows] = useState<Workflow[]>([]);
+const user: any = localStorage.getItem("user");
+    const userData = JSON.parse(user);
 
-  const userId = '663c62145dd5d333dbdaaf00';
-
-  useEffect(() => {
-    // Fetch user data from local storage
-    const userDataString = localStorage.getItem('user');
-    if (userDataString) {
-      const userData = JSON.parse(userDataString) as User;
-      setUser(userData);
-
-      // Fetch workflows
-      if (userData) {
-        fetchAssignedByMeWorkflows(userId);
-        fetchAssignedToMeWorkflows(userId);
-      }
-    }
-  }, []);
+    const userId = userData._id;
 
   const fetchAssignedByMeWorkflows = async (userId: string) => {
     try {
@@ -69,9 +56,12 @@ const UserEnd = () => {
     }
   };
 
+  fetchAssignedByMeWorkflows(userId);
+  fetchAssignedToMeWorkflows(userId);
+
   if (!user) return <div>Loading...</div>; // Handle case where user data is not yet loaded
 
-  const { permissions } = user.role;
+  const { permissions } = userData.role;
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
