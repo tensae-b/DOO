@@ -116,6 +116,19 @@ export const Route = createLazyFileRoute('/assignedbyme')({
       { field: 'categoryName', headerName: 'Category', width: 200 },
       { field: 'subCategoryName', headerName: 'Sub Category', width: 200 },
       { field: 'status', headerName: 'Document Status', width: 200 },
+      { 
+        field: 'Edit', 
+        headerName: 'Edit document', 
+        width: 200,
+        renderCell: (params) => (
+          <Link
+            className="cursor-pointer text-blue-500 underline"
+            to={`EditDocument/${params.row.id}/0`}
+          >
+            {params.value}
+          </Link>
+        ),
+      },
     ];
 
     // Filter rows based on selected tab
