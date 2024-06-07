@@ -2,7 +2,7 @@ import "quill/dist/quill.snow.css";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import NavBar from "../components/NavBar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-// import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
@@ -10,26 +10,26 @@ import { useState } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+// EditDocument.$workflowId.$stepId.lazy
 
-export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
+export const Route = createFileRoute("/EditDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
+      url: `http://localhost:5000/initiate/workflows/get/665cdb916df8d98525dce98e`,
       headers: {},
     };
 
     const res = await axios(config);
-    console.log(res);
+    console.log(res.data);
     const data = await res.data;
-
     const addField = {
-      _id: "",
+      stepId: "",
+      templateId: "",
       title: "Additional Data",
       sections: [
         {
-          multiple: false,
           title: "Additional info",
           content: [
             {
@@ -37,29 +37,31 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
               type: "add-data",
               isRequired: false,
               _id: "",
+              value: "",
             },
           ],
           _id: "",
+          multiple: false,
         },
       ],
     };
-
-    console.log(data.document, "data");
-    const formated = data.documents.flat();
-
-    const additional = data.additional;
-    if (additional) {
+    const formated = data.requiredDocuments.flat();
+    const comment = data.comments;
+    console.log(formated);
+    const additional = data.additionalDocuments;
+    if (additional != null) {
       formated.push(addField);
     }
-    return { workflowId, stepId, formated, additional };
+
+    return { workflowId, stepId, formated, additional, comment };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
   },
-  component: LoanDocument,
+  component: EditDocument,
 });
 
-function LoanDocument() {
+function EditDocument() {
   const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
@@ -70,7 +72,8 @@ function LoanDocument() {
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-
+  console.log(step, "step.formated");
+  console.log(step.formated[step.stepId].sections);
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -85,10 +88,10 @@ function LoanDocument() {
   });
 
   const onSubmit = (data: any) => {
-    console.log({ data });
+    console.log({ nextId });
     if (nextId) {
       location.replace(
-        `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
+        `/EditDocument/${step.workflowId}/${Number(step.stepId) + 1}`
       );
     }
 
@@ -96,6 +99,7 @@ function LoanDocument() {
       formdata.push(content);
       // alert(JSON.stringify(content, null, 2));
     });
+    console.log(formdata, "formdata");
     // setForm(formdata);
     setStepData({
       stepId: step.stepId,
@@ -119,9 +123,9 @@ function LoanDocument() {
       };
 
       var config = {
-        method: "post",
+        method: "put",
         maxBodyLength: Infinity,
-        url: "http://localhost:5000/initiate/workflows",
+        url: `http://localhost:5000/initiate/workflows/${step.workflowId}`,
         headers: {},
         data: documentData,
       };
@@ -133,7 +137,7 @@ function LoanDocument() {
           toast.success("Successfully submited!");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedtome" });
           }, 3000);
         })
         .catch(function (error) {
@@ -141,7 +145,7 @@ function LoanDocument() {
           toast.error("Please try again");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedtome" });
           }, 3000);
           console.log(error);
         });
@@ -182,16 +186,16 @@ function LoanDocument() {
             <div className="mt-10">
               <div className="header flex justify-between">
                 <h2 className="text-[#00B0AD] text-3xl font-bold">
-                  Create Workflow
+                  Edit Workflow
                 </h2>
                 <div className="flex gap-4">
                   <button
                     className={` text-base px-6 py-2 border border-[#DC251C] border-dotted text-[#DC251C] font-semibold rounded-lg`}
                     onClick={() => {
-                      toast.error("Intitation Cancelled");
+                      toast.error("Edit Cancelled");
                       clearStepData();
                       setTimeout(function () {
-                        navigate({ to: "/document" });
+                        navigate({ to: "/assignedtome" });
                       }, 2000);
                     }}
                   >
@@ -206,7 +210,7 @@ function LoanDocument() {
                     <div className="flex gap-0 items-center justify-center">
                       <div className="flex flex-col">
                         <a
-                          href={`/LoanDocument/${step.workflowId}/${index}`}
+                          href={`/EditDocument/${step.workflowId}/${index}`}
                           className={`flex p-5 w-12 h-12 justify-center items-center rounded-full max-w-20 max-h-20 ${
                             index == step.stepId
                               ? current
@@ -308,17 +312,15 @@ function LoanDocument() {
                 </form>
 
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
-                  <p className="text-sm font-bold p-2">Quick Access</p>
-                  {step.formated[step.stepId].sections.map(
-                    (item: any, index: any) => (
-                      <a
-                        className="text-sm bg-[#E0F1F3] rounded-lg p-2 text-[#00B0AD]"
-                        href={`#${item.title}`}
-                      >
-                        {item.title}
-                      </a>
-                    )
-                  )}
+                  <p className="text-lg font-bold p-2">Comments</p>
+                  {step.comment.map((item: any, index: any) => (
+                    <div
+                      className="bg-gray-500 p-2 rounded-md text-white capitalize"
+                      key={index}
+                    >
+                      <p className="text-base">{item.comment}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

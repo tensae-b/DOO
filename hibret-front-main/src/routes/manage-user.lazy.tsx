@@ -121,7 +121,7 @@ function ManageUser() {
               <DataGrid
                 rows={data.docs}
                 columns={columns}
-                getRowId={(row) => row._id}
+                getRowId={(row) => row.email}
                 initialState={{
                   pagination: {
                     paginationModel: { page: 0, pageSize: 5 },

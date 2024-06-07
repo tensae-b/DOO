@@ -195,6 +195,9 @@ function InviteNewUser() {
             <div className="h-full w-full mt-3">
               <DataGrid
                 rows={filteredUsers}
+
+                getRowId={(row) => row.email}
+
                 columns={getColumns(view, handleStatusChange, handleAction)}
                 initialState={{
                   pagination: {
