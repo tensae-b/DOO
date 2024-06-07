@@ -8,55 +8,16 @@ import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import axios from "axios";
 
 export const Route = createFileRoute("/assignedtome")({
-  component: () => <AssignWork />,
+  component: () => {
+    const user = localStorage.getItem("user");
+    const userData = JSON.parse(user);
+    const userId = userData._id;
+    
+    return <AssignWork userId={userId} />;
+  },
 });
 
-const columns: GridColDef[] = [
-  {
-    field: "workflow_id",
-    headerName: "Workflow ID",
-    width: 230,
-    renderCell: (params) => (
-      params.value !== "Unknown" ? (
-        <Link to={`/assignedtomedetails/${params.value}/663c62145dd5d333dbdaaf00`}>
-          {params.value}
-        </Link>
-      ) : (
-        <span>Unknown</span>
-      )
-    ),
-  },
-  { field: "name", headerName: "Name", width: 230 },
-  { field: "status", headerName: "Status", width: 130 },
-  {
-    field: 'actions',
-    headerName: 'Action',
-    width: 150,
-    type: 'actions',
-    renderCell: (params: GridActionsCellParams<any>) => {
-      const onEdit = () => {
-        console.log('Edit button clicked for row:', params.id);
-      };
-
-      const onDelete = () => {
-        console.log('Delete button clicked for row:', params.id);
-      };
-
-      return (
-        <div className="flex justify-around">
-          <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
-            <img src="/asset/icons/edit.png" className="w-5 h-5" />
-          </button>
-          <button onClick={onDelete} className="text-red-500 hover:text-red-700">
-            <img src="/asset/icons/delete.svg" className="w-5 h-5" />
-          </button>
-        </div>
-      );
-    },
-  },
-];
-
-function AssignWork() {
+function AssignWork({ userId }) {
   const [user, setUser] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [acceptanceStatus, setAcceptanceStatus] = useState(null);
@@ -67,8 +28,8 @@ function AssignWork() {
 
   const fetchData = async () => {
     try {
-      const response = await workuser('663c62145dd5d333dbdaaf00');
-      console.log(response)
+      const response = await workuser(userId);
+      console.log(response);
       const updatedUserData = response.data.map((item, index) => {
         return {
           id: item.workflowId || `unknown-${index}`,  // Ensure unique id for DataGrid
@@ -101,6 +62,51 @@ function AssignWork() {
     setSelectedRow(null);
     setAcceptanceStatus(null);
   };
+
+  const columns: GridColDef[] = [
+    {
+      field: "workflow_id",
+      headerName: "Workflow ID",
+      width: 230,
+      renderCell: (params) => (
+        params.value !== "Unknown" ? (
+          <Link to={`/assignedtomedetails/${params.value}/${userId}`}>
+            {params.value}
+          </Link>
+        ) : (
+          <span>Unknown</span>
+        )
+      ),
+    },
+    { field: "name", headerName: "Name", width: 230 },
+    { field: "status", headerName: "Status", width: 130 },
+    {
+      field: 'actions',
+      headerName: 'Action',
+      width: 150,
+      type: 'actions',
+      renderCell: (params: GridActionsCellParams<any>) => {
+        const onEdit = () => {
+          console.log('Edit button clicked for row:', params.id);
+        };
+
+        const onDelete = () => {
+          console.log('Delete button clicked for row:', params.id);
+        };
+
+        return (
+          <div className="flex justify-around">
+            <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
+              <img src="/asset/icons/edit.png" className="w-5 h-5" />
+            </button>
+            <button onClick={onDelete} className="text-red-500 hover:text-red-700">
+              <img src="/asset/icons/delete.svg" className="w-5 h-5" />
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="flex">
