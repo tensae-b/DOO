@@ -22,6 +22,7 @@ const WorkflowtempLazyImport = createFileRoute('/workflowtemp')()
 const WorkflowaddLazyImport = createFileRoute('/workflowadd')()
 const UserDashboardLazyImport = createFileRoute('/userDashboard')()
 const SetNewPasswordLazyImport = createFileRoute('/setNewPassword')()
+const ReportLazyImport = createFileRoute('/report')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const OtpLazyImport = createFileRoute('/otp')()
@@ -80,6 +81,11 @@ const SetNewPasswordLazyRoute = SetNewPasswordLazyImport.update({
 } as any).lazy(() =>
   import('./routes/setNewPassword.lazy').then((d) => d.Route),
 )
+
+const ReportLazyRoute = ReportLazyImport.update({
+  path: '/report',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/report.lazy').then((d) => d.Route))
 
 const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
@@ -361,6 +367,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/report': {
+      preLoaderRoute: typeof ReportLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/setNewPassword': {
       preLoaderRoute: typeof SetNewPasswordLazyImport
       parentRoute: typeof rootRoute
@@ -425,6 +435,7 @@ export const routeTree = rootRoute.addChildren([
   OtpLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
+  ReportLazyRoute,
   SetNewPasswordLazyRoute,
   UserDashboardLazyRoute,
   WorkflowaddLazyRoute,
