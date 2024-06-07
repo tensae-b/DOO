@@ -36,6 +36,7 @@ const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
+const CommiteeLazyImport = createFileRoute('/commitee')()
 const ChangepasswordLazyImport = createFileRoute('/changepassword')()
 const CatagoryListLazyImport = createFileRoute('/catagoryList')()
 const AssignedtomeLazyImport = createFileRoute('/assignedtome')()
@@ -49,11 +50,11 @@ const IndexLazyImport = createFileRoute('/')()
 const FulldocumentDocumntpathLazyImport = createFileRoute(
   '/fulldocument/$documntpath',
 )()
+const AssignedtomedetailsWorkflowIdLazyImport = createFileRoute(
+  '/assignedtomedetails/$workflowId',
+)()
 const AssignedbymedetailsWorkflowIdLazyImport = createFileRoute(
   '/assignedbymedetails/$workflowId',
-)()
-const AssignedtomedetailsWorkflowIdUserIdLazyImport = createFileRoute(
-  '/assignedtomedetails/$workflowId/$userId',
 )()
 
 // Create/Update Routes
@@ -154,6 +155,11 @@ const CreateUserLazyRoute = CreateUserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/create-user.lazy').then((d) => d.Route))
 
+const CommiteeLazyRoute = CommiteeLazyImport.update({
+  path: '/commitee',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/commitee.lazy').then((d) => d.Route))
+
 const ChangepasswordLazyRoute = ChangepasswordLazyImport.update({
   path: '/changepassword',
   getParentRoute: () => rootRoute,
@@ -221,22 +227,22 @@ const FulldocumentDocumntpathLazyRoute =
     import('./routes/fulldocument.$documntpath.lazy').then((d) => d.Route),
   )
 
+const AssignedtomedetailsWorkflowIdLazyRoute =
+  AssignedtomedetailsWorkflowIdLazyImport.update({
+    path: '/assignedtomedetails/$workflowId',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/assignedtomedetails.$workflowId..lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const AssignedbymedetailsWorkflowIdLazyRoute =
   AssignedbymedetailsWorkflowIdLazyImport.update({
     path: '/assignedbymedetails/$workflowId',
     getParentRoute: () => rootRoute,
   } as any).lazy(() =>
     import('./routes/assignedbymedetails.$workflowId.lazy').then(
-      (d) => d.Route,
-    ),
-  )
-
-const AssignedtomedetailsWorkflowIdUserIdLazyRoute =
-  AssignedtomedetailsWorkflowIdUserIdLazyImport.update({
-    path: '/assignedtomedetails/$workflowId/$userId',
-    getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./routes/assignedtomedetails.$workflowId.$userId.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -293,6 +299,10 @@ declare module '@tanstack/react-router' {
     }
     '/changepassword': {
       preLoaderRoute: typeof ChangepasswordLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/commitee': {
+      preLoaderRoute: typeof CommiteeLazyImport
       parentRoute: typeof rootRoute
     }
     '/create-user': {
@@ -371,16 +381,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssignedbymedetailsWorkflowIdLazyImport
       parentRoute: typeof rootRoute
     }
+    '/assignedtomedetails/$workflowId': {
+      preLoaderRoute: typeof AssignedtomedetailsWorkflowIdLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/fulldocument/$documntpath': {
       preLoaderRoute: typeof FulldocumentDocumntpathLazyImport
       parentRoute: typeof rootRoute
     }
     '/LoanDocument/$workflowId/$stepId': {
       preLoaderRoute: typeof LoanDocumentWorkflowIdStepIdImport
-      parentRoute: typeof rootRoute
-    }
-    '/assignedtomedetails/$workflowId/$userId': {
-      preLoaderRoute: typeof AssignedtomedetailsWorkflowIdUserIdLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -400,6 +410,7 @@ export const routeTree = rootRoute.addChildren([
   AssignedtomeLazyRoute,
   CatagoryListLazyRoute,
   ChangepasswordLazyRoute,
+  CommiteeLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
   DocumentempLazyRoute,
@@ -419,9 +430,9 @@ export const routeTree = rootRoute.addChildren([
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   AssignedbymedetailsWorkflowIdLazyRoute,
+  AssignedtomedetailsWorkflowIdLazyRoute,
   FulldocumentDocumntpathLazyRoute,
   LoanDocumentWorkflowIdStepIdRoute,
-  AssignedtomedetailsWorkflowIdUserIdLazyRoute,
 ])
 
 /* prettier-ignore-end */
