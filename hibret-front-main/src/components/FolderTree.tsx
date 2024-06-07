@@ -1,7 +1,7 @@
 import { useState } from 'react';
-// import FolderIcon from '@mui/icons-material/Folder';
-// import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-// import DescriptionIcon from '@mui/icons-material/Description';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const FolderNode = ({ folder }) => {
   const [isExpanded, setIsExpanded] = useState(false);

@@ -14,7 +14,6 @@ const SideBar2 = () => {
 
   // Check for permissions
   const hasCreatePermission = permissions.includes('create-workflow');
-  const hasGetPermission = permissions.includes('get-workflow');
   const hasGetAssignedPermission = permissions.includes('get-assigned');
 
   return (
@@ -35,38 +34,40 @@ const SideBar2 = () => {
           <div className=" flex flex-col mt-5 gap-3 justify-center">
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-              <Link to=''  className=" text-sm text-[#667085]">Dashboard</Link>
+              <Link to='/userDashboard'  className=" text-sm text-[#667085]  [&.active]:font-bold  [&.active]:text-teal-400">Dashboard</Link>
             </div>
-            <div className="flex gap-2 ">
+            {hasCreatePermission&&( <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/user-management.svg" />
-              <Link to="/document" className=" text-sm text-[#667085] [&.active]:font-bold">Documents</Link>
-            </div>
+              <Link to="/document" className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Documents</Link>
+            </div>)}
+           
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/report.svg" />
-              <Link to='/reports' className=" text-sm text-[#667085]">Reports</Link>
+              <Link to='/reports' className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Reports</Link>
             </div>
-            {!hasGetAssignedPermission && (
-              <div className="flex gap-2 ">
-                <img className=" max-w-4" src="/asset/icons/category-list.svg" />
-                <Link to="/catagoryList" className=" text-sm text-[#667085]">Category List</Link>
-              </div>
-            )}
+            
           </div>
         </div>
 
         <div className="category2 flex flex-col justify-center ">
           <h2 className=" text-sm text-[#667085] font-bold">Workflows</h2>
+        
+          <div className="flex gap-2 ">
+              <img className=" max-w-4" src="/asset/icons/report.svg" />
+              <Link to='/FolderHierarchyRoute' className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Repository</Link>
+            </div>
+        
           <div className=" flex flex-col justify-center mt-5 gap-3">
-            {(hasGetAssignedPermission || hasGetPermission) && (
+            {(hasGetAssignedPermission ) && (
               <div className="flex gap-2 ">
                 <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
-                <Link to="/assignedTome" className=" text-sm text-[#667085]">Assigned To Me</Link>
+                <Link to="/assignedTome" className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Assigned To Me</Link>
               </div>
             )}
-            {(hasCreatePermission || (hasCreatePermission && hasGetAssignedPermission)) && (
+            {hasCreatePermission  && (
               <div className="flex gap-2 ">
                 <img className=" max-w-4" src="/asset/icons/some-list.svg" />
-                <Link to="/assignedByme" className=" text-sm text-[#667085]">Assigned By Me</Link>
+                <Link to="/assignedByme" className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Assigned By Me</Link>
               </div>
             )}
           </div>

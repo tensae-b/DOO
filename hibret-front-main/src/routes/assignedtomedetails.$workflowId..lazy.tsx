@@ -1,16 +1,15 @@
+import React, { useEffect, useState, useRef } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import backArrow from "/asset/icons/back-arrow.svg";
-import UserName from "../components/UserName";
-import SideBar2 from "../components/SideBar2";
-import Comm from "../components/Comm";
-
-import { useState, useEffect, useRef } from "react";
 
 import downArrow from "/asset/icons/downArrow.svg";
-import upArrow from "../../public/asset/icons/uparrow.svg";
 import DocumentDetailsCard1 from "../components/DocumentDetailsCard1";
-import { workflowDetail } from "../services/api/ownerWorkApi";
-import Actions from "../components/Actions";
+
+import axios from 'axios';
+import Comments from "../components/Comments";
+import SideBar2 from "../components/SideBar2";
+import UserName from "../components/UserName";
+import upArrow from "../../public/asset/icons/uparrow.svg";
 
 interface Document {
   name: string;
@@ -49,19 +48,20 @@ interface WorkflowDetailData {
   buttons: Buttons;
 }
 
-export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
-  component: () => {
-    const [activeTab, setActiveTab] = useState<number>(1);
-    const underlineRef = useRef<HTMLDivElement>(null);
-    const params = Route.useParams();
-    const workflowId = params.workflowId;
-    
-    const [isOpen, setIsOpen] = useState(false);
-    const user: any = localStorage.getItem("user");
-    const userData = JSON.parse(user);
-    const userId = userData._id;
+export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId")({
+  component: AssignedToMeDetails
+});
 
-    const [isLoading, setIsLoading] = useState(true);
+function AssignedToMeDetails() {
+  const [activeTab, setActiveTab] = useState<number>(1);
+  const underlineRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const params = Route.useParams();
+  const workflowId = params.workflowId;
+  const user: any = localStorage.getItem("user");
+  const userData = JSON.parse(user);
+  const userId = userData._id;
+  const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [workflowDetailData, setWorkflowDetailData] =
       useState<WorkflowDetailData>({
@@ -80,54 +80,50 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
           canApprove: false,
         },
       });
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const result = await workflowDetail(workflowId, userId);
-          setWorkflowDetailData(result.data);
-          setIsLoading(false);
-          setIsError(false);
-        } catch (error) {
-          console.error("Error fetching workflow details:", error);
-          setIsLoading(false);
-          setIsError(true);
-        }
-      };
-
-      fetchData();
-    }, [workflowId, userId]);
-
-    useEffect(() => {
-      const activeTabElement = document.getElementById(`tab-${activeTab}`);
-      if (underlineRef.current && activeTabElement) {
-        underlineRef.current.style.width = `${activeTabElement.offsetWidth}px`;
-        underlineRef.current.style.left = `${activeTabElement.offsetLeft}px`;
+      if (isError) {
+        return <div>Error loading data. Please try again later.</div>;
       }
-    }, [activeTab]);
+     
+  
+      const comments = workflowDetailData.workflow.comments;
+  
+      const Documents = workflowDetailData.workflow.requiredDocuments;
+      const Documents2 = workflowDetailData.workflow.additionalDocuments;
+      console.log(Documents)
+      const detail = workflowDetailData.workflow;
+      const Button= workflowDetailData.buttons
+      const Astatus=Button.canApprove
 
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-screen bg-green-100">
-          <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
-        </div>
-      );
+      const [buttons, setButtons] = useState<any>({Button});
+      const [comment, setComment] = useState<string>("");
+      const [approveStatus, setApproveStatus] = useState<Boolean>(Astatus);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get<WorkflowDetailData>(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        setWorkflowDetailData(result.data);
+     
+        setIsLoading(false);
+          setIsError(false);
+      } catch (error) {
+        console.error("Error fetching detail:", error);
+      }
+    };
+
+    if (workflowId && userId) {
+      fetchData();
     }
+  }, [workflowId, userId]);
 
-    if (isError) {
-      return <div>Error loading data. Please try again later.</div>;
-    }
+  if (isLoading) {
+    return   <div className="flex justify-center items-center h-screen bg-green-100">
+    <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
+  </div>;
+  }
 
-    const comments = workflowDetailData.workflow.comments;
-
-    const Documents = workflowDetailData.workflow.requiredDocuments;
-    const Documents2 = workflowDetailData.workflow.additionalDocuments;
-    const detail = workflowDetailData.workflow;
-
-    console.log(detail);
-
-    return (
-      <div>
+  return (
+    <div>
       <UserName />
       <SideBar2 />
       <div className="mt-24 ml-80 mr-8 w-full h-full">
@@ -195,8 +191,8 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                             Owner/initiator
                           </h5>
                           <p className="text-xs text-gray-600">
-                           {userData.username}
-                           </p>
+                           Not sent from the back
+                          </p>
                         </div>
                         <div className="flex flex-col gap-2">
                           <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
@@ -216,7 +212,14 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                             {detail.currentStageIndex + 1}
                           </p>
                         </div>
-                       
+                        <div className="flex flex-col gap-2">
+                          <h5 className="font-urbanist font-semibold text-purple-800 text-sm leading-18">
+                            Status
+                          </h5>
+                          <p className="text-xs text-gray-600">
+                            {detail.status}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -272,12 +275,22 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
             </div>
             <div className="mt-24">
 
-            <Actions/> 
+            <Comments
+            workflowDetail={workflowDetailData}
+            setWorkflowDetail={setWorkflowDetailData}
+            comment={comments}
+            setComment={setComment}
+            approveStatus={Button.canApprove}
+            setApproveStatus={setApproveStatus}
+            buttons={Button}
+          /> 
             </div>
         
           </div>
         </div>
       </div>
-    );
-  },
-});
+   
+  );
+}
+
+export default AssignedToMeDetails;
