@@ -46,6 +46,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     };
 
     console.log(data.document, "data");
+
     const formated = data.documents.flat();
 
     const additional = data.additional;
@@ -71,7 +72,13 @@ function LoanDocument() {
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-
+  console.log(step.formated.length);
+  if (step.formated.length <= 0) {
+    toast("No data registered for this workflow");
+    setTimeout(function () {
+      navigate({ to: "/assignedbyme" });
+    }, 3000);
+  }
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -160,7 +167,7 @@ function LoanDocument() {
           toast.success("Successfully submited!");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedbyme" });
           }, 3000);
         })
         .catch(function (error) {
@@ -168,7 +175,7 @@ function LoanDocument() {
           toast.error("Please try again");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedbyme" });
           }, 3000);
           console.log(error);
         });
