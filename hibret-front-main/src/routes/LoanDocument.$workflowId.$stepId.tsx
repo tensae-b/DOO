@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
-import toast, { Toaster } from "react-hot-toast";
+// import toast, { Toaster } from "react-hot-toast";
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
