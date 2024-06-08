@@ -10,6 +10,20 @@ export const fetchUser = async () => {
         return { data: null, isLoading: false, isError: true };
     }
 };
+export const createCommite = async (formData) => {
+    console.log(formData)
+    try {
+      const response = await axiosInst.post('/admin/committee', formData);
+      console.log(formData)
+      const { data } = response;
+      return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+      console.error('Error creating committee:', error);
+      return { data: null, isLoading: false, isError: true };
+    }
+  };
+  
+
 export const sendUser = async (selectedUsers) => { // Pass selectedUsers as a parameter
     try {
         const response = await axiosInst.post('api/sendInvitation', {selectedUsers}); // Include selectedUsers in the request body
