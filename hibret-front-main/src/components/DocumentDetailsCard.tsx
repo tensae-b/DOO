@@ -44,33 +44,35 @@ const DocumentDetailsCard = ({ doc }) => {
   const hasFilePath = !!doc.filePath;
   console.log(doc.filePath);
 
-  return (
-    <div className="flex justify-between items-center p-4 border rounded shadow">
-      <div className="flex gap-6 items-center">
-        <img src={pdf} alt="PDF Icon" className="w-8 h-8" />
-        <h5 className="text-teal-600">{doc.name || 'Document'}</h5>
-      </div>
-      <div className="flex gap-6 items-center">
-        {isVisible && hasFilePath && (
-          <div className="relative" style={{ width: '200px', height: '200px' }}>
-            <iframe
-              src={doc.filePath}
-              style={{ width: '100%', height: '100%' }}
-              frameBorder="0"
-            ></iframe>
-          </div>
-        )}
-        {hasFilePath && (
-          <Link to={`/fulldocument/${encodeURIComponent(doc.filePath)}`}>
-            <img src={visible} style={{ cursor: 'pointer' }} alt="Visibility Icon" onClick={toggleVisibility} />
-          </Link>
-        )}
-        {hasFilePath && (
-          <img src={downloadIcon} alt="Download Icon" style={{ cursor: 'pointer' }} onClick={handleDownload} />
-        )}
-      </div>
+ // ...
+return (
+  <div className="flex justify-between items-center p-4 border rounded shadow">
+    <div className="flex gap-6 items-center">
+      <img src={pdf} alt="PDF Icon" className="w-8 h-8" />
+      <h5 className="text-teal-600">{doc.name || 'Document'}</h5>
     </div>
-  );
+    <div className="flex gap-6 items-center">
+      {isVisible && doc.filePath && (
+        <div className="relative" style={{ width: '200px', height: '200px' }}>
+          <iframe
+            src={doc.filePath}
+            style={{ width: '100%', height: '100%' }}
+            frameBorder="0"
+          ></iframe>
+        </div>
+      )}
+      {doc.filePath && (
+        <Link to={`/fulldocument/${encodeURIComponent(doc.filePath)}`}>
+          <img src={visible} style={{ cursor: 'pointer' }} alt="Visibility Icon" onClick={toggleVisibility} />
+        </Link>
+      )}
+      {doc.filePath && (
+        <img src={downloadIcon} alt="Download Icon" style={{ cursor: 'pointer' }} onClick={handleDownload} />
+      )}
+    </div>
+  </div>
+);
+
 };
 
 export default DocumentDetailsCard;

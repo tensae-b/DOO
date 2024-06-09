@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { workapprove, workareject, workforward, workback } from "../services/api/userworkApi";
 
 const Comments = ({
@@ -19,6 +19,7 @@ const Comments = ({
       setIsForwardDisabled(true);
       setIsBackDisabled(true);
     }
+    console.log(buttons)
   }, [workflowDetail]);
 
   const getUserId = () => {
@@ -45,6 +46,9 @@ const Comments = ({
 
       const workflowId = workflowDetail._id;
       const { data, isError } = await workapprove(workflowId, userId, comment);
+      console.log(workflowId)
+      console.log(userId)
+      console.log(comment)
       if (!isError) {
         setApproveStatus("Workflow approved successfully.");
         setWorkflowDetail(data.workflow);
@@ -203,10 +207,10 @@ const Comments = ({
                   <span>{new Date(commentObj.createdAt).toLocaleString()}</span>
                 </div>
                 <p className="text-gray-800 mt-2">{commentObj.comment}</p>
-                <div className="text-sm text-gray-500 mt-2">
+                {/* <div className="text-sm text-gray-500 mt-2">
                   <p>From: {commentObj.fromUser._id}</p>
                   <p>To: {commentObj.toUser._id}</p>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
