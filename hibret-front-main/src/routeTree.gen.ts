@@ -52,9 +52,6 @@ const IndexLazyImport = createFileRoute('/')()
 const FulldocumentDocumntpathLazyImport = createFileRoute(
   '/fulldocument/$documntpath',
 )()
-const AssignedtomedetailsWorkflowIdLazyImport = createFileRoute(
-  '/assignedtomedetails/$workflowId',
-)()
 const AssignedbymedetailsWorkflowIdLazyImport = createFileRoute(
   '/assignedbymedetails/$workflowId',
 )()
@@ -237,16 +234,6 @@ const FulldocumentDocumntpathLazyRoute =
     import('./routes/fulldocument.$documntpath.lazy').then((d) => d.Route),
   )
 
-const AssignedtomedetailsWorkflowIdLazyRoute =
-  AssignedtomedetailsWorkflowIdLazyImport.update({
-    path: '/assignedtomedetails/$workflowId',
-    getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./routes/assignedtomedetails.$workflowId..lazy').then(
-      (d) => d.Route,
-    ),
-  )
-
 const AssignedbymedetailsWorkflowIdLazyRoute =
   AssignedbymedetailsWorkflowIdLazyImport.update({
     path: '/assignedbymedetails/$workflowId',
@@ -259,8 +246,8 @@ const AssignedbymedetailsWorkflowIdLazyRoute =
 
 const AssignedtomedetailsWorkflowIdUserIdLazyRoute =
   AssignedtomedetailsWorkflowIdUserIdLazyImport.update({
-    path: '/$userId',
-    getParentRoute: () => AssignedtomedetailsWorkflowIdLazyRoute,
+    path: '/assignedtomedetails/$workflowId/$userId',
+    getParentRoute: () => rootRoute,
   } as any).lazy(() =>
     import('./routes/assignedtomedetails.$workflowId.$userId.lazy').then(
       (d) => d.Route,
@@ -411,10 +398,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssignedbymedetailsWorkflowIdLazyImport
       parentRoute: typeof rootRoute
     }
-    '/assignedtomedetails/$workflowId': {
-      preLoaderRoute: typeof AssignedtomedetailsWorkflowIdLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/fulldocument/$documntpath': {
       preLoaderRoute: typeof FulldocumentDocumntpathLazyImport
       parentRoute: typeof rootRoute
@@ -429,7 +412,7 @@ declare module '@tanstack/react-router' {
     }
     '/assignedtomedetails/$workflowId/$userId': {
       preLoaderRoute: typeof AssignedtomedetailsWorkflowIdUserIdLazyImport
-      parentRoute: typeof AssignedtomedetailsWorkflowIdLazyImport
+      parentRoute: typeof rootRoute
     }
   }
 }
@@ -469,12 +452,10 @@ export const routeTree = rootRoute.addChildren([
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
   AssignedbymedetailsWorkflowIdLazyRoute,
-  AssignedtomedetailsWorkflowIdLazyRoute.addChildren([
-    AssignedtomedetailsWorkflowIdUserIdLazyRoute,
-  ]),
   FulldocumentDocumntpathLazyRoute,
   EditDocumentWorkflowIdStepIdRoute,
   LoanDocumentWorkflowIdStepIdRoute,
+  AssignedtomedetailsWorkflowIdUserIdLazyRoute,
 ])
 
 /* prettier-ignore-end */
