@@ -17,7 +17,7 @@ export const Route = createLazyFileRoute('/report')({
         <div className='mt-28'>
         <ReportHead/>
         <ReportMiddle/>
-        <ReportEnd/>
+        
         </div>
   
       </div>
