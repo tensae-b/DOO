@@ -1,17 +1,42 @@
-import { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { reset } from '../services/api/usersApi';
+import axios from 'axios';
 import Logo from '../components/logo';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ValidationResult {
   isError: boolean;
   error?: string;
 }
 
+interface ResetResponse {
+  msg: string;
+}
+
+interface ResetResult {
+  isError: boolean;
+  data?: ResetResponse;
+  error?: string;
+}
+
+const reset = async (newPassword: string): Promise<ResetResult> => {
+  try {
+    const response = await axios.put<ResetResponse>('http://localhost:5000/api/resetPassword', {
+      password: newPassword,
+    });
+
+    return { isError: false, data: response.data };
+  } catch (error: any) {
+    console.error('Error resetting password:', error);
+    return { isError: true, error: error.response?.data?.error || 'Internal server error' };
+  }
+};
+
 export const Route = createLazyFileRoute('/setNewPassword')({
   component: () => {
-    const [oldPassword, setOldPassword] = useState<string>('');
-    const [newPassword, setNewPassword] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
     const [isOldPasswordVisible, setIsOldPasswordVisible] = useState<boolean>(false);
     const [isNewPasswordVisible, setIsNewPasswordVisible] = useState<boolean>(false);
@@ -37,28 +62,33 @@ export const Route = createLazyFileRoute('/setNewPassword')({
     };
 
     const handleChangePassword = async () => {
-      const errors = validatePassword(newPassword);
+      const passwordErrors = validatePassword(password);
+      const confirmPasswordErrors = validatePassword(confirmPassword);
+      const errors = [...passwordErrors, ...confirmPasswordErrors];
       setValidationErrors(errors);
       if (errors.length > 0) {
         return; // If there are validation errors, do not proceed
       }
 
       try {
-        // Call reset function with old password and new password
-        const result: ValidationResult = await reset(oldPassword, newPassword);
-        
+        // Call reset function with new password
+        const result: ValidationResult = await reset(password);
+
         // Handle the result as needed
         if (!result.isError) {
           // Password changed successfully
-          // You may redirect to another page or show a success message
-          console.log('Password changed successfully');
+          toast.success('Password changed successfully');
+          // Redirect to login page
+          window.location.href = '/login';
         } else {
           // Handle error
           console.error('Error changing password:', result.error);
+          toast.error(result.error || 'Error changing password');
         }
       } catch (error) {
         // Handle network error
         console.error('Network error:', error);
+        toast.error('Network error. Please try again.');
       }
     };
 
@@ -68,6 +98,14 @@ export const Route = createLazyFileRoute('/setNewPassword')({
 
     const toggleNewPasswordVisibility = () => {
       setIsNewPasswordVisible((prevState) => !prevState);
+    };
+
+    const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    };
+
+    const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setConfirmPassword(e.target.value);
     };
 
     return (
@@ -83,10 +121,10 @@ export const Route = createLazyFileRoute('/setNewPassword')({
             <div className='relative w-full'>
               <input
                 type={isOldPasswordVisible ? 'text' : 'password'}
-                placeholder='Old password'
+                placeholder='New password'
                 className='w-full placeholder:text-xs py-2 px-3 placeholder:text-gray-600 text-sm border h-12 rounded-md border-gray-600'
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
+                value={password}
+                onChange={handlePasswordChange}
               />
               <button
                 type="button"
@@ -112,10 +150,10 @@ export const Route = createLazyFileRoute('/setNewPassword')({
             <div className='relative w-full'>
               <input
                 type={isNewPasswordVisible ? 'text' : 'password'}
-                placeholder='Enter a new password'
+                placeholder='Confirm password'
                 className='w-full placeholder:text-xs py-2 px-3 placeholder:text-gray-600 text-sm border rounded-md h-12 border-gray-600'
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
               />
               <button
                 type="button"
@@ -141,3 +179,4 @@ export const Route = createLazyFileRoute('/setNewPassword')({
     );
   },
 });
+
