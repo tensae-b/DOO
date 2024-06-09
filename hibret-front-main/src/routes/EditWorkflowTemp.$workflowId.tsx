@@ -14,19 +14,55 @@ import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
 import { fetchCatag, fetchDepartment, fetchRequiredDocument, fetchRole, fetchSubCatag, fetchtCommittee } from "../services/api/fetchDataApi";
+import { getWorkflowTemplate } from "../services/api/workflowApi";
 
 
-export const Route = createFileRoute("/workflowadd")({
-  component: () => <WorkFlowAddTemp />,
+export const Route = createFileRoute("/EditWorkflowTemp/$workflowId")({
+  loader: async ({ params: { workflowId } }) => {
+   console.log(workflowId) 
+   
+    const result = await getWorkflowTemplate(workflowId);
+
+    const data = result.data;
+    return { data,workflowId };
+  },
+  notFoundComponent: () => {
+    return <p>step not found</p>;
+  },
+  component: EditWorkflowTemp,
 });
 
-function WorkFlowAddTemp() {
-  useEffect(() => {
-    
-    getDepartment();
-    getCommittees();
-  }, []);
+const addSection= {
+  "name":"some demo workflow",
+  "depId":"6661c53bfc6f3eba0d27b7de",
+  "categoryId":"6662896104b1482ab5876cb8",
+  "subCategoryId":"6662896904b1482ab5876cf1",
+  "additionalDoc":false,
+  "requiredDocumentTemplates":[
+     "6664db66d81f1ee5a55eb918",
+     "6664dc59d81f1ee5a55eb987"
+  ],
+  "stages":[
+     {
+        "stageTitle":"inital",
+        "hasCondition":false,
+        "ListCondition":"Select Condition",
+        "approverType":"Single Person",
+        "single_permissions":{
+           "role_id":"6661caaefc6f3eba0d27b7f9"
+        }
+     }
+  ]
+}
 
+function EditWorkflowTemp() {
+  // useEffect(() => {
+    
+  //   getDepartment();
+  //   getCommittees();
+  // }, []);
+  let stageLength = addSection.stages.length-1;
+  console.log(stageLength);
 
   const [category, setCategory] = useState([]);
   const [department, setDepartment] = useState([]);
@@ -37,40 +73,42 @@ function WorkFlowAddTemp() {
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-      console.log(depId)
-    getCategory();
-    getRoles();
-  }, [depId]);
-  
-  function getDepartment(){
-    fetchDepartment().then(result => {
-      if(!result.isError){
-        setDepartment(result.data)
-      }else{
-       toast.error("error fetching");
-      }
-      
-     })
  
-  }
+  
 
-
-  function getCommittees() {
-    fetchtCommittee().then(result => {
-      if(!result.isError){
-    
-        setCommittee(result.data);
-      }else{
-       toast.error("error fetching");
-      }
+  // useEffect(() => {
+  //     console.log(depId)
+  //   getCategory();
+  //   getRoles();
+  // }, [depId]);
+  
+  // function getDepartment(){
+  //   fetchDepartment().then(result => {
+  //     if(!result.isError){
+  //       setDepartment(result.data)
+  //     }else{
+  //      toast.error("error fetching");
+  //     }
       
-     })
+  //    })
+ 
+  // }
+
+
+  // function getCommittees() {
+  //   fetchtCommittee().then(result => {
+  //     if(!result.isError){
     
-  }
+  //       setCommittee(result.data);
+  //     }else{
+  //      toast.error("error fetching");
+  //     }
+      
+  //    })
+    
+  // }
   function getRoles() {
-    fetchRole(depId).then(result => {
+    fetchRole(addSection.depId).then(result => {
       if(!result.isError){
         console.log(result.data)
         setRoles(result.data);
@@ -82,27 +120,32 @@ function WorkFlowAddTemp() {
     
   }
 
-  function getSubCategory(value: any) {
-    fetchSubCatag(value).then(result => {
-     if(!result.isError){
-      setSubCategory(result.data);
-     }else{
-      toast.error("error fetching");
-     }
+  // function getSubCategory(value: any) {
+  //   fetchSubCatag(value).then(result => {
+  //    if(!result.isError){
+  //     setSubCategory(result.data);
+  //    }else{
+  //     toast.error("error fetching");
+  //    }
      
-    })
+  //   })
 
    
   
-  }
+  // }
+  useEffect(()=>{
+    requriedDocument();
+    setRequiredDocument("workflowtemp.requiredDocumentTemplates", addSection.requiredDocumentTemplates)
+    getRoles();
+  },[])
 
   function setRequiredDocument(title: any, value: any) {
     setValue(title, value);
   }
-  function requriedDocument(subCategoryId: any) {
-    fetchRequiredDocument(subCategoryId).then(result => {
+  function requriedDocument() {
+    fetchRequiredDocument(addSection.subCategoryId).then(result => {
       if(!result.isError){
-        console.log(result.data.templates, 'docs')
+        console.log(result.data.templates,'temp')
         setRequiredDocuments(result.data.templates)
       }else{
        toast.error("error fetching");
@@ -113,22 +156,22 @@ function WorkFlowAddTemp() {
   }
   
 
-  function getCategory() {
-    fetchCatag(depId).then(result => {
-      if(!result.isError){
-       setCategory(result.data);
-      }else{
-        console.log(result)
+  // function getCategory() {
+  //   fetchCatag(depId).then(result => {
+  //     if(!result.isError){
+  //      setCategory(result.data);
+  //     }else{
+  //       console.log(result)
        
-      }
-    })
+  //     }
+  //   })
     
-  }
-  const handleDeleteDocument = (title: any) => {
-    setChosenDocument((prevDocuments) =>
-      prevDocuments.filter((doc) => doc.title !== title)
-    );
-  };
+  // }
+  // const handleDeleteDocument = (title: any) => {
+  //   setChosenDocument((prevDocuments) =>
+  //     prevDocuments.filter((doc) => doc.title !== title)
+  //   );
+  // };
 
   const [stageCondition, setStageCondition] = useState([]);
   const [stageGroup, setStageGroup] = useState([]);
@@ -190,30 +233,7 @@ function WorkFlowAddTemp() {
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
 
-    var config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/workflow-templates",
-      headers: {},
-      data: data.workflowtemp,
-    };
-
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        toast.success("Successfully toasted!");
-      
-                  navigate({ to: "/workflowtemp" });
-      })
-      .catch(function (error) {
-        console.log(error);
-        
-        toast.error("please try again");
-      });
-
-    // const dataSent={
-
-    // }
+    
   };
 
   // function handleDragEnd(event: any) {
@@ -243,7 +263,7 @@ function WorkFlowAddTemp() {
                   <img src="/asset/icons/back-arrow.svg" />
                 </a>
                 <h2 className="text-[#4A176D] text-3xl font-bold">
-                  Add New Workflow Template
+                  Edit Workflow Template
                 </h2>
               </div>
               <form
@@ -271,11 +291,11 @@ function WorkFlowAddTemp() {
                         <input
                           type="text"
                           id="WorkflowName"
-                          {...register("workflowtemp.name", {
-                            required: true,
-                          })}
+                          placeholder={addSection.name}
+                          defaultValue={addSection.name}
+                          disabled 
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                          required
+                          
                         />
                       </div>
                       <div className="mt-4">
@@ -283,77 +303,19 @@ function WorkFlowAddTemp() {
                           htmlFor="workflow.department"
                           className="text-sm w-full"
                         >
-                          Choose department*
+                          Choose department
                         </label>
-                        <select
-                            
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.depId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              setDepId(e.target.value)
-                            }
-                            required
-                          >
-                            <option label="Select" value="" />
-                            {department?.map((option: any, index) => (
-                              <option
-                                key={option}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                        <p>{addSection.depId}</p>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
                         <div className="w-full flex flex-col justify-center gap-2">
-                          <label className="text-sm w-full">
-                            Workflow Category*
-                          </label>
-                          <select
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.categoryId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              getSubCategory(e.target.value)
-                            }
-                          >
-                            <option value="">Select Category</option>
-                            {category?.map((option: any, index) => (
-                              <option
-                                key={index}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                          <label className="text-sm w-full">Catagory</label>
+                          <p>{addSection.categoryId}</p>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
-                          <label className="text-sm w-full">
-                            Workflow Subcategory*
-                          </label>
-                          <select
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.subCategoryId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              requriedDocument(e.target.value)
-                            }
-                          >
-                            <option value="">Select SubCategory</option>
-
-                            {subCategory?.map((option: any, index) => (
-                              <option
-                                key={index}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                          <label className="text-sm w-full">SubCatagory</label>
+                          <p>{addSection.subCategoryId}</p>
                         </div>
                       </div>
                     </div>
@@ -389,6 +351,7 @@ function WorkFlowAddTemp() {
                                 // );
                                 // );
                                 // console.log({ chosenDocuments });
+
                                 setChosenDocument((prevDocuments) => {
                                   const s = [...prevDocuments, e.target.value];
                                   console.log({ s });
@@ -406,6 +369,7 @@ function WorkFlowAddTemp() {
                               }}
                             >
                               <option>select a document</option>
+                              
                               {requiredDocuments?.map((option: any, index) => (
                                 <option
                                   className="border"
@@ -420,6 +384,7 @@ function WorkFlowAddTemp() {
                             <input
                               type="checkbox"
                               {...register("workflowtemp.additionalDoc")}
+                              defaultChecked= {addSection.additionalDoc}
                             />
                             <label
                               htmlFor="additionalInfo"
@@ -437,28 +402,30 @@ function WorkFlowAddTemp() {
                           >
                             Order of appearance
                           </label>
-                          {/* <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
-                          >
-                            <SortableContext
-                              items={chosenDocuments}
-                              strategy={verticalListSortingStrategy}
-                            >
-                              {chosenDocuments.map((item, index) => (
-                                <SortableItem
-                                  key={index}
-                                  title={item}
-                                  id={index + 1}
-                                />
-                              ))} */}
-
-                          {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
+                         
+                          {addSection.requiredDocumentTemplates.map((item,index)=>(
+                            
+                            <div className="flex gap-2">
+                            <img src="/asset/icons/order.svg" />
+                            <p className="text-[#667085] text-sm">
+                             {item}
+                            </p>
+                            <div>
+                              <img
+                                onClick={() => {
+                                  // handleDeleteDocument(item);
+                                }}
+                                src="/asset/icons/delete.svg"
+                              />
+                            </div>
+                          </div>
+                          ))
+                          }
                            {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
                               <p className="text-[#667085] text-sm">
+                            
                                 {
                                   requiredDocuments.find((i) => i._id === item)
                                     .documentTitle
@@ -467,7 +434,7 @@ function WorkFlowAddTemp() {
                               <div>
                                 <img
                                   onClick={() => {
-                                    handleDeleteDocument(item);
+                                    // handleDeleteDocument(item);
                                   }}
                                   src="/asset/icons/delete.svg"
                                 />
@@ -478,6 +445,144 @@ function WorkFlowAddTemp() {
                           </DndContext> */}
                         </div>
                       </div>
+
+                      {addSection.stages.map((item, index)=>(
+                        <div className="flex flex-col gap-5 mb-7">
+                        <div className="flex justify-between w-full">
+                          <h3
+                            className="text-[#00B0AD] text-xl font-bold"
+                            id="Stages"
+                          >
+                            Stages
+                          </h3>
+                          {/* <button
+                            type="button"
+                            onClick={() => remove(index)}
+                            className="max-w-10"
+                          >
+                            <img src="/asset/icons/delete.svg" />
+                          </button> */}
+                        </div>
+
+                        {/* stage */}
+                        <h2 className="text-[#667085] text-xl">
+                          Stage_{index + 1}
+                        </h2>
+                        <div className="flex flex-col gap-5 w-full items-center justify-center">
+                          <div className="flex flex-col gap-4 w-full">
+                            <label
+                              htmlFor="stageTitle"
+                              className="text-sm w-full"
+                            >
+                              Stage Title*
+                            </label>
+                            <input
+                              type="text"
+                              id="stagetitle"
+                              {...register(
+                                `workflowtemp.stages.${index}.stageTitle`,
+                                
+                              )}
+                              defaultValue={item.stageTitle}
+                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                              required
+                            />
+                          </div>
+                          <div className="flex gap-5 w-full">
+                            <div className="flex gap-4 justify-center items-center ">
+                              <input
+                                type="checkbox"
+                                {...register(
+                                  `workflowtemp.stages.${index}.hasCondition`
+                                )}
+                                onChange={(e) => {
+                                  handleConditionChange(
+                                    index,
+                                    e.target.checked
+                                  );
+                                }}
+                                defaultChecked={item.hasCondition}
+                              />
+                              <label
+                                htmlFor="hasCondition"
+                                className="text-sm w-full"
+                              >
+                                Stage has conditions?
+                              </label>
+                            </div>
+                            <div>
+                              <select
+                                {...register(
+                                  `workflowtemp.stages.${index}.ListCondition`
+                                )}
+                                className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                              >
+                                {/* <option>List Condition</option>
+                                
+                                  {item.ListCondition.map((item)=>(
+                               <p> {item}</p>
+                                  ))} */}
+                               
+
+                              </select>
+                            </div>
+                          </div>
+                          
+                            </div>
+                            <div>
+                            <label>
+                              Approver type
+                            </label>
+                            <select
+                                id="sectiontype"
+                                {...register(`document.sections.${0}.content.${index}.type`)}
+                                defaultValue={
+                                  item.approverType
+                                }
+                                className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                              
+                              >
+                                <option value="Single Person">Single Person</option>
+                                <option value="Committee">Committee</option>
+                                
+                              </select>
+                        </div>
+                        {'single_permissions'in item ? (
+                          <div>
+                            <label>
+                             Role
+                            </label>
+                            <input
+                              type="text"
+                              id="approverType"
+                              {...register(
+                                `workflowtemp.stages.${index}.single_permissions.role_id`,
+                                
+                              )}
+                              defaultValue={item.single_permissions.role_id}
+                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                              required
+                            />
+                        </div>
+                        ): <div>
+                        <label>
+                         Role
+                        </label>
+                        <input
+                          type="text"
+                          id="approverType"
+                          {...register(
+                            `workflowtemp.stages.${index}.committee_permissions.role_ids`,
+                            
+                          )}
+                          defaultValue={item.committee_permissions.role_ids}
+                          className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                          required
+                        />
+                    </div>}
+                        
+                      </div>
+                      ))}
                     </div>
 
                     {/* section 3 */}
@@ -504,7 +609,7 @@ function WorkFlowAddTemp() {
 
                               {/* stage */}
                               <h2 className="text-[#667085] text-xl">
-                                Stage_{index + 1}
+                                Stage_{stageLength + index + 1}
                               </h2>
                               <div className="flex flex-col gap-5 w-full items-center justify-center">
                                 <div className="flex flex-col gap-4 w-full">
@@ -518,7 +623,7 @@ function WorkFlowAddTemp() {
                                     type="text"
                                     id="stagetitle"
                                     {...register(
-                                      `workflowtemp.stages.${index}.stageTitle`,
+                                      `workflowtemp.stages.${stageLength + index + 1}.stageTitle`,
                                       { required: true }
                                     )}
                                     className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
@@ -530,11 +635,11 @@ function WorkFlowAddTemp() {
                                     <input
                                       type="checkbox"
                                       {...register(
-                                        `workflowtemp.stages.${index}.hasCondition`
+                                        `workflowtemp.stages.${stageLength + index + 1}.hasCondition`
                                       )}
                                       onChange={(e) => {
                                         handleConditionChange(
-                                          index,
+                                          stageLength + index + 1,
                                           e.target.checked
                                         );
                                       }}
@@ -549,7 +654,7 @@ function WorkFlowAddTemp() {
                                   <div>
                                     <select
                                       {...register(
-                                        `workflowtemp.stages.${index}.ListCondition`
+                                        `workflowtemp.stages.${stageLength + index + 1}.ListCondition`
                                       )}
                                       className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                                     >
@@ -560,16 +665,16 @@ function WorkFlowAddTemp() {
                               </div>
                             </div>
 
-                            {stageCondition[index] && (
+                            {stageCondition[stageLength + index + 1] && (
                               <StageCondition
-                                conditionIndex={index}
+                                conditionIndex={stageLength + index + 1}
                                 {...{ control, register }}
                                 departmentData={department}
                                 committeeData={committee}
                                 role={role}
                               />
                             )}
-                            {!stageCondition[index] && (
+                            {!stageCondition[stageLength + index + 1] && (
                               <div
                                 key={field.id}
                                 className="flex flex-col gap-5 w-full items-center justify-center mb-6"
@@ -587,12 +692,12 @@ function WorkFlowAddTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${index}.approverType`
+                                            `workflowtemp.stages.${stageLength + index + 1}.approverType`
                                           )}
                                           value="Single Person"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              index,
+                                              stageLength + index + 1,
                                               e.target.value
                                             );
                                           }}
@@ -604,12 +709,12 @@ function WorkFlowAddTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${index}.approverType`
+                                            `workflowtemp.stages.${stageLength + index + 1}.approverType`
                                           )}
                                           value="Committee"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              index,
+                                              stageLength + index + 1,
                                               e.target.value
                                             );
                                           }}
@@ -620,7 +725,7 @@ function WorkFlowAddTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[index] == "Committee" ? (
+                                {stageGroup[stageLength + index + 1] == "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
@@ -628,7 +733,7 @@ function WorkFlowAddTemp() {
                                       </label>
                                       <select
                                         {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.role_ids`
+                                          `workflowtemp.stages.${stageLength + index + 1}.committee_permissions.role_ids`
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
@@ -698,7 +803,7 @@ function WorkFlowAddTemp() {
                                         </label>
                                         <select
                                           {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.role_id`
+                                            `workflowtemp.stages.${stageLength + index + 1}.single_permissions.role_id`
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
@@ -790,4 +895,4 @@ function WorkFlowAddTemp() {
   );
 }
 
-export default WorkFlowAddTemp;
+export default EditWorkflowTemp;

@@ -21,14 +21,16 @@ import {
   fetchSubCatag,
   fetchtCommittee,
 } from "../services/api/fetchDataApi";
-import { getDocumentTemplate } from "../services/api/documentApi";
+import { getDocumentTemplate, updateDocumentTemplate } from "../services/api/documentApi";
 
 export const Route = createFileRoute("/EditDocumentTemplate/$workflowId")({
   loader: async ({ params: { workflowId } }) => {
+   console.log(workflowId) 
+   
     const result = await getDocumentTemplate(workflowId);
 
     const data = result.data;
-    return { data };
+    return { data,workflowId };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -63,6 +65,7 @@ export const Route = createFileRoute("/EditDocumentTemplate/$workflowId")({
 // };
 
 function EditDocumentTemplate() {
+  const navigate = useNavigate();
   const [sectionEdited, setSectionEdited] = useState(false);
   const methods = useForm({
     mode: "onChange",
@@ -97,8 +100,21 @@ function EditDocumentTemplate() {
     name: "document",
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(data.document, "docment data");
+    const documentData=data.document;
+    const result = await updateDocumentTemplate(templateData.workflowId, documentData);
+    console.log(result)
+    if(!result.isError){
+     toast.success(result.data.message)
+     navigate({ to: `/documentemp` });
+
+    }else{
+      toast.error(result.data.message)
+    }
+    
+    // const documentTempData= 
+
   };
 
   return (
@@ -157,17 +173,17 @@ function EditDocumentTemplate() {
                         >
                           department
                         </label>
-                        <p>{addSection.depId}</p>
+                        <p>{addSection.department}</p>
                       </div>
 
                       <div className="flex w-full gap-3">
                         <div className="w-full flex flex-col justify-center gap-2">
                           <label className="text-sm w-full">Catagory</label>
-                          <p>{addSection.categoryId}</p>
+                          <p>{addSection.category}</p>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
                           <label className="text-sm w-full">SubCatagory</label>
-                          <p>{addSection.subCategoryId.name}</p>
+                          <p>{addSection.subCategory}</p>
                         </div>
                       </div>
                     </div>
@@ -179,12 +195,12 @@ function EditDocumentTemplate() {
                           htmlFor="documentName"
                           className="text-[#00B0AD] text-xl font-bold "
                         >
-                          Section Title*
+                          Field Title*
                         </label>
                         <input
                           type="text"
                           id="documentName"
-                          {...register("document.name")}
+                          {...register(`document.sections.${0}.title`)}
                           placeholder={addSection.sections[0].title}
                           className="border rounded-md p-2 mt-1 w-full"
                           defaultValue={addSection.sections[0].title}
@@ -210,7 +226,7 @@ function EditDocumentTemplate() {
                               <input
                                 type="text"
                                 id="sectiontitle"
-                                {...register(`document.section.${index}.title`)}
+                                {...register(`document.sections.${0}.content.${index}.title`)}
                                 placeholder={
                                   addSection.sections[0].content[index].title
                                 }
@@ -232,7 +248,7 @@ function EditDocumentTemplate() {
                               </label>
                               <select
                                 id="sectiontype"
-                                {...register(`document.section.${index}.type`)}
+                                {...register(`document.sections.${0}.content.${index}.type`)}
                                 defaultValue={
                                   addSection.sections[0].content[index].type
                                 }
@@ -256,15 +272,13 @@ function EditDocumentTemplate() {
                               <input
                                 type="checkbox"
                                 id="required"
-                                // {...register(
-                                //   `document.section.${index}.required`
-                                // )}
-                                defaultChecked={`${addSection.sections[0].content[index].isRequired}`}
+                                {...register(
+                                  `document.sections.${0}.content.${index}.isRequired`
+                                )}
+                                defaultChecked={addSection.sections[0].content[index].isRequired}
+
                                 onChange={(data) => {
-                                  setValue(
-                                    `document.section.${index}.required`,
-                                    data.target.checked
-                                  );
+                                 
                                   setSectionEdited(true);
                                 }}
                               />
@@ -275,9 +289,9 @@ function EditDocumentTemplate() {
                                 type="checkbox"
                                 id="condition"
                                 {...register(
-                                  `document.section.${index}.condition`
+                                  `document.sections.${0}.content.${index}.conditionLogic`
                                 )}
-                                defaultValue={`${addSection.sections[0].content[index].conditionLogic}`}
+                                defaultChecked={addSection.sections[0].content[index].conditionLogic}
                                 onChange={() => {
                                   setSectionEdited(true);
                                 }}
@@ -317,7 +331,7 @@ function EditDocumentTemplate() {
                               type="text"
                               id="sectiontitle"
                               {...register(
-                                `document.section.${
+                                `document.sections.${0}.content.${
                                   sectionLength + index
                                 }.title`
                               )}
@@ -337,7 +351,7 @@ function EditDocumentTemplate() {
                             <select
                               id="sectiontype"
                               {...register(
-                                `document.section.${sectionLength + index}.type`
+                                `document.sections.${0}.content.${sectionLength + index}.type`
                               )}
                               className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                               onChange={() => {
@@ -357,32 +371,28 @@ function EditDocumentTemplate() {
                               is it Required
                             </label>
                             <input
-                              type="checkbox"
-                              id="required"
-                              // {...register(
-                              //   `document.section.${
-                              //     sectionLength + index
-                              //   }.required`
-                              // )}
-                              defaultChecked={`${addSection.sections[0].content[index].isRequired}`}
-                              onChange={(data) => {
-                                setValue(
-                                  `document.section.${index}.required`,
-                                  data.target.checked
-                                );
-                                setSectionEdited(true);
-                              }}
-                            />
+                                type="checkbox"
+                                id="required"
+                                {...register(
+                                  `document.sections.${0}.content.${sectionLength + index}.isRequired`
+                                )}
+                                // defaultChecked={addSection.sections[0].content[index].isRequired}
+
+                                onChange={() => {
+                                 
+                                  setSectionEdited(true);
+                                }}
+                              />
                           </div>
                           <div className="flex gap-3 w-full">
                             <label htmlFor="sectionTitle">condition</label>
                             <input
                               type="checkbox"
-                              id="required"
+                              
                               {...register(
-                                `document.section.${
+                                `document.sections.${0}.content.${
                                   sectionLength + index
-                                }.condition`
+                                }.conditionLogic`
                               )}
                               onChange={() => {
                                 setSectionEdited(true);

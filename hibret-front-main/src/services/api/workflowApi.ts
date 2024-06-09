@@ -23,3 +23,32 @@ export const fetchWorkflowName = async () => {
         return { data: null, isLoading: false, isError: true };
     }
 };
+
+export const deleteWorkflowTemplate = async (workFlowId:any) => {
+    try {
+        const response = await axiosInst.delete(`/admin//workflow-templates/delete/${workFlowId}`)
+        const { data } = response;
+       
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        const {data}= error.response
+        
+        console.error('Error fetching catagory:', error);
+        return { data, isLoading: false, isError: true };
+    }
+
+};
+
+export const getWorkflowTemplate = async (workFlowId:any) => {
+    try {
+        const response = await axiosInst.get(`/admin/workflow-templates/get/${workFlowId}`)
+        const { data } = response;
+       console.log(data)
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        const {data}= error.response
+        
+        console.error('Error fetching catagory:', error);
+        return { data, isLoading: false, isError: true };
+    }
+};
