@@ -144,7 +144,7 @@ function WorkflowTemp() {
         <div className="w-full flex flex-col">
           <NavBar />
           {user.length == 0 && (
-            <NoData title={"Workflow"} openPopUp={openAddTemplate} />
+            <NoData title={"Workflow Template"} openPopUp={openAddTemplate} />
           )}
 
           {user.length != 0 && (
@@ -162,7 +162,7 @@ function WorkflowTemp() {
                     className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white"
                   >
                     <img src="/asset/icons/plus3.png" className="w-5" />
-                    Add New
+                    Add New 
                   </a>
                 </div>
               </div>

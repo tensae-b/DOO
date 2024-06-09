@@ -13,18 +13,24 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
-import { fetchCatag, fetchDepartment, fetchRequiredDocument, fetchRole, fetchSubCatag, fetchtCommittee } from "../services/api/fetchDataApi";
+import {
+  fetchCatag,
+  fetchDepartment,
+  fetchRequiredDocument,
+  fetchRole,
+  fetchSubCatag,
+  fetchtCommittee,
+} from "../services/api/fetchDataApi";
 import { getWorkflowTemplate } from "../services/api/workflowApi";
-
 
 export const Route = createFileRoute("/EditWorkflowTemp/$workflowId")({
   loader: async ({ params: { workflowId } }) => {
-   console.log(workflowId) 
-   
-    const result = await getWorkflowTemplate(workflowId);
+    console.log(workflowId);
 
+    const result = await getWorkflowTemplate(workflowId);
+    console.log(result);
     const data = result.data;
-    return { data,workflowId };
+    return { data, workflowId };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
@@ -32,129 +38,111 @@ export const Route = createFileRoute("/EditWorkflowTemp/$workflowId")({
   component: EditWorkflowTemp,
 });
 
-const addSection= {
-  "name":"some demo workflow",
-  "depId":"6661c53bfc6f3eba0d27b7de",
-  "categoryId":"6662896104b1482ab5876cb8",
-  "subCategoryId":"6662896904b1482ab5876cf1",
-  "additionalDoc":false,
-  "requiredDocumentTemplates":[
-     "6664db66d81f1ee5a55eb918",
-     "6664dc59d81f1ee5a55eb987"
-  ],
-  "stages":[
-     {
-        "stageTitle":"inital",
-        "hasCondition":false,
-        "ListCondition":"Select Condition",
-        "approverType":"Single Person",
-        "single_permissions":{
-           "role_id":"6661caaefc6f3eba0d27b7f9"
-        }
-     }
-  ]
-}
+// const addSection= {
+//   "name":"some demo workflow",
+//   "depId":"6661c53bfc6f3eba0d27b7de",
+//   "categoryId":"6662896104b1482ab5876cb8",
+//   "subCategoryId":"6662896904b1482ab5876cf1",
+//   "additionalDoc":false,
+//   "requiredDocumentTemplates":[
+//      "6664db66d81f1ee5a55eb918",
+//      "6664dc59d81f1ee5a55eb987"
+//   ],
+//   "stages":[
+//      {
+//         "stageTitle":"inital",
+//         "hasCondition":false,
+//         "ListCondition":"Select Condition",
+//         "approverType":"Single Person",
+//         "single_permissions":{
+//            "role_id":"6661caaefc6f3eba0d27b7f9"
+//         }
+//      }
+//   ]
+// }
 
 function EditWorkflowTemp() {
   // useEffect(() => {
-    
+
   //   getDepartment();
   //   getCommittees();
   // }, []);
-  let stageLength = addSection.stages.length-1;
+  const templateData: any = Route.useLoaderData();
+  console.log(templateData);
+  const addSection = templateData.data;
+  console.log(addSection);
+  let stageLength = addSection.stages.length ;
   console.log(stageLength);
 
   const [category, setCategory] = useState([]);
   const [department, setDepartment] = useState([]);
   const [committee, setCommittee] = useState([]);
-  const [role, setRoles] = useState([]);
-  const [depId, setDepId] = useState('')
+  const [roles, setRoles] = useState([]);
+  const [depId, setDepId] = useState("");
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   const navigate = useNavigate();
- 
+
   
 
-  // useEffect(() => {
-  //     console.log(depId)
-  //   getCategory();
-  //   getRoles();
-  // }, [depId]);
-  
-  // function getDepartment(){
-  //   fetchDepartment().then(result => {
-  //     if(!result.isError){
-  //       setDepartment(result.data)
-  //     }else{
-  //      toast.error("error fetching");
-  //     }
-      
-  //    })
- 
-  // }
-
-
-  // function getCommittees() {
-  //   fetchtCommittee().then(result => {
-  //     if(!result.isError){
-    
-  //       setCommittee(result.data);
-  //     }else{
-  //      toast.error("error fetching");
-  //     }
-      
-  //    })
-    
-  // }
-  function getRoles() {
-    fetchRole(addSection.depId).then(result => {
+  function getCommittees() {
+    fetchtCommittee().then(result => {
       if(!result.isError){
-        console.log(result.data)
-        setRoles(result.data);
+
+        setCommittee(result.data);
       }else{
-       console.log(result.data)
+       toast.error("error fetching");
       }
-      
+
      })
-    
+
+  }
+  function getRoles() {
+    fetchRole(addSection.department._id).then((result) => {
+      if (!result.isError) {
+        console.log(result.data);
+        setRoles(result.data);
+      } else {
+        console.log(result.data);
+      }
+    });
   }
 
-  // function getSubCategory(value: any) {
-  //   fetchSubCatag(value).then(result => {
-  //    if(!result.isError){
-  //     setSubCategory(result.data);
-  //    }else{
-  //     toast.error("error fetching");
-  //    }
-     
-  //   })
-
-   
   
-  // }
-  useEffect(()=>{
+  useEffect(() => {
     requriedDocument();
-    setRequiredDocument("workflowtemp.requiredDocumentTemplates", addSection.requiredDocumentTemplates)
+    if (addSection.requiredDocuments.length > 0) {
+      setRequiredDocument(
+        "workflowtemp.requiredDocumentTemplates",
+        addSection.requiredDocuments
+      );
+    }
+
     getRoles();
-  },[])
+    getCommittees()
+  }, []);
 
   function setRequiredDocument(title: any, value: any) {
     setValue(title, value);
   }
-  function requriedDocument() {
-    fetchRequiredDocument(addSection.subCategoryId).then(result => {
-      if(!result.isError){
-        console.log(result.data.templates,'temp')
-        setRequiredDocuments(result.data.templates)
-      }else{
-       toast.error("error fetching");
-      }
-      
-     })
- 
+
+  function setRoleValue(title: any, value: any) {
+    setValue(title, value);
   }
-  
+  function requriedDocument() {
+    if(addSection.subCategory != null){
+      fetchRequiredDocument(addSection.subCategory._id).then((result) => {
+        if (!result.isError) {
+          console.log(result.data.templates, "temp");
+          setRequiredDocuments(result.data.templates);
+        } else {
+          toast.error("error fetching");
+        }
+      });
+    }
+    
+  }
 
   // function getCategory() {
   //   fetchCatag(depId).then(result => {
@@ -162,10 +150,10 @@ function EditWorkflowTemp() {
   //      setCategory(result.data);
   //     }else{
   //       console.log(result)
-       
+
   //     }
   //   })
-    
+
   // }
   // const handleDeleteDocument = (title: any) => {
   //   setChosenDocument((prevDocuments) =>
@@ -232,8 +220,6 @@ function EditWorkflowTemp() {
 
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
-
-    
   };
 
   // function handleDragEnd(event: any) {
@@ -293,9 +279,8 @@ function EditWorkflowTemp() {
                           id="WorkflowName"
                           placeholder={addSection.name}
                           defaultValue={addSection.name}
-                          disabled 
+                          disabled
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                          
                         />
                       </div>
                       <div className="mt-4">
@@ -305,17 +290,17 @@ function EditWorkflowTemp() {
                         >
                           Choose department
                         </label>
-                        <p>{addSection.depId}</p>
+                        <p>{addSection.department.name}</p>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
                         <div className="w-full flex flex-col justify-center gap-2">
                           <label className="text-sm w-full">Catagory</label>
-                          <p>{addSection.categoryId}</p>
+                          <p>{addSection.category != null ?  addSection.category.name: ''}</p>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
                           <label className="text-sm w-full">SubCatagory</label>
-                          <p>{addSection.subCategoryId}</p>
+                          <p>{addSection.subCategory != null ?  addSection.subCategory.name: ''}</p>
                         </div>
                       </div>
                     </div>
@@ -361,15 +346,10 @@ function EditWorkflowTemp() {
                                   );
                                   return s;
                                 });
-
-                                // setRequiredDocument(
-                                //   "workflowtemp.requiredDocumentTemplates",
-                                //   chosenDocuments
-                                // );
                               }}
                             >
                               <option>select a document</option>
-                              
+
                               {requiredDocuments?.map((option: any, index) => (
                                 <option
                                   className="border"
@@ -384,7 +364,7 @@ function EditWorkflowTemp() {
                             <input
                               type="checkbox"
                               {...register("workflowtemp.additionalDoc")}
-                              defaultChecked= {addSection.additionalDoc}
+                              defaultChecked={addSection.additionalDoc}
                             />
                             <label
                               htmlFor="additionalInfo"
@@ -402,30 +382,35 @@ function EditWorkflowTemp() {
                           >
                             Order of appearance
                           </label>
-                         
-                          {addSection.requiredDocumentTemplates.map((item,index)=>(
-                            
-                            <div className="flex gap-2">
-                            <img src="/asset/icons/order.svg" />
-                            <p className="text-[#667085] text-sm">
-                             {item}
-                            </p>
-                            <div>
-                              <img
-                                onClick={() => {
-                                  // handleDeleteDocument(item);
-                                }}
-                                src="/asset/icons/delete.svg"
-                              />
-                            </div>
-                          </div>
-                          ))
-                          }
-                           {chosenDocuments.map((item, index) => (
+                          {addSection.requiredDocuments.length > 0 &&
+                            addSection.requiredDocuments.map(
+                              (item, index) => (
+                                <div key={index} className="flex gap-2">
+                                  <img
+                                    src="/asset/icons/order.svg"
+                                    alt="Order Icon"
+                                  />
+                                  <p className="text-[#667085] text-sm">
+                                    {item}
+                                  </p>
+                                  <div>
+                                    <img
+                                      onClick={() => {
+                                        // Define the handleDeleteDocument function elsewhere and pass it as a prop or define it here.
+                                        // handleDeleteDocument(item);
+                                      }}
+                                      src="/asset/icons/delete.svg"
+                                      alt="Delete Icon"
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            )}
+
+                          {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
                               <p className="text-[#667085] text-sm">
-                            
                                 {
                                   requiredDocuments.find((i) => i._id === item)
                                     .documentTitle
@@ -440,148 +425,154 @@ function EditWorkflowTemp() {
                                 />
                               </div>
                             </div>
-                          ))} 
+                          ))}
                           {/* </SortableContext>
                           </DndContext> */}
                         </div>
                       </div>
 
-                      {addSection.stages.map((item, index)=>(
+                      {addSection.stages.map((item, index) => (
                         <div className="flex flex-col gap-5 mb-7">
-                        <div className="flex justify-between w-full">
-                          <h3
-                            className="text-[#00B0AD] text-xl font-bold"
-                            id="Stages"
-                          >
-                            Stages
-                          </h3>
-                          {/* <button
+                          <div className="flex justify-between w-full">
+                            <h3
+                              className="text-[#00B0AD] text-xl font-bold"
+                              id="Stages"
+                            >
+                              Stages
+                            </h3>
+                            {/* <button
                             type="button"
                             onClick={() => remove(index)}
                             className="max-w-10"
                           >
                             <img src="/asset/icons/delete.svg" />
                           </button> */}
-                        </div>
-
-                        {/* stage */}
-                        <h2 className="text-[#667085] text-xl">
-                          Stage_{index + 1}
-                        </h2>
-                        <div className="flex flex-col gap-5 w-full items-center justify-center">
-                          <div className="flex flex-col gap-4 w-full">
-                            <label
-                              htmlFor="stageTitle"
-                              className="text-sm w-full"
-                            >
-                              Stage Title*
-                            </label>
-                            <input
-                              type="text"
-                              id="stagetitle"
-                              {...register(
-                                `workflowtemp.stages.${index}.stageTitle`,
-                                
-                              )}
-                              defaultValue={item.stageTitle}
-                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                              required
-                            />
                           </div>
-                          <div className="flex gap-5 w-full">
-                            <div className="flex gap-4 justify-center items-center ">
-                              <input
-                                type="checkbox"
-                                {...register(
-                                  `workflowtemp.stages.${index}.hasCondition`
-                                )}
-                                onChange={(e) => {
-                                  handleConditionChange(
-                                    index,
-                                    e.target.checked
-                                  );
-                                }}
-                                defaultChecked={item.hasCondition}
-                              />
+
+                          {/* stage */}
+                          <h2 className="text-[#667085] text-xl">
+                            Stage_{index + 1}
+                          </h2>
+                          <div className="flex flex-col gap-5 w-full items-center justify-center">
+                            <div className="flex flex-col gap-4 w-full">
                               <label
-                                htmlFor="hasCondition"
+                                htmlFor="stageTitle"
                                 className="text-sm w-full"
                               >
-                                Stage has conditions?
+                                Stage Title*
                               </label>
-                            </div>
-                            <div>
-                              <select
+                              <input
+                                type="text"
+                                id="stagetitle"
                                 {...register(
-                                  `workflowtemp.stages.${index}.ListCondition`
+                                  `workflowtemp.stages.${index}.stageTitle`
                                 )}
-                                className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                              >
-                                {/* <option>List Condition</option>
-                                
-                                  {item.ListCondition.map((item)=>(
-                               <p> {item}</p>
-                                  ))} */}
-                               
+                                defaultValue={item.title}
+                                className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                                required
+                              />
+                            </div>
+                            <div className="flex gap-5 w-full">
+                              <div className="flex gap-4 justify-center items-center ">
+                                <input
+                                  type="checkbox"
+                                  {...register(
+                                    `workflowtemp.stages.${index}.hasCondition`
+                                  )}
+                                  onChange={(e) => {
+                                    console.log(index, e.target.checked)
+                                    handleConditionChange(
+                                      index,
+                                      e.target.checked
+                                    );
+                                  }}
+                                  defaultChecked={item.hasCondition}
+                                />
+                                <label
+                                  htmlFor="hasCondition"
+                                  className="text-sm w-full"
+                                >
+                                  Stage has conditions?
+                                </label>
+                              </div>
 
-                              </select>
+                              <div></div>
                             </div>
                           </div>
-                          
-                            </div>
-                            <div>
-                            <label>
-                              Approver type
-                            </label>
+                          <div>
+                            {stageCondition[index] ||item.hasCondition  &&  (
+                              <StageCondition
+                                conditionIndex={index}
+                                {...{ control, register }}
+                                departmentData={department}
+                                committeeData={committee}
+                                role={roles}
+                              />
+                            )}
+                            
+                          </div>
+
+                          <div>
+                            <label>Approver type</label>
                             <select
-                                id="sectiontype"
-                                {...register(`document.sections.${0}.content.${index}.type`)}
+                              id="sectiontype"
+                              {...register(
+                                `document.sections.${0}.content.${index}.type`
+                              )}
+                              defaultValue={item.approverType}
+                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                            >
+                              <option value="Single Person">
+                                Single Person
+                              </option>
+                              <option value="Committee">Committee</option>
+                            </select>
+                          </div>
+                          {"singlePermissions" in item && item.singlePermissions.role !=null ? (
+                            <div>
+                              <label>Role</label>
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                       
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           defaultValue={item.singlePermissions.role._id}
+                         >
+                          
+                        <option>{item.singlePermissions.role.roleName}</option>
+                           {roles?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.roleName}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                          ) : (
+                            <div>
+                              <label>Role</label>
+                              <input
+                                type="text"
+                                id="approverType"
+                                {...register(
+                                  `workflowtemp.stages.${index}.committeePermissions.committee`
+                                )}
                                 defaultValue={
-                                  item.approverType
+                                  item.committeePermissions.committee
                                 }
                                 className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                              
-                              >
-                                <option value="Single Person">Single Person</option>
-                                <option value="Committee">Committee</option>
-                                
-                              </select>
-                        </div>
-                        {'single_permissions'in item ? (
-                          <div>
-                            <label>
-                             Role
-                            </label>
-                            <input
-                              type="text"
-                              id="approverType"
-                              {...register(
-                                `workflowtemp.stages.${index}.single_permissions.role_id`,
-                                
-                              )}
-                              defaultValue={item.single_permissions.role_id}
-                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                              required
-                            />
-                        </div>
-                        ): <div>
-                        <label>
-                         Role
-                        </label>
-                        <input
-                          type="text"
-                          id="approverType"
-                          {...register(
-                            `workflowtemp.stages.${index}.committee_permissions.role_ids`,
-                            
+                                required
+                              />
+                            </div>
                           )}
-                          defaultValue={item.committee_permissions.role_ids}
-                          className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                          required
-                        />
-                    </div>}
-                        
-                      </div>
+                        </div>
                       ))}
                     </div>
 
@@ -623,7 +614,9 @@ function EditWorkflowTemp() {
                                     type="text"
                                     id="stagetitle"
                                     {...register(
-                                      `workflowtemp.stages.${stageLength + index + 1}.stageTitle`,
+                                      `workflowtemp.stages.${
+                                        stageLength + index + 1
+                                      }.stageTitle`,
                                       { required: true }
                                     )}
                                     className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
@@ -635,7 +628,9 @@ function EditWorkflowTemp() {
                                     <input
                                       type="checkbox"
                                       {...register(
-                                        `workflowtemp.stages.${stageLength + index + 1}.hasCondition`
+                                        `workflowtemp.stages.${
+                                          stageLength + index + 1
+                                        }.hasCondition`
                                       )}
                                       onChange={(e) => {
                                         handleConditionChange(
@@ -654,7 +649,9 @@ function EditWorkflowTemp() {
                                   <div>
                                     <select
                                       {...register(
-                                        `workflowtemp.stages.${stageLength + index + 1}.ListCondition`
+                                        `workflowtemp.stages.${
+                                          stageLength + index + 1
+                                        }.ListCondition`
                                       )}
                                       className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                                     >
@@ -671,7 +668,7 @@ function EditWorkflowTemp() {
                                 {...{ control, register }}
                                 departmentData={department}
                                 committeeData={committee}
-                                role={role}
+                                role={roles}
                               />
                             )}
                             {!stageCondition[stageLength + index + 1] && (
@@ -692,7 +689,9 @@ function EditWorkflowTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${stageLength + index + 1}.approverType`
+                                            `workflowtemp.stages.${
+                                              stageLength + index + 1
+                                            }.approverType`
                                           )}
                                           value="Single Person"
                                           onChange={(e) => {
@@ -709,7 +708,9 @@ function EditWorkflowTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${stageLength + index + 1}.approverType`
+                                            `workflowtemp.stages.${
+                                              stageLength + index + 1
+                                            }.approverType`
                                           )}
                                           value="Committee"
                                           onChange={(e) => {
@@ -725,7 +726,8 @@ function EditWorkflowTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[stageLength + index + 1] == "Committee" ? (
+                                {stageGroup[stageLength + index + 1] ==
+                                "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
@@ -733,7 +735,9 @@ function EditWorkflowTemp() {
                                       </label>
                                       <select
                                         {...register(
-                                          `workflowtemp.stages.${stageLength + index + 1}.committee_permissions.role_ids`
+                                          `workflowtemp.stages.${
+                                            stageLength + index + 1
+                                          }.committee_permissions.role_ids`
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
@@ -748,54 +752,11 @@ function EditWorkflowTemp() {
                                       </select>
                                     </div>
 
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        permission Type
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.permission`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                      >
-                                         <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      </select>
-                                    </div> */}
+                                   
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        Select Department*
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.single_permissions.department`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        onChange={(e: {
-                                          target: { value: any };
-                                        }) => {
-                                          getRoles(e.target.value);
-                                        }}
-                                      >
-                                        <option>Select Department</option>
-                                        {department.map(
-                                          (option: any, index) => (
-                                            <option
-                                              key={index}
-                                              label={option.name}
-                                              value={option._id}
-                                            />
-                                          )
-                                        )}
-                                      </select>
-                                    </div> */}
+                                    
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
@@ -803,12 +764,14 @@ function EditWorkflowTemp() {
                                         </label>
                                         <select
                                           {...register(
-                                            `workflowtemp.stages.${stageLength + index + 1}.single_permissions.role_id`
+                                            `workflowtemp.stages.${
+                                              stageLength + index + 1
+                                            }.single_permissions.role.`
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
                                           <option>Select Role</option>
-                                          {role.map((option: any, index) => (
+                                          {roles.map((option: any, index) => (
                                             <option
                                               key={index}
                                               label={option.roleName}

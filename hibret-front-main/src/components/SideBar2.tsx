@@ -36,10 +36,10 @@ const SideBar2 = () => {
               <img className=" max-w-4" src="/asset/icons/dashboard.svg" />
               <Link to='/userDashboard'  className=" text-sm text-[#667085]  [&.active]:font-bold  [&.active]:text-teal-400">Dashboard</Link>
             </div>
-            {hasCreatePermission&&( <div className="flex gap-2 ">
+            {/* {hasCreatePermission&&( <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/user-management.svg" />
               <Link to="/document" className=" text-sm text-[#667085] [&.active]:font-bold [&.active]:text-teal-400">Documents</Link>
-            </div>)}
+            </div>)} */}
            
             <div className="flex gap-2 ">
               <img className=" max-w-4" src="/asset/icons/report.svg" />
