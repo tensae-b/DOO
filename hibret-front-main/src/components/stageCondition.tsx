@@ -10,24 +10,7 @@ export default ({
   committeeData,
   role
 }: any) => {
-  // const [role, setRoles] = useState([]);
-  // function getRoles(value: any) {
-  //   var config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: `http://localhost:5000/admin/roles/dep/${value}`,
-  //     headers: {},
-  //   };
-
-  //   axios(config)
-  //     .then(function (response: { data: any }) {
-  //       console.log(response.data);
-  //       setRoles(response.data);
-  //     })
-  //     .catch(function (error: any) {
-  //       console.log(error);
-  //     });
-  // }
+  
   const { fields, remove, append } = useFieldArray({
     control,
     name: `workflowtemp.${conditionIndex}.conditionvariants`,
@@ -132,41 +115,11 @@ export default ({
                 </select>
               </div>
 
-              {/* <div className="w-full flex flex-col gap-2">
-                <label className="text-sm w-full">permission Type</label>
-                <select
-                  {...register(
-                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.permission`
-                  )}
-                  className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                >
-                  <option value="reviewer">Select permission type</option>
-                </select>
-              </div> */}
+              
             </div>
           ) : (
             <div className="w-full flex flex-col gap-2">
-              {/* <div className="w-full flex flex-col gap-2">
-                <label className="text-sm w-full">Select Department*</label>
-                <select
-                  {...register(
-                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.department`
-                  )}
-                  className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                  onChange={(e: { target: { value: any } }) => {
-                    getRoles(e.target.value);
-                  }}
-                >
-                  <option>Select Department</option>
-                  {departmentData.map((option: any, index: any) => (
-                    <option
-                      key={index}
-                      label={option.name}
-                      value={option._id}
-                    />
-                  ))}
-                </select>
-              </div> */}
+             
               <div className="w-full flex gap-6">
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm w-full">Select Role**</label>
@@ -186,17 +139,7 @@ export default ({
                     ))}
                   </select>
                 </div>
-                {/* <div className="w-full flex flex-col gap-2">
-                  <label className="text-sm w-full">Permission Type*</label>
-                  <select
-                    {...register(
-                      `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.permission`
-                    )}
-                    className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                  >
-                    <option>Permission Type</option>
-                  </select>
-                </div> */}
+                
               </div>
             </div>
           )}

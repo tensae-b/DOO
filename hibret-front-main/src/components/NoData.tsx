@@ -15,21 +15,20 @@ const NoData = (prop: any) => {
                   <h2 className="text-[#4A176D] text-3xl font-bold">
                     {prop.title}
                   </h2>
-                  <p className="text-[#667085] text-base"> placeholder</p>
+                  
                 </div>
                 <div className="flex gap-4 justify-center items-center ">
-                  <button
+                
+                  <a
                     className="flex gap-2  px-4 py-2 rounded-lg text-[#00B0AD] items-center border-2 border-[#00B0AD]"
-                    onClick={()=>{
-                        prop.openPopUp()
-                      }}
+                     href="/workflowadd"
                   >
                     Add
                     <img
                       src="/asset/icons/arrowDown.svg"
                       className="w-5 text-white"
                     />
-                  </button>
+                  </a>
                 </div>
               </div>
               <div className="flex flex-col justify-center items-center gap-4">
@@ -41,17 +40,15 @@ const NoData = (prop: any) => {
                   No  {prop.title} Yet!
                 </h2>
                 <p className="text-xl text-center text-[#6B7280]">
-                  To create a  {prop.title} click on the button bellow.
+                  To create a  {prop.title} click on the button below.
                 </p>
-                <button
+                <a
                   className="bg-[#00B0AD] flex gap-2 py-2 px-6 rounded-lg justify-center items-center text-white"
-                  onClick={()=>{
-                    prop.openPopUp()
-                  }}
+                  href="/workflowadd"
                 >
                   <img src="/asset/icons/plus.svg" className="" />
                   Add New {prop.title}
-                </button>
+                </a>
               </div>
             </div>
         

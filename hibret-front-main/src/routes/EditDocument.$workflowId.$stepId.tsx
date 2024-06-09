@@ -17,7 +17,7 @@ export const Route = createFileRoute("/EditDocument/$workflowId/$stepId")({
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://localhost:5000/initiate/workflows/get/665cdb916df8d98525dce98e`,
+      url: `http://localhost:5000/initiate/workflows/get/${workflowId}`,
       headers: {},
     };
 
@@ -313,12 +313,15 @@ function EditDocument() {
 
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
                   <p className="text-lg font-bold p-2">Comments</p>
-                  {step.comment.map((item: any, index: any) => (
+                  {step.comment.map((item: any, index: any) =>
+                    
+                   (
+                   
                     <div
                       className="bg-gray-500 p-2 rounded-md text-white capitalize"
                       key={index}
                     >
-                      <p className="text-base">{item.comment}</p>
+                     {item.comment != "" && <p className="text-base">{item.comment}</p>} 
                     </div>
                   ))}
                 </div>

@@ -266,7 +266,9 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
               </div>
             </div>
             <div className="mt-24">
-              <Actions />
+              <Actions 
+              workflowId={workflowId}
+              />
             </div>
           </div>
         </div>

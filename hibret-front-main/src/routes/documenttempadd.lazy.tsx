@@ -32,12 +32,12 @@ const addSection = [
       {
         title: "type",
         type: "select",
-        options: ["text", "textarea", "select", "upload"],
+        options: ["text", "textarea", "select", "upload", "date", "number"],
       },
       {
         title: "isRequired",
         type: "radio",
-        options: ["true", "Optional"],
+        options: ["true", "false"],
       },
       {
         title: "conditionLogic",

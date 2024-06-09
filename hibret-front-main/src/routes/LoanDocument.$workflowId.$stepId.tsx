@@ -24,7 +24,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     const res = await axios(config);
     console.log(res);
     const data = await res.data;
-
+  
     const addField = {
       _id: "",
       title: "Additional Data",
@@ -72,13 +72,9 @@ function LoanDocument() {
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-  console.log(step.formated.length);
-  if (step.formated.length <= 0) {
-    toast("No data registered for this workflow");
-    setTimeout(function () {
-      navigate({ to: "/assignedbyme" });
-    }, 3000);
-  }
+ 
+  
+  
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -119,28 +115,12 @@ function LoanDocument() {
       title: step.formated[step.stepId].title,
       sections: formdata,
     };
-    // setStepData((prev) => {
-    //   const newData = {
-    //     stepId: step.stepId,
-    //     templateId: step.formated[step.stepId]._id,
-    //     title: step.formated[step.stepId].title,
-    //     sections: formdata,
-    //   };
-    //   console.log({ ...prev, newData }, "asdasdasd");
-    //   return { ...prev, newData };
-    // });
-
-    // setStepData(
-    //   ,)
-    // useStepFormStore.setState((state: any) => ({
-
-    // }));
+    
 
     console.log({ stepFormData, newData, stepFormData });
-    // const ss = stepFormData.filter(Boolean) ?? [stepFormData];
-    // console.log({ ...stepFormData, newData }, "jesus");
+   
     stepFormData.push(newData);
-    // const zen = cero.map((data) => data);
+    
     console.log(stepFormData, "demon");
     if (!nextId) {
       const documentData = {
