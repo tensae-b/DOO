@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { workapprove, workareject, workforward, workback } from "../services/api/userworkApi";
 
 const Comments = ({

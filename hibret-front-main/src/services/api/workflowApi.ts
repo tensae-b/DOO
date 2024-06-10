@@ -15,7 +15,7 @@ export const getRequiredDocument = async (workflowId: any) => {
 
 export const fetchWorkflowName = async () => {
     try {
-        const response = await axiosInst.get(`http://localhost:5000/admin/workflow-templates/getAll`)
+        const response = await axiosInst.get(`http://localhost:5000/admin/workflow-templates/getAll`, {withCredentials: true})
         const { data } = response;
         return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
     } catch (error) {

@@ -50,6 +50,7 @@ function WorkFlowAddTemp() {
         setDepartment(result.data)
       }else{
        toast.error("error fetching");
+       setDepartment([])
       }
       
      })
@@ -64,6 +65,7 @@ function WorkFlowAddTemp() {
         setCommittee(result.data);
       }else{
        toast.error("error fetching");
+       setCommittee([]);
       }
       
      })
@@ -76,6 +78,7 @@ function WorkFlowAddTemp() {
         setRoles(result.data);
       }else{
        console.log(result.data)
+       setRoles([]);
       }
       
      })
@@ -88,6 +91,7 @@ function WorkFlowAddTemp() {
       setSubCategory(result.data);
      }else{
       toast.error("error fetching");
+      setSubCategory([]);
      }
      
     })
@@ -119,6 +123,7 @@ function WorkFlowAddTemp() {
        setCategory(result.data);
       }else{
         console.log(result)
+        setCategory([]);
        
       }
     })

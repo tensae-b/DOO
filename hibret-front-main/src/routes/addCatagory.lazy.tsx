@@ -121,10 +121,7 @@ function CatagAdd({ onClose }: Props) {
           <label htmlFor="categoryName" className="text-[#00B0AD] block font-medium mb-1">Category Name <span className="text-red-500">*</span></label>
           <input type="text" id="categoryName" {...register("categoryName", { required: true })} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
         </div>
-        <div className="mb-4">
-          <label htmlFor="categoryDescription" className="text-[#00B0AD] block font-medium mb-1">Description</label>
-          <textarea id="categoryDescription" {...register("categoryDescription")} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-        </div>
+        
         <div className="mb-4">
           <label className="text-[#00B0AD] block font-medium mb-1">Subcategories</label>
           {fields.map((field, index) => (

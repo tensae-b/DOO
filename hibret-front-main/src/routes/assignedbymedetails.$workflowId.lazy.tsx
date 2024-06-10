@@ -268,6 +268,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
             <div className="mt-24">
               <Actions 
               workflowId={workflowId}
+              currentStage = {detail.currentStageIndex}
               />
             </div>
           </div>

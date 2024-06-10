@@ -3,7 +3,7 @@ import axiosInst from './axiosInst';
 export const fetchCatag = async (depId: any) => {
     try {
        
-        const response = await axiosInst.get(`admin/category/${depId}`)
+        const response = await axiosInst.get(`admin/repo/category/${depId}`)
        
         const { data } = response;
         console.log(data)

@@ -173,7 +173,7 @@ any) => {
     } else if (type === "text") {
       return (
         <>
-          {/* <label htmlFor={`content.${index}.${title}`}>{title}</label> */}
+   
           <Field
             type="text"
             id={`content.${index}.${title}`}
@@ -184,54 +184,7 @@ any) => {
         </>
       );
     }
-    //  else if (type === "upload") {
-    //   return (
-    //     <>
-    //       <div
-    //         className={clsx("flex items-center justify-center w-full", {
-    //         //   [errorClassNames.join(" ")]: errors?.[title],
-    //         })}
-    //       >
-    //         <label
-    //           htmlFor="dropzone-file"
-    //           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 "
-    //         >
-    //           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-    //             <img
-    //               src="/asset/icons/upload-icon.svg"
-    //               className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-    //             />
-
-    //             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-    //               <span className="font-semibold">Click to upload</span> or drag
-    //               and drop
-    //             </p>
-    //             <p className="text-xs text-gray-500 dark:text-gray-400">
-    //               PDF, CSV, and JPEG (MAX. 800x400px)
-    //             </p>
-    //           </div>
-    //           <input
-    //             type="file"
-    //             required={required}
-    //             // accept="image/png, image/gif, image/jpeg"
-    //             // onChange={(e) =>
-    //             //   validateDocumentImage(
-    //             //     `section.${parentIndex}.content[${index}].value`,
-    //             //     e.target.files[0]
-    //             //   )
-    //             // }
-    //           />
-    //         </label>
-    //       </div>
-    //       <span className="label-text-alt text-[hsl(var(--er))]">
-    //         <ErrorMessage
-    //         //   errors={errors}
-    //           name={`section.${parentIndex}.content[${index}].value`}
-    //         />
-    //       </span>
-    //     </>
-    //   );
-    // }
+   
     else if (type == "radio") {
       return (
         <>
@@ -274,33 +227,7 @@ any) => {
         />
       );
     }
-    //     else {
-    //   // console.log(editorContent);
-    //   return (
-    //     <>
-    //       <div className="w-full">
-    //         <ReactQuill
-    //           theme="snow"
-    //           modules={modules}
-    //           formats={formats}
-    //           placeholder="write your content ...."
-    //         //   value={editorContent}
-    //         //   onChange={(editorState) =>
-    //             // onEditorStateChange(
-    //             //   `section.${parentIndex}.content[${index}].value`,
-    //             //   editorState
-    //             // )
-    //         //   }
-    //         />
-    //       </div>
-    //       <span className="label-text-alt text-[hsl(var(--er))]">
-    //         <ErrorMessage
-    //         //   errors={errors}
-    //           name={`section.${parentIndex}.content[${index}].value`}
-    //         />
-    //       </span>
-    //     </>
-    //   );
+   
   };
 
   return (
@@ -311,9 +238,7 @@ any) => {
         </label>
 
         {handleInput()}
-        {/* <HandleInput /> */}
-        {/*         
-        <button onClick={() => remove(index)}>Remove</button> */}
+       
       </div>
     </div>
   );
