@@ -1,4 +1,3 @@
-// services/api/report.ts
 import axios from 'axios';
 
 export const fetchreports = async () => {
@@ -28,12 +27,11 @@ export const fetchUserDashboardData = async () => {
   }
 };
 
-
-export const fetchAdminWorkflow= async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/initiate/workflows', { withCredentials: true });
-      return response.data;
-    } catch (error) {
-      throw new Error('Error fetching user dashboard data');
-    }
-  };
+export const fetchAdminWorkflow = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/initiate/workflows', { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching workflow data');
+  }
+};
