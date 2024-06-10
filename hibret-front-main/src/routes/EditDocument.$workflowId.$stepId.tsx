@@ -22,10 +22,12 @@ export const Route = createFileRoute("/EditDocument/$workflowId/$stepId")({
       withCredentials: true,
       headers: {},
     };
+    
 
     const res = await axios(config);
-    console.log(res.data);
+  
     const data = await res.data;
+    console.log(data)
     const addField = {
       stepId: "",
       templateId: "",
@@ -129,6 +131,7 @@ function EditDocument() {
         maxBodyLength: Infinity,
         url: `http://localhost:5000/initiate/workflows/${step.workflowId}`,
         headers: {},
+        withCredentials: true,
         data: documentData,
       };
 

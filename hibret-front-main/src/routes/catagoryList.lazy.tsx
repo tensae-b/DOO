@@ -25,6 +25,7 @@ function CatagoryList() {
   const [user, setUser] = useState([]);
   const [reload, setReload] = useState(false);
   const [showAddTemplate, setShowAddTemplate] = useState(false);
+  // const [isLoading, setIsLoading]=useState(true)
 
   const handleOpen = () => {
     setOpen(true);
@@ -43,15 +44,25 @@ function CatagoryList() {
   };
 
   const reloadCategories = async () => {
-    const { data, isError } = await fetchCatag();
+    const { data, isError, isLoading } = await fetchCatag();
     if (!isError) {
+    
       const updatedUserData = data.map((category: any) => ({
         id: category._id,
         catagoryname: category.name,
       }));
       setUser(updatedUserData);
+      // setIsLoading(false)
     }
   };
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen bg-green-100">
+  //       <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
+  //     </div>
+  //   );
+  // }
 
   useEffect(() => {
     reloadCategories();

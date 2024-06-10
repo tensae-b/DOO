@@ -14,6 +14,7 @@ import NoData from "../components/NoData";
 import axios from "axios";
 import {  deleteWorkflowTemplate } from "../services/api/workflowApi";
 import toast, { Toaster } from "react-hot-toast";
+import UserName from "../components/UserName";
 
 
 
@@ -142,15 +143,15 @@ function WorkflowTemp() {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex">
         <SideBar />
-        <div className="w-full flex flex-col">
-          <NavBar />
+        <div className="w-full flex flex-col ">
+          <UserName />
           {user.length == 0 && (
             <NoData title={"Workflow Template"} openPopUp={openAddTemplate} />
           )}
 
           {user.length != 0 && (
             <>
-              <div className="flex justify-between">
+              <div className="flex justify-between mt-32">
                 <div className="flex flex-col gap-3 my-5">
                   <h2 className="text-[#4A176D] text-3xl font-bold">
                     Workflow Template

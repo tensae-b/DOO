@@ -95,3 +95,17 @@ export const cancel = async (workflowId:any) => {
     }
 };
 
+export const getArchive = async (userId:any) => {
+    try {
+        const response = await axiosInst.get(`initiate/workflows/${userId}/getArchived`)
+        const { data } = response;
+       console.log(data)
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        const {data}= error.response
+        
+        console.error('Error fetching catagory:', error);
+        return { data, isLoading: false, isError: true };
+    }
+};
+

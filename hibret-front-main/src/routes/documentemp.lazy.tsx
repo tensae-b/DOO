@@ -107,6 +107,7 @@ const columns: GridColDef[] = [
       method: "get",
       maxBodyLength: Infinity,
       url: "http://localhost:5000/admin/documentTemplate",
+      withCredentials: true,
       headers: {},
     };
 
