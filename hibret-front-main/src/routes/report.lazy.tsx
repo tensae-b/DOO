@@ -156,7 +156,7 @@ const Reports = () => {
       </div>
 
       <div className="mt-8 flex gap-2 mb-4 h-60 ">
-        <div className="border border-opacity-5 w-6/12 flex flex-col gap-2 px-8 py-2">
+        <div className="border border-opacity-5 h-72 w-full flex flex-col gap-2 px-8 py-2 items-center justify-center">
           <h4 className="text-lg font-semibold text-purple-900">Workflow creation timeline</h4>
           
 
