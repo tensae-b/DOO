@@ -22,6 +22,18 @@ export const createCommite = async (formData) => {
       return { data: null, isLoading: false, isError: true };
     }
   };
+  export const rolebyid = async ( depId: any) => {
+    try {
+        console.log('perm', depId)
+        const response = await axiosInst.get(`admin/roles/dep/${depId}`)
+        const { data } = response;
+        console.log(data)
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        console.error('Error fetching catagory:', error);
+        return { data: null, isLoading: false, isError: true };
+    }
+};
   
 
 export const sendUser = async (selectedUsers) => { // Pass selectedUsers as a parameter

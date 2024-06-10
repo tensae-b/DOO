@@ -7,9 +7,10 @@ import downArrow from "/asset/icons/down-arrow.svg";
 import DocumentDetailsCard from "../components/DocumentDetailsCard";
 import { Link } from "@tanstack/react-router";
 import axios from 'axios';
+import axiosInst from "../services/api//axiosInst";
 import Comments from "../components/Comments";
 import UserName from "../components/UserName";
-import SideBar2 from "../components/SideBar2";
+import SideBar from "../components/SideBar";
 
 export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId/$userId")({
   component: AssignedToMeDetails
@@ -29,7 +30,7 @@ function AssignedToMeDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        const { data } = await axiosInst.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
         const { workflow } = data;
         console.log(data)
 
@@ -63,7 +64,7 @@ function AssignedToMeDetails() {
   return (
     <div>
       <UserName />
-      <SideBar2 />
+      <SideBar />
       <div className="mt-24 ml-80 mr-8 w-full h-full">
         <div>
           <div className="flex flex-row gap-6 font-bold items-center">

@@ -1,6 +1,6 @@
 import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import NavBar from "../components/NavBar";
+import UserName from "../components/UserName";
 import SideBar from "../components/SideBar";
 import SubCatagoryView from "../components/subCatagoryView";
 import { DeleteCatag, EditCatag, fetchCatag } from "../services/api/catagoryApi";
@@ -125,10 +125,11 @@ function CatagoryList() {
 
   return (
     <div className="mx-3">
-      <div className="flex">
+      <div className="flex mr-30 ">
         <SideBar />
         <div className="w-full flex flex-col">
-          <NavBar />
+          <UserName />
+          <div className="mt-24">
           <div className={`flex justify-between ${showAddTemplate ? "opacity-20" : "opacity-100"}`}>
             <div className="flex flex-col gap-3 my-5 opa">
               <h2 className="text-[#4A176D] text-3xl font-bold">Catagory List</h2>
@@ -188,7 +189,7 @@ function CatagoryList() {
               </div>
             </Box>
           </Modal>
-          <div className={`h-full w-full mt  ${showAddTemplate ? "opacity-20" : "opacity-100"}`}>
+          <div className={` w-full mt  ${showAddTemplate ? "opacity-20" : "opacity-100"}`}>
             <DataGrid
               rows={user}
               columns={columns}
@@ -202,6 +203,7 @@ function CatagoryList() {
               onRowSelectionModelChange={(id) => console.log(id)}
             />
           </div>
+        </div>
         </div>
       </div>
     </div>

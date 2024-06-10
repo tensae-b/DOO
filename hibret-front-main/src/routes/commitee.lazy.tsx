@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { DataGrid } from '@mui/x-data-grid';
@@ -7,8 +7,9 @@ import axios from 'axios';
 import UserName from '../components/UserName';
 import SideBar from '../components/SideBar';
 import { fetchDepartment } from "../services/api/fetchDataApi";
+import axiosInst from "../services/api/axiosInst";
 import { Modal, Box, TextField, Button, Typography, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from "@mui/material";
-import { fetchUser, createCommite, resendUser, activateUser, deactivateUser } from "../services/api/usersApi";
+import { fetchUser, createCommite, rolebyid, activateUser, deactivateUser } from "../services/api/usersApi";
 
 const columns = [
   { field: 'name', headerName: 'Name', flex: 1 },
@@ -19,13 +20,11 @@ const CommitteeTable = () => {
   const [committees, setCommittees] = useState([]);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [users, setUsers] = useState([]);
-  
-
 
   useEffect(() => {
     const fetchCommittees = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/admin/committee');
+        const response = await axiosInst.get('http://localhost:5000/admin/committee');
         const data = response.data.map(committee => ({
           id: committee._id,
           name: committee.name,
@@ -39,7 +38,6 @@ const CommitteeTable = () => {
 
     fetchCommittees();
   }, []);
- 
 
   return (
     <div className="">
@@ -55,27 +53,27 @@ const CommitteeTable = () => {
 
 export const Route = createLazyFileRoute('/commitee')({
   component: () => {
-    
     const [isPopup, setIsPopup] = useState(false);
     const [selectedMembers, setSelectedMembers] = useState([]);
-    const [chairperson,setChairperson] = useState([]);
+    const [chairperson, setChairperson] = useState([]);
     const [department, setDepartment] = useState([]);
+    const [roles, setRoles] = useState([]); // State to store roles
     const { register, handleSubmit, formState: { errors }, setValue } = useForm();
     const [users, setUsers] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+    const [shouldRefresh, setShouldRefresh] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+    const [selectedRoleId, setSelectedRoleId] = useState('');
+    const handleSnackbarClose = () => {
+      setSnackbarOpen(false);
+    };
 
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
     const fetchData = useCallback(async () => {
       try {
         const { data, isError } = await fetchUser();
-        console.log(data)
         if (!isError && data && data.users) {
-          const updatedData = data.users.map((user) => ({
+          const updatedData = data.users.filter(user => user.role_id === selectedRoleId).map((user) => ({
             id: user.userId,
             username: user.username,
             email: user.email,
@@ -83,7 +81,7 @@ export const Route = createLazyFileRoute('/commitee')({
             activationStatus: user.activationStatus,
             isSelected: false,
             accountCreationStatus: user.accountCreationStatus,
-            loading: false, // Add loading state for each user
+            loading: false,
           }));
           setUsers(updatedData);
         } else {
@@ -92,7 +90,8 @@ export const Route = createLazyFileRoute('/commitee')({
       } catch (error) {
         console.error('Error fetching user:', error);
       }
-    }, []);
+    }, [selectedRoleId]);
+
     useEffect(() => {
       fetchData();
     }, [fetchData]);
@@ -112,7 +111,6 @@ export const Route = createLazyFileRoute('/commitee')({
       setSelectedMembers(selectedOptions);
       setValue('memberNames', selectedOptions);
     };
-    
 
     useEffect(() => {
       const getDepartment = async () => {
@@ -130,7 +128,27 @@ export const Route = createLazyFileRoute('/commitee')({
 
       getDepartment();
     }, []);
-
+    const handleDepartmentChange = async (event) => {
+      const departmentId = event.target.value;
+      setValue('department', departmentId);
+      if (departmentId) {
+        try {
+          const { data, isError } = await rolebyid(departmentId);
+          if (!isError) {
+            setRoles(data);
+            setSelectedRoleId(data[0]._id); // Set the initial selected role_id
+          } else {
+            console.log("Error fetching roles");
+          }
+        } catch (error) {
+          console.error("Error fetching roles:", error);
+        }
+      } else {
+        setRoles([]);
+        setSelectedRoleId(''); // Clear the selected role_id
+      }
+    };
+    
     const onSubmit = async (data) => {
       try {
         // Extract member IDs
@@ -138,24 +156,28 @@ export const Route = createLazyFileRoute('/commitee')({
           const member = users.find((user) => user.username === memberName);
           return member ? member.id : null;
         });
-    
+
         // Extract chairperson ID
         const chairpersonUser = users.find((user) => user.username === data.chairperson);
         const chairpersonId = chairpersonUser ? chairpersonUser.id : null;
-    
+
         // Make a POST request to create the committee
         const response = await createCommite({
           name: data.committeeName,
           members: memberIds,
           chairperson: chairpersonId, // Use chairperson ID
         });
-    
+
         // Handle the response accordingly
         console.log("Committee created successfully:", response.data);
-        setSnackbarMessage("commite created successfully");
+        setSnackbarMessage("Committee created successfully");
         setSnackbarSeverity("success");
-         // Close the popup
         setSnackbarOpen(true);
+
+        // Close the popup
+        setIsPopup(false);
+        
+
         // Optionally, reset form fields or handle any other post-submit actions
       } catch (error) {
         console.error("Error creating committee:", error);
@@ -165,8 +187,7 @@ export const Route = createLazyFileRoute('/commitee')({
         // Handle errors
       }
     };
-    
-    
+
     return (
       <div className="flex">
         <SideBar />
@@ -206,6 +227,7 @@ export const Route = createLazyFileRoute('/commitee')({
                               name="department"
                               className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                               {...register("department", { required: true })}
+                              onChange={handleDepartmentChange} // Add onChange handler
                             >
                               <option value="">Select</option>
                               {department.map((option) => (
@@ -231,19 +253,18 @@ export const Route = createLazyFileRoute('/commitee')({
                           </label>
                         </div>
                         <div>
-                        <label className="block mb-2 text-sm font-semibold text-gray-700">
+                          <label className="block mb-2 text-sm font-semibold text-gray-700">
                             Member Names <span className="text-red-500">*</span>
                             <select
-                              name="memberNames"
-                              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-                              multiple
-                              onChange={handleMemberSelect}
-                            >
-                              {users.map(user => (
+  name="memberNames"
+  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+  multiple
+  onChange={handleMemberSelect}
+>
+  {users.map(user => (
     <option key={user.userId} value={user.userId}>{user.username}</option>
-))}
-
-                            </select>
+  ))}
+</select>
                             {errors.memberNames && <span className="text-red-500 text-sm">This field is required</span>}
                           </label>
                           <div className="mt-2">
@@ -254,25 +275,40 @@ export const Route = createLazyFileRoute('/commitee')({
                             ))}
                           </div>
                           <label className="block mb-2 text-sm font-semibold text-gray-700">
-  Chairperson <span className="text-red-500">*</span>
-  <select
-    name="chairperson"
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-    onChange={(event) => setChairperson(event.target.value)}
-    value={chairperson}
-  >
-    <option value="">Select Chairperson</option>
-    {users.map((user) => (
-      <option key={user.userId} value={user.userId}>
-        {user.username}
-      </option>
-    ))}
-  </select>
-  {errors.chairperson && (
-    <span className="text-red-500 text-sm">This field is required</span>
-  )}
-</label>
-
+                            Chairperson <span className="text-red-500">*</span>
+                            <select
+  name="chairperson"
+  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+  onChange={(event) => setChairperson(event.target.value)}
+  value={chairperson}
+>
+  <option value="">Select Chairperson</option>
+  {users.map((user) => (
+    <option key={user.userId} value={user.userId}>
+      {user.username}
+    </option>
+  ))}
+</select>
+                            {errors.chairperson && <span className="text-red-500 text-sm">This field is required</span>}
+                          </label>
+                        </div>
+                      </div>
+                      <div className='flex gap-8'>
+                        <div>
+                          <label className="block mb-2 text-sm font-semibold text-gray-700">
+                            Roles <span className="text-red-500">*</span>
+                            <select
+                              name="roles"
+                              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                              {...register('roles', { required: true })}
+                            >
+                              <option value="">Select Role</option>
+                              {roles.map((role) => (
+                                <option key={role._id} value={role._id}>{role.roleName}</option>
+                              ))}
+                            </select>
+                            {errors.roles && <span className="text-red-500 text-sm">This field is required</span>}
+                          </label>
                         </div>
                       </div>
                       <div className="col-span-2">
@@ -284,14 +320,14 @@ export const Route = createLazyFileRoute('/commitee')({
               )}
             </div>
             <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleSnackbarClose}
+            >
+              <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </div>
         </div>
       </div>
