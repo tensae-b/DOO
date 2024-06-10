@@ -35,7 +35,10 @@ const UserEnd: React.FC = () => {
     const fetchAssignedByMeWorkflows = async (userId: string) => {
       try {
         const response = await fetch(
-          `http://localhost:5000/initiate/workflows/owner/${userId}`
+          `http://localhost:5000/initiate/workflows/owner/${userId}`,
+          {
+            credentials: 'include'
+          }
         );
         const data = await response.json();
 
@@ -54,7 +57,10 @@ const UserEnd: React.FC = () => {
     const fetchAssignedToMeWorkflows = async (userId: string) => {
       try {
         const response = await fetch(
-          `http://localhost:5000/initiate/userWorkflow/${userId}`
+          `http://localhost:5000/initiate/userWorkflow/${userId}`,
+          {
+            credentials: 'include'
+          }
         );
         const data = await response.json();
 
@@ -184,7 +190,8 @@ const UserEnd: React.FC = () => {
           {permissions.includes("get-assigned") && !permissions.includes("create-workflow") && (
             <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to receive assignments; you cannot initiate any workflows.</li>
           )}
-          {permissions.includes("create-workflow") && !permissions.includes("get-assigned") && (
+          {permissions.includes("create-workflow") && !permissions.includes
+("get-assigned") && (
             <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to initiate workflows; nobody can assign workflows to you.</li>
           )}
           {permissions.includes("get-assigned") && permissions.includes("create-workflow") && (
