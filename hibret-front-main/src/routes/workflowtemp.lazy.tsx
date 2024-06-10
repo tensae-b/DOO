@@ -2,7 +2,8 @@ import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
-
+import { archiveTemplate } from "../services/api/userworkApi";
+import axiosInst from "../services/api/axiosInst";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 export const Route = createFileRoute("/workflowtemp")({
@@ -103,7 +104,40 @@ function WorkflowTemp() {
           </div>
         );
       },
+      
     },
+    {
+      field: "archive",
+      headerName: "Archive",
+      width: 90,
+      type: "actions",
+      renderCell: (params: GridActionsCellParams<any>) => {
+        const onArchive = async () => {
+          // Handle archive functionality for the specific row
+          console.log("Archive button clicked for row:", params.id);
+          const result = await archiveTemplate(params.id);
+          if (!result.isError) {
+            toast.success(result.data.message);
+            setReload(true);
+          } else {
+            toast.error(result.data.message);
+            setReload(true);
+          }
+        };
+  
+        return (
+          <div className="flex justify-around">
+            <button
+              onClick={onArchive}
+              className="text-yellow-500 hover:text-yellow-700"
+            >
+              archive
+              {/* <img src="/asset/icons/archive.svg" className="w-5" /> */}
+            </button>
+          </div>
+        );
+      },
+    }
   ];
   useEffect(() => {
     var config = {
@@ -113,7 +147,7 @@ function WorkflowTemp() {
       headers: {},
     };
 
-    axios(config)
+    axiosInst(config)
       .then(function (response) {
         console.log(response.data);
         setUser(response.data);

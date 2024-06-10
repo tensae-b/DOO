@@ -1,23 +1,18 @@
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { deleteDocumentTempla } from "../services/api/documentApi";
+import toast, { Toaster } from "react-hot-toast";
 import React, { useState, lazy, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import Dropdown from "react-dropdown";
 import axiosInst from "../services/api/axiosInst";
-import { archivedoc } from "../services/api/documentApi";
+import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid"
 
-import "react-dropdown/style.css";
-export const Route = createFileRoute("/documentemp")({
-  component: () => <DocumentTemp />,
-});
-const DocumentAddTemp = lazy(() => import("./documenttempadd.lazy"));
-import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
-import axios from "axios";
-import { deleteDocumentTempla } from "../services/api/documentApi";
-import toast, { Toaster } from "react-hot-toast";
-
-
-function DocumentTemp() {
+export const Route = createLazyFileRoute('/documentArchive')({
+  component: () => <DocumentArchive />,
+})
+function DocumentArchive() {
   // const userData: any = [];
   const navigate = useNavigate();
   const [reload, setReload]= useState(false)
@@ -140,7 +135,7 @@ const columns: GridColDef[] = [
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: "http://localhost:5000admin/documentTemplate/getArchived",
+      url: "http://localhost:5000/admin/documentTemplate/getArchived",
       headers: {},
     };
 

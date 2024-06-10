@@ -38,6 +38,7 @@ const ForgotpasswordLazyImport = createFileRoute('/forgotpassword')()
 const DocumenttempaddLazyImport = createFileRoute('/documenttempadd')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const DocumentempLazyImport = createFileRoute('/documentemp')()
+const DocumentArchiveLazyImport = createFileRoute('/documentArchive')()
 const DocumentLazyImport = createFileRoute('/document')()
 const CreateUserLazyImport = createFileRoute('/create-user')()
 const CommiteeLazyImport = createFileRoute('/commitee')()
@@ -150,6 +151,13 @@ const DocumentempLazyRoute = DocumentempLazyImport.update({
   path: '/documentemp',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/documentemp.lazy').then((d) => d.Route))
+
+const DocumentArchiveLazyRoute = DocumentArchiveLazyImport.update({
+  path: '/documentArchive',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/documentArchive.lazy').then((d) => d.Route),
+)
 
 const DocumentLazyRoute = DocumentLazyImport.update({
   path: '/document',
@@ -328,6 +336,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentLazyImport
       parentRoute: typeof rootRoute
     }
+    '/documentArchive': {
+      preLoaderRoute: typeof DocumentArchiveLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/documentemp': {
       preLoaderRoute: typeof DocumentempLazyImport
       parentRoute: typeof rootRoute
@@ -440,6 +452,7 @@ export const routeTree = rootRoute.addChildren([
   CommiteeLazyRoute,
   CreateUserLazyRoute,
   DocumentLazyRoute,
+  DocumentArchiveLazyRoute,
   DocumentempLazyRoute,
   DocumentsLazyRoute,
   DocumenttempaddLazyRoute,

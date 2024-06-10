@@ -26,6 +26,19 @@ export const initiateWorkflow = async (formData: any) => {
   }
 
 }
+export const archivedoc = async (workFlowId: any) => {
+  try {
+    const response = await axiosInst.patch(`/admin/documentTemplate/archive/${workFlowId}`);
+    const { data } = response;
+    console.log(data)
+    return { data, isLoading: false, isError: false };
+  } catch (error) {
+    console.error('Error fetching detail:', error);
+    return { data: null, isLoading: false, isError: true };
+  }
+
+
+}
 
 export const getDocumentTemplate = async (workFlowId: any) => {
   try {

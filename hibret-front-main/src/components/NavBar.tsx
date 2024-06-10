@@ -25,24 +25,24 @@ const NavBar: React.FC = () => {
 
     fetchNotifications();
 
-    // Setup Socket.IO client
-    const socket: Socket = io('http://localhost:5000', {
-      path: '/socket.io',
+    // // Setup Socket.IO client
+    // const socket: Socket = io('http://localhost:5000', {
+    //   path: '/socket.io',
      
-    });
+    // });
   
-    socket.on('connect', () => {
-      console.log('Connected to socket.io server');
-      socket.emit('join', userData._id);
-    });
+    // socket.on('connect', () => {
+    //   console.log('Connected to socket.io server');
+    //   socket.emit('join', userData._id);
+    // });
   
-    socket.on('newNotification', (notification) => {
-      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-    });
+    // socket.on('newNotification', (notification) => {
+    //   setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+    // });
   
-    socket.on('disconnect', () => {
-      console.log('Disconnected from socket.io server');
-    });
+    // socket.on('disconnect', () => {
+    //   console.log('Disconnected from socket.io server');
+    // });
   }, [userData._id]);
 
   const toggleNotification = () => {

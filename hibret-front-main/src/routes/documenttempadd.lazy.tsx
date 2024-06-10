@@ -12,6 +12,7 @@ import {
 import { FormBuilderTrial } from "../components/FormBuilderTrial";
 import "react-dropdown/style.css";
 import axios from "axios";
+import axiosInst from "../services/api/axiosInst";
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
 import {
@@ -110,7 +111,7 @@ function DocumentAddTemp() {
               console.log(values);
               await new Promise((r) => setTimeout(r, 500));
               // console.log(values);
-              axios
+              axiosInst
                 .post("http://localhost:5000/admin/documentTemplate", {
                   ...values.documentvalue,
                   depId: depId,

@@ -27,23 +27,23 @@ export const Route = createLazyFileRoute('/notification')({
     fetchNotifications();
 
     // Initialize Socket.IO client with proper URL
-    const socket: Socket = io('http://localhost:5000', {
-    path: '/socket.io',
+  //   const socket: Socket = io('http://localhost:5000', {
+  //   path: '/socket.io',
    
-  });
+  // });
 
-  socket.on('connect', () => {
-    console.log('Connected to socket.io server');
-    socket.emit('join', userData._id);
-  });
+  // socket.on('connect', () => {
+  //   console.log('Connected to socket.io server');
+  //   socket.emit('join', userData._id);
+  // });
 
-  socket.on('newNotification', (notification) => {
-    setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-  });
+  // socket.on('newNotification', (notification) => {
+  //   setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+  // });
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected from socket.io server');
-  });
+  // socket.on('disconnect', () => {
+  //   console.log('Disconnected from socket.io server');
+  // });
   }, []);
 
   return (

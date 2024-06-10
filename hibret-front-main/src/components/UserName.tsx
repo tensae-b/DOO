@@ -4,6 +4,7 @@ import downArrow from "/asset/icons/downArrow.svg";
 import notification from "/asset/icons/notification.svg"; // Fixed typo
 import avatar from "/asset/icons/avatar.svg";
 import axios from "axios";
+import axiosInst from "../services/api/axiosInst";
 import { fetchnotification } from "../services/api/notificationAPi";
 import { io, Socket } from 'socket.io-client';
 
@@ -27,22 +28,22 @@ const UserName: React.FC = () => {
     fetchNotifications();
 
     // Setup Socket.IO client
-    const socket: Socket = io('http://localhost:5000', {
-      path: '/socket.io',
-    });
+    // const socket: Socket = io('http://localhost:5000', {
+    //   path: '/socket.io',
+    // });
 
-    socket.on('connect', () => {
-      console.log('Connected to socket.io server');
-      socket.emit('join', userData._id);
-    });
+    // socket.on('connect', () => {
+    //   console.log('Connected to socket.io server');
+    //   socket.emit('join', userData._id);
+    // });
 
-    socket.on('newNotification', (notification) => {
-      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
-    });
+    // socket.on('newNotification', (notification) => {
+    //   setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+    // });
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from socket.io server');
-    });
+    // socket.on('disconnect', () => {
+    //   console.log('Disconnected from socket.io server');
+    // });
   }, [userData._id]);
 
   const toggleDropdown = () => {
@@ -55,7 +56,7 @@ const UserName: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
+      const response = await axiosInst.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
       if (response.data.message === "Logout successful") {
         localStorage.removeItem('user');
         window.location.href = '/login';

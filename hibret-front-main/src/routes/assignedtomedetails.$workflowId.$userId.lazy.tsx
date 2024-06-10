@@ -10,7 +10,7 @@ import axios from 'axios';
 import axiosInst from "../services/api//axiosInst";
 import Comments from "../components/Comments";
 import UserName from "../components/UserName";
-import SideBar from "../components/SideBar";
+import SideBar2 from "../components/SideBar2";
 
 export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId/$userId")({
   component: AssignedToMeDetails
@@ -47,6 +47,7 @@ function AssignedToMeDetails() {
 
         setWorkflowDetail(updatedWorkflowDetail);
         setButtons(data.buttons || {});
+        console.log(data.buttons)
       } catch (error) {
         console.error("Error fetching detail:", error);
       }
@@ -64,7 +65,7 @@ function AssignedToMeDetails() {
   return (
     <div>
       <UserName />
-      <SideBar />
+      <SideBar2 />
       <div className="mt-24 ml-80 mr-8 w-full h-full">
         <div>
           <div className="flex flex-row gap-6 font-bold items-center">
