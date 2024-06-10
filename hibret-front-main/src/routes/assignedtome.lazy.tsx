@@ -5,6 +5,7 @@ import { workuser } from "../services/api/userworkApi";
 import SideBar2 from "../components/SideBar2";
 import UserName from "../components/UserName";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import NavBar from "../components/NavBar";
 
 export const Route = createFileRoute("/assignedtome")({
   component: () => {
@@ -117,10 +118,15 @@ function AssignWork({ userId }) {
             <h2 className="text-[#4A176D] text-3xl font-bold">Assigned workflow</h2>
             <p className="text-[#667085] text-base"> placeholder</p>
           </div>
-          <div className="h-full w-full mt-4">
+          <div className=" w-full  ">
             <DataGrid
               rows={user}
               columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
               pageSizeOptions={[5, 10]}
               checkboxSelection
               getRowId={(row) => row.workflow_id} // Use workflow_id as row identifier

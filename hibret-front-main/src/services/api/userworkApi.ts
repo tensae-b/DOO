@@ -13,7 +13,9 @@ export const fetchdetail = async (catagId) => {
     }
 };
 export const workapprove = async (workflowId, userId, comment) => {
-
+    console.log(workflowId)
+    console.log(userId)
+    console.log(comment)
     try {
         const response = await axiosInst.post(`initiate/workflows/approve/`, { workflowId, userId, comment });
         const { data } = response;

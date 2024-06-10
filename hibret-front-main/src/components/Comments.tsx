@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { workapprove, workareject, workforward, workback } from "../services/api/userworkApi";
-
+import { toast , Toaster  } from "react-hot-toast";
 const Comments = ({
   workflowDetail,
   setWorkflowDetail,
@@ -19,6 +19,7 @@ const Comments = ({
       setIsForwardDisabled(true);
       setIsBackDisabled(true);
     }
+    console.log(buttons)
   }, [workflowDetail]);
 
   const getUserId = () => {
@@ -45,8 +46,12 @@ const Comments = ({
 
       const workflowId = workflowDetail._id;
       const { data, isError } = await workapprove(workflowId, userId, comment);
+      console.log(workflowId)
+      console.log(userId)
+      console.log(comment)
       if (!isError) {
         setApproveStatus("Workflow approved successfully.");
+        toast.success("Workflow approved successfully.");
         setWorkflowDetail(data.workflow);
         setIsForwardDisabled(true);
         setIsBackDisabled(true);
@@ -76,6 +81,7 @@ const Comments = ({
       const { data, isError } = await workareject(workflowId, userId, comment);
       if (!isError) {
         setApproveStatus("Workflow rejected successfully.");
+        toast.success("Workflow rejected successfully.");
         setWorkflowDetail(data.workflow);
         setIsForwardDisabled(true);
         setIsBackDisabled(true);
@@ -105,6 +111,7 @@ const Comments = ({
       const { data, isError } = await workforward(workflowId, userId, comment);
       if (!isError) {
         setApproveStatus("Workflow forwarded successfully.");
+        toast.success("Workflow forwarded successfully.");
         setWorkflowDetail(data.workflow);
         setIsForwardDisabled(true);
       } else {
@@ -133,6 +140,7 @@ const Comments = ({
       const { data, isError } = await workback(workflowId, userId, comment);
       if (!isError) {
         setApproveStatus("Workflow sent back successfully.");
+        toast.success("Workflow sent back successfully.");
         setWorkflowDetail(data.workflow);
         setIsBackDisabled(true);
       } else {
@@ -141,11 +149,13 @@ const Comments = ({
     } catch (error) {
       console.error("Error sending workflow back:", error);
       setApproveStatus("Error sending workflow back.");
+
     }
   };
 
   return (
     <div className="comments-container h-auto w-80 border border-gray-300 rounded-lg shadow-md my-9 flex flex-col p-4 gap-4 bg-white">
+        <Toaster position="top-right" reverseOrder={false} toastOptions={{ duration: 5000 }} />
       <h5 className="text-teal-600 font-semibold">Comments/Feedback</h5>
       <textarea
         className="w-full h-20 border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-teal-400"
@@ -203,10 +213,10 @@ const Comments = ({
                   <span>{new Date(commentObj.createdAt).toLocaleString()}</span>
                 </div>
                 <p className="text-gray-800 mt-2">{commentObj.comment}</p>
-                <div className="text-sm text-gray-500 mt-2">
+                {/* <div className="text-sm text-gray-500 mt-2">
                   <p>From: {commentObj.fromUser._id}</p>
                   <p>To: {commentObj.toUser._id}</p>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
