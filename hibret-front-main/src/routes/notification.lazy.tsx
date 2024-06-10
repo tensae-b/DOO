@@ -9,6 +9,7 @@ import { fetchnotification  } from "../services/api/notificationAPi";
 export const Route = createLazyFileRoute('/notification')({
   component: () => {
     const [notifications, setNotifications] = useState([]);
+
   const user: any = localStorage.getItem("user");
   const userData = JSON.parse(user);
   console.log(userData)
@@ -45,6 +46,7 @@ export const Route = createLazyFileRoute('/notification')({
     console.log('Disconnected from socket.io server');
   });
   }, []);
+
 
   return (
     <div className="mt-36 ml-80 mr-8 w-full h-full">

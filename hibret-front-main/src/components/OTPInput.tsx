@@ -1,24 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
 
 const OTPInput: React.FC = () => {
   const [otp, setOtp] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [timer, setTimer] = useState<number>(10 * 60); // 10 minutes in seconds
-  const [showResendLink, setShowResendLink] = useState<boolean>(false);
-  const history = useHistory();
-
-  useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    } else {
-      setShowResendLink(true);
-    }
-  }, [timer]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -28,18 +13,21 @@ const OTPInput: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(otp);
+    console.log("Submitting OTP:", otp);
     try {
       const response = await axios.post("http://localhost:5000/api/verifyOTP", {
         code: otp,
       });
 
-      if (response.data.msg === "Verify Successfully!") {
+    
+
+      if (response.status === 201) {
         setMessage(response.data.msg);
-        // Reset session
-        resetSession();
-        // Redirect to next page
-        history.push("/setnewpassword");
+        
+        // Redirect to the new password page
+        console.log("Redirecting to /setNewPassword");
+        window.location.href = "/setNewPassword";
+       
       } else {
         setMessage(response.data.msg);
       }
@@ -49,23 +37,6 @@ const OTPInput: React.FC = () => {
     }
   };
 
-  const resetSession = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/api/resetSession");
-      console.log(response.data);
-      // Handle success response
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error
-    }
-  };
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="w-80 h-96 gap-4 flex flex-col">
@@ -73,7 +44,7 @@ const OTPInput: React.FC = () => {
           Enter OTP
         </h2>
         <h5 className="w-full text-center font-urbanist font-normal text-base text-gray-400">
-          Please enter the verification code we sent to the email example@gmail.com
+          Please enter the verification code we sent to your email
         </h5>
         <div className="flex justify-center mb-4 w-80">
           <input
@@ -89,13 +60,6 @@ const OTPInput: React.FC = () => {
           Verify OTP
         </button>
         {message && <p className="text-red-500 mt-2">{message}</p>}
-        {timer > 0 ? (
-          <p className="text-gray-500 mt-2">Resend OTP in {formatTime(timer)}</p>
-        ) : (
-          <a className="text-teal-500 mt-2" href="/forgotpassword">
-            Resend OTP
-          </a>
-        )}
       </div>
     </div>
   );
