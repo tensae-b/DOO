@@ -27,30 +27,20 @@ const useStepFormStore = create(
   )
 );
 
-
-// const useStore = create(
-//   persist(
-//     (set) => ({
-//       files: [], // Initial state with empty files array
-//       addFile: (file:any) =>
-//         set((state :any) => ({
-//           files: [...state.files, file], // Add the file to the files array
-//         })),
-//         clearFile: () =>
-//           set(() => ({
-//                files: [],
-//           })),
-//     }),
+const useNameStore = create(
+  persist(
+    (set) => ({
+      name: "",
+      setName: (name: string) => set({ name }),
+      clearName: () => set({ name: "" }),
+    }),
+    {
+      name: "nameData",
+    }
+  )
+);
 
 
-//     {
-//       name: "files",
-//     }
-//   )
- 
- 
-// );
-// export const useFiles = () => useStore((state:any) => state.files);
 
-export {useStepFormStore as default};
+export { useStepFormStore as default, useNameStore };
 

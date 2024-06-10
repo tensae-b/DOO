@@ -136,14 +136,16 @@ export const FormBuilder = ({
 
       // addFile(file);
       uploadFile(formData).then((result) => {
+        const datas=[]
         if (!result.isError) {
           console.log(result.data);
-          setValue(title, result.data);
+          datas.push(result.data.id)
+          setValue(title, datas);
         } else {
           console.log(result.data);
           toast.error("error fetching");
         }
-      });
+      })
 
       // clearErrors(title);
     }

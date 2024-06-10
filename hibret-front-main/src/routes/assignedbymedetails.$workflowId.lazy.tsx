@@ -124,7 +124,8 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
     const Documents2 = workflowDetailData.workflow.additionalDocuments;
     const detail = workflowDetailData.workflow;
 
-    console.log(detail);
+    
+ console.log(detail)
 
     return (
       <div>
@@ -268,6 +269,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
             <div className="mt-24">
               <Actions 
               workflowId={workflowId}
+              detail= {detail}
               />
             </div>
           </div>

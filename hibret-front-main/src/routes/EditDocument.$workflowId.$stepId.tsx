@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+import toast, { Toaster } from "react-hot-toast";
 // EditDocument.$workflowId.$stepId.lazy
 
 export const Route = createFileRoute("/EditDocument/$workflowId/$stepId")({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/EditDocument/$workflowId/$stepId")({
       method: "get",
       maxBodyLength: Infinity,
       url: `http://localhost:5000/initiate/workflows/get/${workflowId}`,
+      withCredentials: true,
       headers: {},
     };
 
@@ -195,7 +197,7 @@ function EditDocument() {
                       toast.error("Edit Cancelled");
                       clearStepData();
                       setTimeout(function () {
-                        navigate({ to: "/assignedtome" });
+                        navigate({ to: "/assignedbyme" });
                       }, 2000);
                     }}
                   >
