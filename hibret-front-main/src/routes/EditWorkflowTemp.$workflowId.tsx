@@ -21,7 +21,7 @@ import {
   fetchSubCatag,
   fetchtCommittee,
 } from "../services/api/fetchDataApi";
-import { getWorkflowTemplate } from "../services/api/workflowApi";
+import { editWorkflowTemplate, getWorkflowTemplate } from "../services/api/workflowApi";
 
 export const Route = createFileRoute("/EditWorkflowTemp/$workflowId")({
   loader: async ({ params: { workflowId } }) => {
@@ -83,13 +83,13 @@ function EditWorkflowTemp() {
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   const navigate = useNavigate();
-
+  const [sectionEdited, setSectionEdited] = useState(false);
   
 
   function getCommittees() {
     fetchtCommittee().then(result => {
       if(!result.isError){
-
+         console.log(result.data)
         setCommittee(result.data);
       }else{
        toast.error("error fetching");
@@ -113,10 +113,17 @@ function EditWorkflowTemp() {
   useEffect(() => {
     requriedDocument();
     if (addSection.requiredDocuments.length > 0) {
+      console.log('hey')
+let data: any = []
+      addSection.requiredDocuments.map((item, index)=>{
+         data.push(item._id)
+        
+      })
       setRequiredDocument(
         "workflowtemp.requiredDocumentTemplates",
-        addSection.requiredDocuments
+        data
       );
+      
     }
 
     getRoles();
@@ -144,22 +151,7 @@ function EditWorkflowTemp() {
     
   }
 
-  // function getCategory() {
-  //   fetchCatag(depId).then(result => {
-  //     if(!result.isError){
-  //      setCategory(result.data);
-  //     }else{
-  //       console.log(result)
 
-  //     }
-  //   })
-
-  // }
-  // const handleDeleteDocument = (title: any) => {
-  //   setChosenDocument((prevDocuments) =>
-  //     prevDocuments.filter((doc) => doc.title !== title)
-  //   );
-  // };
 
   const [stageCondition, setStageCondition] = useState([]);
   const [stageGroup, setStageGroup] = useState([]);
@@ -218,22 +210,20 @@ function EditWorkflowTemp() {
     setStageGroup(newConditions);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(data.workflowtemp, "template data");
+    const result = await editWorkflowTemplate(templateData.workflowId, data.workflowtemp);
+    console.log(result)
+    if(!result.isError){
+     toast.success(result.data.message)
+     navigate({ to: `/workflowtemp` });
+
+    }else{
+      toast.error(result.data.message)
+    }
   };
 
-  // function handleDragEnd(event: any) {
-  //   const { active, over } = event;
-  //   console.log(active, over.id);
-  //   if (active.id !== over.id) {
-  //     setRequiredDocuments((items) => {
-  //       const oldIndex = items.indexOf(active.id);
-  //       const newIndex = items.indexOf(over.id);
-  //       console.log(oldIndex, newIndex);
-  //       return arrayMove(items, oldIndex, newIndex);
-  //     });
-  //   }
-  // }
+  
 
   return (
     <FormProvider {...methods}>
@@ -336,7 +326,9 @@ function EditWorkflowTemp() {
                                 // );
                                 // );
                                 // console.log({ chosenDocuments });
-
+                               
+                                  setSectionEdited(true);
+                              
                                 setChosenDocument((prevDocuments) => {
                                   const s = [...prevDocuments, e.target.value];
                                   console.log({ s });
@@ -365,6 +357,9 @@ function EditWorkflowTemp() {
                               type="checkbox"
                               {...register("workflowtemp.additionalDoc")}
                               defaultChecked={addSection.additionalDoc}
+                              onChange={() => {
+                                setSectionEdited(true);
+                              }}
                             />
                             <label
                               htmlFor="additionalInfo"
@@ -391,7 +386,7 @@ function EditWorkflowTemp() {
                                     alt="Order Icon"
                                   />
                                   <p className="text-[#667085] text-sm">
-                                    {item}
+                                    {item.title}
                                   </p>
                                   <div>
                                     <img
@@ -467,6 +462,9 @@ function EditWorkflowTemp() {
                                 {...register(
                                   `workflowtemp.stages.${index}.stageTitle`
                                 )}
+                                onChange={() => {
+                                  setSectionEdited(true);
+                                }}
                                 defaultValue={item.title}
                                 className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                                 required
@@ -479,7 +477,11 @@ function EditWorkflowTemp() {
                                   {...register(
                                     `workflowtemp.stages.${index}.hasCondition`
                                   )}
+
                                   onChange={(e) => {
+                                   
+                                      setSectionEdited(true);
+                                    
                                     console.log(index, e.target.checked)
                                     handleConditionChange(
                                       index,
@@ -500,8 +502,10 @@ function EditWorkflowTemp() {
                             </div>
                           </div>
                           <div>
+                       
                             {stageCondition[index] ||item.hasCondition  &&  (
                               <StageCondition
+                              conditionvariants={item.conditionVariants}
                                 conditionIndex={index}
                                 {...{ control, register }}
                                 departmentData={department}
@@ -519,6 +523,15 @@ function EditWorkflowTemp() {
                               {...register(
                                 `document.sections.${0}.content.${index}.type`
                               )}
+                              onChange={(e) => {
+                                handleGroupChange(
+                                 index ,
+                                  e.target.value
+                                );
+                              
+                                  setSectionEdited(true);
+                              
+                              }}
                               defaultValue={item.approverType}
                               className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                             >
@@ -528,13 +541,15 @@ function EditWorkflowTemp() {
                               <option value="Committee">Committee</option>
                             </select>
                           </div>
-                          {"singlePermissions" in item && item.singlePermissions.role !=null ? (
+                          {("singlePermissions" in item && item.singlePermissions.role !=null) ||stageGroup[index ] =="Single Person" ? (
                             <div>
                               <label>Role</label>
                            <select
                            className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                            onChange={(e: { target: { value: any } }) => {
-                       
+                            
+                              setSectionEdited(true);
+                           
                             setRoleValue(
                               "workflowtemp.stages.${index}.singlePermission.role",
                               e.target.value
@@ -555,23 +570,67 @@ function EditWorkflowTemp() {
                            ))}
                          </select>
                          </div>
-                          ) : (
+                          ) : ("committeePermissions" in item && item.committeePermissions.committee !=null) || stageGroup[stageLength ]=="Committee"  ? (
                             <div>
+                              <label>Committee</label>
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                            
+                              setSectionEdited(true);
+                         
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           defaultValue={item.committeePermissions.committee._id}
+                         >
+                          
+                        <option>{item.committeePermissions.committee.name}</option>
+                           {committee?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.name}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                          ):(
+                             <div> 
+                                <div>
                               <label>Role</label>
-                              <input
-                                type="text"
-                                id="approverType"
-                                {...register(
-                                  `workflowtemp.stages.${index}.committeePermissions.committee`
-                                )}
-                                defaultValue={
-                                  item.committeePermissions.committee
-                                }
-                                className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                                required
-                              />
-                            </div>
-                          )}
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                            
+                              setSectionEdited(true);
+                            
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           
+                         >
+                          
+                        <option>No role selected</option>
+                           {roles?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.roleName}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                             </div>
+                          ) }
                         </div>
                       ))}
                     </div>
@@ -591,7 +650,7 @@ function EditWorkflowTemp() {
                                 </h3>
                                 <button
                                   type="button"
-                                  onClick={() => remove(index)}
+                                  onClick={() => remove( index)}
                                   className="max-w-10"
                                 >
                                   <img src="/asset/icons/delete.svg" />
@@ -615,10 +674,13 @@ function EditWorkflowTemp() {
                                     id="stagetitle"
                                     {...register(
                                       `workflowtemp.stages.${
-                                        stageLength + index + 1
+                                        stageLength + index 
                                       }.stageTitle`,
                                       { required: true }
                                     )}
+                                    onChange={() => {
+                                      setSectionEdited(true);
+                                    }}
                                     className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                                     required
                                   />
@@ -629,12 +691,15 @@ function EditWorkflowTemp() {
                                       type="checkbox"
                                       {...register(
                                         `workflowtemp.stages.${
-                                          stageLength + index + 1
+                                          stageLength + index 
                                         }.hasCondition`
                                       )}
                                       onChange={(e) => {
+                                       
+                                          setSectionEdited(true);
+                                       
                                         handleConditionChange(
-                                          stageLength + index + 1,
+                                          stageLength + index ,
                                           e.target.checked
                                         );
                                       }}
@@ -650,9 +715,12 @@ function EditWorkflowTemp() {
                                     <select
                                       {...register(
                                         `workflowtemp.stages.${
-                                          stageLength + index + 1
+                                          stageLength + index 
                                         }.ListCondition`
                                       )}
+                                      onChange={() => {
+                                        setSectionEdited(true);
+                                      }}
                                       className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                                     >
                                       <option>Select Condition</option>
@@ -662,16 +730,16 @@ function EditWorkflowTemp() {
                               </div>
                             </div>
 
-                            {stageCondition[stageLength + index + 1] && (
+                            {stageCondition[stageLength + index ] && (
                               <StageCondition
-                                conditionIndex={stageLength + index + 1}
+                                conditionIndex={stageLength + index }
                                 {...{ control, register }}
                                 departmentData={department}
                                 committeeData={committee}
                                 role={roles}
                               />
                             )}
-                            {!stageCondition[stageLength + index + 1] && (
+                            {!stageCondition[stageLength + index ] && (
                               <div
                                 key={field.id}
                                 className="flex flex-col gap-5 w-full items-center justify-center mb-6"
@@ -690,15 +758,18 @@ function EditWorkflowTemp() {
                                           type="radio"
                                           {...register(
                                             `workflowtemp.stages.${
-                                              stageLength + index + 1
+                                              stageLength + index 
                                             }.approverType`
                                           )}
                                           value="Single Person"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              stageLength + index + 1,
+                                              stageLength + index ,
                                               e.target.value
                                             );
+                                           
+                                              setSectionEdited(true);
+                                           
                                           }}
                                           defaultChecked
                                         />
@@ -709,15 +780,18 @@ function EditWorkflowTemp() {
                                           type="radio"
                                           {...register(
                                             `workflowtemp.stages.${
-                                              stageLength + index + 1
+                                              stageLength + index 
                                             }.approverType`
                                           )}
                                           value="Committee"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              stageLength + index + 1,
+                                              stageLength + index ,
                                               e.target.value
                                             );
+                                           
+                                              setSectionEdited(true);
+                                            
                                           }}
                                         />
                                         <label>Committee</label>
@@ -726,7 +800,7 @@ function EditWorkflowTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[stageLength + index + 1] ==
+                                {stageGroup[stageLength + index ] ==
                                 "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
@@ -739,6 +813,9 @@ function EditWorkflowTemp() {
                                             stageLength + index + 1
                                           }.committee_permissions.role_ids`
                                         )}
+                                        onChange={() => {
+                                          setSectionEdited(true);
+                                        }}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
                                         <option>Select Committee</option>
@@ -760,14 +837,17 @@ function EditWorkflowTemp() {
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
-                                          Select Role**
+                                          Select Role
                                         </label>
                                         <select
                                           {...register(
                                             `workflowtemp.stages.${
-                                              stageLength + index + 1
-                                            }.single_permissions.role.`
+                                              stageLength + index 
+                                            }.single_permissions.role._id`
                                           )}
+                                          onChange={() => {
+                                            setSectionEdited(true);
+                                          }}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
                                           <option>Select Role</option>
@@ -780,25 +860,7 @@ function EditWorkflowTemp() {
                                           ))}
                                         </select>
                                       </div>
-                                      {/* <div className="w-full flex flex-col gap-2">
-                                        <label className="text-sm w-full">
-                                          Permission Type*
-                                        </label>
-                                        <select
-                                          {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.permission`
-                         S                 )}
-                                          className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        >
-                                           <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      
-                                        </select>
-                                      </div> */}
+                                     
                                     </div>
                                   </div>
                                 )}
@@ -808,7 +870,7 @@ function EditWorkflowTemp() {
                         ))}
                         <button
                           type="button"
-                          onClick={() =>
+                          onClick={() =>{
                             append({
                               stageTitle: "",
                               hasCondition: "",
@@ -818,6 +880,9 @@ function EditWorkflowTemp() {
                               role: "",
                               permissionType: "",
                             })
+                            setSectionEdited(true);
+
+                          }
                           }
                           className="mt-4 p-2 bg-blue-500 text-white rounded-lg"
                         >
@@ -825,12 +890,15 @@ function EditWorkflowTemp() {
                         </button>{" "}
                         {/* section 4*/}
                       </div>
-                      <button
-                        type="submit"
-                        className=" w-full text-base px-6 py-2 text-[#00B0AD] bgt-white rounded-lg border border-[#00B0AD] flex items-center justify-center gap-3"
-                      >
-                        <img src="/asset/icons/plus-black.svg" /> Submit
-                      </button>
+                      {sectionEdited && (
+                         <button
+                         type="submit"
+                         className=" w-full text-base px-6 py-2 text-[#00B0AD] bgt-white rounded-lg border border-[#00B0AD] flex items-center justify-center gap-3"
+                       >
+                       Edit workflow
+                       </button>
+                      )}
+                     
                     </div>
                   </div>
                   <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
