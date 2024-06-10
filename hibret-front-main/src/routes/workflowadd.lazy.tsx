@@ -190,31 +190,31 @@ function WorkFlowAddTemp() {
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
 
-    // var config = {
-    //   method: "post",
-    //   maxBodyLength: Infinity,
-    //   url: "http://localhost:5000/admin/workflow-templates",
-    //   withCredentials: true,
-    //   headers: {},
-    //   data: data.workflowtemp,
-    // };
+    var config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "http://localhost:5000/admin/workflow-templates",
+      withCredentials: true,
+      headers: {},
+      data: data.workflowtemp,
+    };
 
-    // axios(config)
-    //   .then(function (response) {
-    //     console.log(JSON.stringify(response.data));
-    //     toast.success("Successfully toasted!");
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        toast.success("Successfully toasted!");
       
-    //               navigate({ to: "/workflowtemp" });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
+                  navigate({ to: "/workflowtemp" });
+      })
+      .catch(function (error) {
+        console.log(error);
         
-    //     toast.error("please try again");
-    //   });
+        toast.error("please try again");
+      });
 
-    // const dataSent={
+    const dataSent={
 
-    // }
+    }
   };
 
   
