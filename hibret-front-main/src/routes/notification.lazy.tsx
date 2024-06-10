@@ -8,18 +8,24 @@ import avatar from '../../public/asset/icons/avatar.svg';
 export const Route = createLazyFileRoute('/notification')({
   component: () => {
     const [notifications, setNotifications] = useState([]);
-
+    
     useEffect(() => {
-      const fetchNotifications = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/initiate/notifications/663c92732358e4d0b92c9288');
-          setNotifications(response.data);
-        } catch (error) {
-          console.error('Error fetching notifications:', error);
-        }
-      };
+      const user = localStorage.getItem("user");
+      if (user) {
+        const userData = JSON.parse(user);
+        const userId = userData._id;
 
-      fetchNotifications();
+        const fetchNotifications = async () => {
+          try {
+            const response = await axios.get(`http://localhost:5000/initiate/notifications/${userId}`);
+            setNotifications(response.data);
+          } catch (error) {
+            console.error('Error fetching notifications:', error);
+          }
+        };
+
+        fetchNotifications();
+      }
     }, []);
 
     return (

@@ -12,9 +12,9 @@ export const Route = createFileRoute("/FolderHierarchyRoute")({
     <div className="mt-24 ml-80 mr-8">
       <UserName />
       <SideBar2/>
-      <div className="mt-36">
-        <h1 className="text-teal-400 mb-3 text-xl font-bold">Repository</h1>
-      <div className='border border-gray-400 border-opacity-20 px-6 py-6  mb-16'>
+      <div className="mt-24">
+        <h1 className="text-teal-500 mb-3 text-3xl font-bold">Repository</h1>
+      <div className='border border-gray-400 border-opacity-20 px-6 py-6  mb-16 mt-10'>
         
       <FolderTreeContainer />
       </div>

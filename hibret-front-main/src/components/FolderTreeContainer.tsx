@@ -18,6 +18,8 @@ const FolderTreeContainer = () => {
     fetchData();
   }, []);
 
+
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen ">
@@ -27,7 +29,7 @@ const FolderTreeContainer = () => {
   }
 
   if (!data) {
-    return <div className="flex items-center justify-center h-screen">No data available</div>;
+    return <div className="flex items-center justify-center h-screen">No Repository available</div>;
   }
 
   return <FolderTree data={data} />;
