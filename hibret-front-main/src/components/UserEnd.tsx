@@ -1,28 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Tabs, Tab, Box } from "@mui/material";
 import { Link } from "@tanstack/react-router";
 
 // Define your interfaces
+interface Workflow {
+  _id: string;
+  workflowName: string;
+  status: string;
+  createdAt: string;
+  categoryName: string;
+  subCategoryName: string;
+  id?: string; // Optional because we'll add this later
+}
 
-const UserEnd = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
+interface UserData {
+  _id: string;
+  role: {
+    permissions: string[];
+  };
+}
+
+const UserEnd: React.FC = () => {
+  const [selectedTab, setSelectedTab] = useState<number>(0);
   const [assignedByMeRows, setAssignedByMeRows] = useState<Workflow[]>([]);
   const [assignedToMeRows, setAssignedToMeRows] = useState<Workflow[]>([]);
-  const user: any = localStorage.getItem("user");
-  const userData = JSON.parse(user);
-  const userId = userData._id;
+  const user = localStorage.getItem("user");
+  const userData: UserData | null = user ? JSON.parse(user) : null;
+  const userId = userData?._id;
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchAssignedByMeWorkflows = async (userId: string) => {
       try {
         const response = await fetch(
-          `http://localhost:5000/initiate/workflows/owner/${userId}`
+          `http://localhost:5000/initiate/workflows/owner/${userId}`,
+          {
+            credentials: 'include'
+          }
         );
         const data = await response.json();
-        setAssignedByMeRows(
-          data.map((row, index) => ({ ...row, id: `assignedByMe-${row._id}` }))
-        );
+
+        if (Array.isArray(data)) {
+          setAssignedByMeRows(
+            data.map((row) => ({ ...row, id: `assignedByMe-${row._id}` }))
+          );
+        } else {
+          console.error("Expected array but got:", data);
+        }
       } catch (error) {
         console.error("Error fetching assigned by me workflows:", error);
       }
@@ -31,12 +57,20 @@ const UserEnd = () => {
     const fetchAssignedToMeWorkflows = async (userId: string) => {
       try {
         const response = await fetch(
-          `http://localhost:5000/initiate/userWorkflow/${userId}`
+          `http://localhost:5000/initiate/userWorkflow/${userId}`,
+          {
+            credentials: 'include'
+          }
         );
         const data = await response.json();
-        setAssignedToMeRows(
-          data.map((row, index) => ({ ...row, id: `assignedToMe-${row._id}` }))
-        );
+
+        if (Array.isArray(data)) {
+          setAssignedToMeRows(
+            data.map((row) => ({ ...row, id: `assignedToMe-${row._id}` }))
+          );
+        } else {
+          console.error("Expected array but got:", data);
+        }
       } catch (error) {
         console.error("Error fetching assigned to me workflows:", error);
       }
@@ -46,30 +80,36 @@ const UserEnd = () => {
     fetchAssignedToMeWorkflows(userId);
   }, [userId]);
 
-  if (!user) return <div>Loading...</div>; // Handle case where user data is not yet loaded
+  if (!userData) return <div>Loading...</div>; // Handle case where user data is not yet loaded
 
   const { permissions } = userData.role;
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setSelectedTab(newValue);
   };
 
-  // Modified columns with link rendering for workflowName
-  const assignedByMeColumns = [
-    // Define your columns
+  const assignedByMeColumns: GridColDef[] = [
+    { field: "workflowName", headerName: "Workflow Name", width: 200 },
+    { field: "status", headerName: "Status", width: 150 },
+    { field: "createdAt", headerName: "Created At", width: 200 },
+    { field: "categoryName", headerName: "Category", width: 150 },
+    
   ];
 
-  // Modified columns for "Assigned to Me" page
-  const assignedToMeColumns = [
-    // Define your columns
+  const assignedToMeColumns: GridColDef[] = [
+    { field: "workflowName", headerName: "Workflow Name", width: 200 },
+    { field: "status", headerName: "Status", width: 150 },
+    { field: "createdAt", headerName: "Created At", width: 200 },
+    { field: "categoryName", headerName: "Category", width: 150 }
+   
   ];
 
-  const AssignedByMeTable = () => {
+  const AssignedByMeTable: React.FC = () => {
     if (assignedByMeRows.length === 0) {
       return (
         <div className="flex items-center flex-col justify-center gap-2">
           <img src="/asset/nodocument.svg" className="h-44" />
-          <p className="text-purple-900 font-semibold">You didnt intiate any Workflow, Currently</p>
+          <p className="text-purple-900 font-semibold">You didn't initiate any Workflow, Currently</p>
         </div>
       );
     }
@@ -86,12 +126,14 @@ const UserEnd = () => {
     );
   };
 
-  const AssignedToMeTable = () => {
+  const AssignedToMeTable: React.FC = () => {
     if (assignedToMeRows.length === 0) {
-      return  <div className="flex items-center flex-col justify-center gap-2">
-      <img src="/asset/nodocument.svg" className="h-44" />
-      <p className="text-purple-900 font-semibold" >There is  no workflow assigned to you, currently</p>
-    </div>;
+      return (
+        <div className="flex items-center flex-col justify-center gap-2">
+          <img src="/asset/nodocument.svg" className="h-44" />
+          <p className="text-purple-900 font-semibold">There is no workflow assigned to you, currently</p>
+        </div>
+      );
     }
 
     return (
@@ -143,20 +185,20 @@ const UserEnd = () => {
         )}
       </div>
       <div className="border border-opacity-5 w-96 flex flex-col gap-4 px-8 py-4">
-  <h4 className="text-lg font-semibold text-purple-900">User Permissions</h4>
-  <ul className="list-disc">
-  {permissions.includes("get-assigned") && !permissions.includes("create-workflow")&&(
-    <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to receive assignments; you cannot initiate any workflows.</li>
-  )}
-  {permissions.includes("create-workflow") && !permissions.includes("get-assigned") && (
-    <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to initiate workflows; nobody can assign workflows to you.</li>
-  )}
-  {permissions.includes("get-assigned") && permissions.includes("create-workflow") && (
-    <li className="text-sm text-gray-500 justify-paragraph">You are allowed both to receive assignments and to initiate workflows.</li>
-  )}
-</ul>
-
-</div>
+        <h4 className="text-lg font-semibold text-purple-900">User Permissions</h4>
+        <ul className="list-disc">
+          {permissions.includes("get-assigned") && !permissions.includes("create-workflow") && (
+            <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to receive assignments; you cannot initiate any workflows.</li>
+          )}
+          {permissions.includes("create-workflow") && !permissions.includes
+("get-assigned") && (
+            <li className="text-sm text-gray-500 justify-paragraph">You are only allowed to initiate workflows; nobody can assign workflows to you.</li>
+          )}
+          {permissions.includes("get-assigned") && permissions.includes("create-workflow") && (
+            <li className="text-sm text-gray-500 justify-paragraph">You are allowed both to receive assignments and to initiate workflows.</li>
+          )}
+        </ul>
+      </div>
     </div>
   );
 };
