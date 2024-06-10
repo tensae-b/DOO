@@ -50,13 +50,13 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <div className="search-bar flex justify-between mt-11 p-3">
+    <div className="search-bar flex justify-between mt-11 p-3 self-end">
       {/* <div className="flex border border-[#667085] px-3 py-2 rounded-lg ">
         <input type="text" placeholder="Search something...." />
         <img src="/asset/icons/search.svg" alt="Search" />
       </div> */}
 
-      <div className="flex gap-6 items-center">
+      <div className="flex gap-6 items-center ">
         <div className="relative">
           <img
             src={notifcation}
