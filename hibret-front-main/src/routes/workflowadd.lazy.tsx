@@ -202,7 +202,7 @@ function WorkFlowAddTemp() {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
-        toast.success("Successfully toasted!");
+        toast.success("Successfully workflow Template Created!");
       
                   navigate({ to: "/workflowtemp" });
       })

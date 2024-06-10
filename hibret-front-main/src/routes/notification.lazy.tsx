@@ -47,7 +47,7 @@ export const Route = createLazyFileRoute('/notification')({
   });
   }, []);
 
-
+console.log(notifications)
   return (
     <div className="mt-36 ml-80 mr-8 w-full h-full">
       <h1 className="text-teal-400 text-2xl">Notifications</h1>
@@ -60,7 +60,7 @@ export const Route = createLazyFileRoute('/notification')({
               <img src={avatar} className="h-8" alt="User avatar" />
               <div>
                 <p className="text-sm text-gray-400">
-                  <a href="#" className="text-teal-400">{notification.message}</a>
+                  <a href={`/EditDocument/${notification.workflowId}/0`} className="text-teal-400">{notification.message}</a>
                 </p>
               </div>
             </div>
