@@ -19,9 +19,6 @@ const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
-    // Hide the forward arrow
-
-    // Prevent navigation through browser history
     window.history.pushState(null, document.title, window.location.href);
     window.addEventListener('popstate', function(event) {
       window.history.pushState(null, document.title, window.location.href);
@@ -54,29 +51,28 @@ const Login = () => {
         setError(data.message);
         setSuccess("");
       } else {
-        const { _id, username, role } = data.data; // Extract data from the nested data object
+        const { _id, username, role} = data.data;
         setSuccess(data.msg);
-       
 
-        // Store user details in localStorage
         localStorage.setItem('user', JSON.stringify({ _id, username, role }));
 
-        // Optionally, set session
-        // setSession({ userId: _id, username, role });
+        const user = localStorage.getItem("user");
+        if (user) {
+          const userData = JSON.parse(user);
+          const roleId = userData.role._id;
+          const isFirstLogin = userData.role.isFirst;
 
-        // Check the role and redirect accordingly
-
-        const user: any = localStorage.getItem("user");
-        const userData = JSON.parse(user);
-
-        const roleId = userData.role._id;
-
-        if (roleId === "66374bd0fdfae8633a05d11e") {
-          // Redirect to admin dashboard
-          window.location.href = "/adminDashboard";
+          if (!isFirstLogin) {
+            if (roleId === "66374bd0fdfae8633a05d11e") {
+              window.location.href = "/adminDashboard";
+            } else {
+              window.location.href = "/userDashboard";
+            }
+          } else {
+            window.location.href = '/resetPassword';
+          }
         } else {
-          // Redirect to user dashboard
-          window.location.href = "/userDashboard";
+          setError("Failed to retrieve user data.");
         }
       }
     } catch (error: any) {
@@ -94,7 +90,7 @@ const Login = () => {
 
   return (
     <div> 
-      <Logo/>
+      <Logo />
       <div className="flex justify-center items-center h-screen w-screen">
         <div className="w-80 h-96 gap-4 flex flex-col">
           <h1 className="w-full h-10 font-ralewa font-bold text-3xl text-center bg-gradient-to-r text-transparent bg-clip-text from-teal-500 to-purple-900">
