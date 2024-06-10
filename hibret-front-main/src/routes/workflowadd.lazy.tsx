@@ -190,45 +190,34 @@ function WorkFlowAddTemp() {
   const onSubmit = (data: any) => {
     console.log(data.workflowtemp, "template data");
 
-    var config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/workflow-templates",
-      withCredentials: true,
-      headers: {},
-      data: data.workflowtemp,
-    };
+    // var config = {
+    //   method: "post",
+    //   maxBodyLength: Infinity,
+    //   url: "http://localhost:5000/admin/workflow-templates",
+    //   withCredentials: true,
+    //   headers: {},
+    //   data: data.workflowtemp,
+    // };
 
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        toast.success("Successfully toasted!");
+    // axios(config)
+    //   .then(function (response) {
+    //     console.log(JSON.stringify(response.data));
+    //     toast.success("Successfully toasted!");
       
-                  navigate({ to: "/workflowtemp" });
-      })
-      .catch(function (error) {
-        console.log(error);
+    //               navigate({ to: "/workflowtemp" });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
         
-        toast.error("please try again");
-      });
+    //     toast.error("please try again");
+    //   });
 
     // const dataSent={
 
     // }
   };
 
-  // function handleDragEnd(event: any) {
-  //   const { active, over } = event;
-  //   console.log(active, over.id);
-  //   if (active.id !== over.id) {
-  //     setRequiredDocuments((items) => {
-  //       const oldIndex = items.indexOf(active.id);
-  //       const newIndex = items.indexOf(over.id);
-  //       console.log(oldIndex, newIndex);
-  //       return arrayMove(items, oldIndex, newIndex);
-  //     });
-  //   }
-  // }
+  
 
   return (
     <FormProvider {...methods}>
@@ -597,7 +586,7 @@ function WorkFlowAddTemp() {
                                               e.target.value
                                             );
                                           }}
-                                          defaultChecked
+                                         
                                         />
                                         <label>Single Person</label>
                                       </div>
@@ -628,12 +617,16 @@ function WorkFlowAddTemp() {
                                         Select Committee*
                                       </label>
                                       <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.role_ids`
-                                        )}
+                                        // {...register(
+                                        //   `workflowtemp.stages.${index}.committee_permissions.role_ids`
+                                        // )}
+                                        onChange={(e)=>{
+                                          setValue(`workflowtemp.stages.${index}.committee_permissions.role_ids`, e.target.value)
+                                        }}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                                        defaultValue={''}
                                       >
-                                        
+                                        <option>select committe</option>
                                         {committee.map((option: any, index) => (
                                           <option
                                             key={index}
@@ -655,12 +648,16 @@ function WorkFlowAddTemp() {
                                           Select Role*
                                         </label>
                                         <select
-                                          {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.role_id`
-                                          )}
+                                          // {...register(
+                                          //   `workflowtemp.stages.${index}.single_permissions.role_id`
+                                          // )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                                          defaultValue={''}
+                                          onChange={(e)=>{
+                                            setValue(`workflowtemp.stages.${index}.single_permissions.role_id`,e.target.value)
+                                          }}
                                         >
-                                          
+                                          <option>select role</option>
                                           {role.map((option: any, index) => (
                                             <option
                                               key={index}

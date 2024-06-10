@@ -21,6 +21,10 @@ export default ({
     newConditions[index] = newCondition;
     setStageGroup(newConditions);
   };
+  function setValue(arg0: string, value: string) {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div>
       {fields.map((field, index) => (
@@ -99,10 +103,14 @@ export default ({
               <div className="w-full flex flex-col gap-2">
                 <label className="text-sm w-full">Select Committee*</label>
                 <select
-                  {...register(
-                    `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.role_ids`
-                  )}
+                  // {...register(
+                  //   `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.role_ids`
+                  // )}
                   className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                  onChange={(e)=>{
+                    setValue(`workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.committee_permissions.role_ids`, e.target.value)
+                  }}
+                  defaultValue={''}
                 >
                   <option>Select Committee</option>
                   {committeeData.map((option: any, index: any) => (
@@ -124,10 +132,14 @@ export default ({
                 <div className="w-full flex flex-col gap-2">
                   <label className="text-sm w-full">Select Role**</label>
                   <select
-                    {...register(
-                      `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.role_id`
-                    )}
+                    // {...register(
+                    //   `workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.role_id`
+                    // )}
                     className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
+                    onChange={(e)=>{
+                      setValue(`workflowtemp.stages.${conditionIndex}.conditionvariants.${index}.single_permissions.role_id`, e.target.value)
+                    }}
+                    defaultValue={''}
                   >
                     <option>Select Role</option>
                     {role.map((option: any, index:any) => (
