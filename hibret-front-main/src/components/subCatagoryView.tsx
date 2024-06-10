@@ -13,7 +13,7 @@ const SubCatagoryView = ({ data, onReloadData }: any) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
-
+  const [shouldRefetch, setShouldRefetch] = useState(false);
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
