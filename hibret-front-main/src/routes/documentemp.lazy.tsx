@@ -13,6 +13,8 @@ import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
 import axios from "axios";
 import { deleteDocumentTemplate } from "../services/api/documentApi";
 import toast, { Toaster } from "react-hot-toast";
+import UserEnd from "$src/components/UserEnd";
+import UserName from "../components/UserName";
 
 
 function DocumentTemp() {
@@ -138,14 +140,14 @@ const columns: GridColDef[] = [
       <Toaster position="top-center" reverseOrder={false} />
       <div className="flex">
         <SideBar />
-        <div className="w-full flex flex-col">
-          <NavBar />
+        <div className="w-full flex flex-col ">
+          <UserName />
           <div
             className={`flex justify-between ${
               showAddTemplate ? "opacity-20" : "opacity-100"
             }`}
           >
-            <div className="flex flex-col gap-3 my-5 opa">
+            <div className="flex flex-col gap-3 my-5 mt-32">
               <h2 className="text-[#4A176D] text-3xl font-bold">
                 Document Template
               </h2>

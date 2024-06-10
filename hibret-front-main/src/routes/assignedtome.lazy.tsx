@@ -64,21 +64,23 @@ function AssignWork({ userId }) {
   };
 
   const columns: GridColDef[] = [
-    {
-      field: "workflow_id",
-      headerName: "Workflow ID",
-      width: 230,
+    // {
+    //   field: "workflow_id",
+    //   headerName: "Workflow ID",
+    //   width: 230,
+     
+    // },
+    { field: "name", headerName: "Name", width: 230,
       renderCell: (params) => (
         params.value !== "Unknown" ? (
-          <Link to={`/assignedtomedetails/${params.value}/${userId}`}>
+          <Link to={`/assignedtomedetails/${params.row.id}/${userId}`}>
             {params.value}
           </Link>
         ) : (
           <span>Unknown</span>
         )
       ),
-    },
-    { field: "name", headerName: "Name", width: 230 },
+     },
     { field: "status", headerName: "Status", width: 130 },
     {
       field: 'actions',
