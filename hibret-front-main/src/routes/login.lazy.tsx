@@ -20,7 +20,6 @@ const Login = () => {
 
   useEffect(() => {
     // Hide the forward arrow
-    
 
     // Prevent navigation through browser history
     window.history.pushState(null, document.title, window.location.href);
@@ -51,14 +50,13 @@ const Login = () => {
       });
 
       const { data } = response;
-      console.log(data);
-      if (data.error) {
-        setError(data.error);
+      if (data.status === 404) {
+        setError(data.message);
         setSuccess("");
       } else {
         const { _id, username, role } = data.data; // Extract data from the nested data object
         setSuccess(data.msg);
-        setFormData({ email: "", password: "" });
+       
 
         // Store user details in localStorage
         localStorage.setItem('user', JSON.stringify({ _id, username, role }));
@@ -67,7 +65,13 @@ const Login = () => {
         // setSession({ userId: _id, username, role });
 
         // Check the role and redirect accordingly
-        if (role === "66374bd0fdfae8633a05d11e") {
+
+        const user: any = localStorage.getItem("user");
+        const userData = JSON.parse(user);
+
+        const roleId = userData.role._id;
+
+        if (roleId === "66374bd0fdfae8633a05d11e") {
           // Redirect to admin dashboard
           window.location.href = "/adminDashboard";
         } else {
@@ -75,12 +79,16 @@ const Login = () => {
           window.location.href = "/userDashboard";
         }
       }
-    } catch (error) {
-      console.log(error);
-      setError("An error occurred while logging in.");
+    } catch (error: any) {
+      if (error.response) {
+        setError(error.response.data.message || "An error occurred while logging in.");
+      } else {
+        setError("An error occurred while logging in.");
+      }
+      setSuccess("");
       setTimeout(() => {
         setError("");
-      }, 2000);
+      }, 8000);
     }
   };
 
@@ -95,8 +103,8 @@ const Login = () => {
           <h3 className="w-full text-center font-urbanist font-normal text-base text-gray-400">
             Sign in to your account.
           </h3>
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">{success}</p>}
+          {error && <p className="text-red-500 font-semibold ">{error}</p>}
+          {success && <p className="text-green-500 font-semibold">{success}</p>}
           <form onSubmit={handleLogin} className="gap-4 flex flex-col">
             <input
               id="email"
