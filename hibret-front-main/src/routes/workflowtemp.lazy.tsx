@@ -110,6 +110,7 @@ function WorkflowTemp() {
       method: "get",
       maxBodyLength: Infinity,
       url: "http://localhost:5000/admin/workflow-templates/getAll",
+      withCredentials: true,
       headers: {},
     };
 

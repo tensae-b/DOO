@@ -194,6 +194,7 @@ function WorkFlowAddTemp() {
       method: "post",
       maxBodyLength: Infinity,
       url: "http://localhost:5000/admin/workflow-templates",
+      withCredentials: true,
       headers: {},
       data: data.workflowtemp,
     };
@@ -632,7 +633,7 @@ function WorkFlowAddTemp() {
                                         )}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
-                                        <option>Select Committee</option>
+                                        
                                         {committee.map((option: any, index) => (
                                           <option
                                             key={index}
@@ -643,58 +644,15 @@ function WorkFlowAddTemp() {
                                       </select>
                                     </div>
 
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        permission Type
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.permission`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                      >
-                                         <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      </select>
-                                    </div> */}
+                                    
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        Select Department*
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.single_permissions.department`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        onChange={(e: {
-                                          target: { value: any };
-                                        }) => {
-                                          getRoles(e.target.value);
-                                        }}
-                                      >
-                                        <option>Select Department</option>
-                                        {department.map(
-                                          (option: any, index) => (
-                                            <option
-                                              key={index}
-                                              label={option.name}
-                                              value={option._id}
-                                            />
-                                          )
-                                        )}
-                                      </select>
-                                    </div> */}
+                                  
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
-                                          Select Role**
+                                          Select Role*
                                         </label>
                                         <select
                                           {...register(
@@ -702,7 +660,7 @@ function WorkFlowAddTemp() {
                                           )}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
-                                          <option>Select Role</option>
+                                          
                                           {role.map((option: any, index) => (
                                             <option
                                               key={index}
@@ -712,25 +670,7 @@ function WorkFlowAddTemp() {
                                           ))}
                                         </select>
                                       </div>
-                                      {/* <div className="w-full flex flex-col gap-2">
-                                        <label className="text-sm w-full">
-                                          Permission Type*
-                                        </label>
-                                        <select
-                                          {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.permission`
-                         S                 )}
-                                          className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        >
-                                           <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      
-                                        </select>
-                                      </div> */}
+                                     
                                     </div>
                                   </div>
                                 )}
