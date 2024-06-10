@@ -1,20 +1,20 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { fetchreports, fetchAdminDashboardData } from '../services/api/report';
 import { useState, useEffect } from 'react';
-import { Pie, Bubble } from 'react-chartjs-2';
-import { Chart, Tooltip, Legend, LinearScale, ArcElement, PointElement, CategoryScale } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+import { Chart, Tooltip, Legend, LinearScale, ArcElement, CategoryScale, BarElement } from 'chart.js';
 import UserName from '../components/UserName';
 import SideBar from '../components/SideBar';
 
-Chart.register(Tooltip, Legend, LinearScale, ArcElement, PointElement, CategoryScale);
+Chart.register(Tooltip, Legend, LinearScale, ArcElement, CategoryScale, BarElement);
 
 const Reports = () => {
   const user = localStorage.getItem('user');
   const userData = JSON.parse(user || '{}');
-  
+
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [isReportLoading, setIsReportLoading] = useState(true);
-  
+
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [isDashboardLoading, setIsDashboardLoading] = useState(true);
 
@@ -64,20 +64,16 @@ const Reports = () => {
   const templateLabels = workflowTemplateData.map(item => item.template);
   const templateCounts = workflowTemplateData.map(item => item.count);
 
-  const workflowTemplateBubbleData = {
+  const workflowTemplatePieData = {
     labels: templateLabels,
     datasets: [
       {
         label: 'Workflow Template Usage',
-        data: templateCounts.map((count, index) => ({
-          x: index, // Position bubbles linearly on the x-axis
-          y: count, // y value represents the count
-          r: count*10 // Radius of bubble proportional to count, use square root to scale down
-        })),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'], // Use different colors
+        data: templateCounts,
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
       }
-    ] 
+    ]
   };
 
   const workflowStatusPieData = {
@@ -100,7 +96,7 @@ const Reports = () => {
     return countData ? countData.count : 0;
   });
 
-  const workflowCreationPieData = {
+  const workflowCreationBarData = {
     labels: allMonths,
     datasets: [
       {
@@ -108,6 +104,8 @@ const Reports = () => {
         data: creationCountsByMonth,
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+        barThickness: 10 // Make bars thinner
       }
     ]
   };
@@ -125,7 +123,25 @@ const Reports = () => {
         backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#FF5722'],
         hoverBackgroundColor: ['#81C784', '#FFD54F', '#64B5F6', '#FF8A65']
       }
-    ] 
+    ]
+  };
+
+  const pieChartOptions = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false // Disable the legend
+      }
+    },
+    layout: {
+      padding: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 10
+      }
+    }
   };
 
   return (
@@ -141,36 +157,41 @@ const Reports = () => {
           </h1>
         </div>
       </div>
-      <div className="flex flex-wrap justify-between gap-5 mt-8">
-        <div className='font-semibold flex flex-col items-center w-72 h-44 rounded-md gap-4 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-4 px-6'>
-        <Pie data={workflowCreationPieData} />
+      <div className="flex flex-wrap justify-between mt-8">
+        <div className='font-semibold flex flex-col items-center w-80 h-44  rounded-md gap-0.5 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-2 px-6'>
+          <h4 className="text-lg font-semibold text-purple-900">Workflow Template Usage</h4>
+          <div className="chart-container" style={{ position: "relative", height: "90%", width: "100%" }}>
+            <Pie data={workflowTemplatePieData} options={pieChartOptions} />
+          </div>
         </div>
 
-        <div className='font-semibold flex flex-col items-center w-72 h-44 rounded-md gap-4 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-4 px-6'>
-          <Pie data={workflowStatusPieData} />
+        <div className='font-semibold flex flex-col items-center w-80 h-44  rounded-md gap-0.5 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-2 px-6'>
+          <h4 className="text-lg font-semibold text-purple-900">Workflow Status</h4>
+          <div className="chart-container" style={{ position: "relative", height: "90%", width: "100%" }}>
+            <Pie data={workflowStatusPieData} options={pieChartOptions} />
+          </div>
         </div>
 
-        <div className='font-semibold flex flex-col items-center w-72 h-44 rounded-md gap-4 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-4 px-6'>
-          <Pie data={documentTemplatePieData} />
+        <div className='font-semibold flex flex-col items-center w-80 h-44  rounded-md gap-0.5 border border-gray-200 shadow-md hover:shadow-lg transition duration-300 ease-in-out py-2 px-6'>
+          <h4 className="text-lg font-semibold text-purple-900">Document template Usage</h4>
+          <div className="chart-container" style={{ position: "relative", height: "90%", width: "100%" }}>
+            <Pie data={documentTemplatePieData} options={pieChartOptions} />
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 flex gap-2 mb-4 h-60 ">
-        <div className="border border-opacity-5 h-72 w-full flex flex-col gap-2 px-8 py-2 items-center justify-center">
-          <h4 className="text-lg font-semibold text-purple-900">Workflow creation timeline</h4>
-          
-
-          <Bubble data={workflowTemplateBubbleData} options={{
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(tooltipItem) {
-                    const dataIndex = tooltipItem.dataIndex;
-                    return `${templateLabels[dataIndex]}: ${templateCounts[dataIndex]}`;
-                  }
+      <div className="mt-8 flex gap-2 mb-4 h-96">
+        <div className="border border-opacity-5 h-96 w-full flex flex-col gap-2 px-8 py-2 items-center justify-center">
+          <h4 className="text-lg font-semibold text-purple-900">Workflow Creation Timeline</h4>
+          <Bar data={workflowCreationBarData} options={{ 
+            maintainAspectRatio: false, 
+            scales: {
+              y: {
+                ticks: {
+                  stepSize: 1 // Show only whole numbers on the y-axis
                 }
               }
-            }
+            } 
           }} />
         </div>
       </div>
