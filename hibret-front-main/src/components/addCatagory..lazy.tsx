@@ -7,7 +7,7 @@ import { createcatag } from "../services/api/catagoryApi";
 import { createsubcatag } from "../services/api/subcatagApi";
 import axios from "axios";
 import { fetchDepartment } from "../services/api/fetchDataApi";
-// import toast from "react-hot-toast";
+import { toast , Toaster  } from "react-hot-toast";
 
 export const Route = createFileRoute("/addCatagory")({
   component: () => <CatagAdd />,
@@ -75,6 +75,7 @@ function CatagAdd({ closePopup }: any) {
     //integrated
 
     <div className="absolute left-[40%] top-[20%] w-[30%] p-10 border border-gray-300 rounded-md  bg-white z-50">
+    <Toaster position="top-right" reverseOrder={false} toastOptions={{ duration: 5000 }} />
       <div className="flex gap-4 items-center mb-4">
         <button
           className=" text-gray-600 hover:text-gray-800 focus:outline-none"
@@ -122,7 +123,7 @@ function CatagAdd({ closePopup }: any) {
             className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
           />
         </div>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label
             htmlFor="categoryDescription"
             className="text-[#00B0AD] block font-medium mb-1"
@@ -134,7 +135,7 @@ function CatagAdd({ closePopup }: any) {
             {...register("categoryDescription")}
             className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
           />
-        </div>
+        </div> */}
         <div className="mb-4">
           <label className="text-[#00B0AD] block font-medium mb-1">
             Subcategories

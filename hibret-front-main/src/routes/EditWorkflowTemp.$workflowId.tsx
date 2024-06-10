@@ -13,122 +13,145 @@ import {
 import "react-dropdown/style.css";
 import StageCondition from "../components/stageCondition";
 import axios from "axios";
-import { fetchCatag, fetchDepartment, fetchRequiredDocument, fetchRole, fetchSubCatag, fetchtCommittee } from "../services/api/fetchDataApi";
+import {
+  fetchCatag,
+  fetchDepartment,
+  fetchRequiredDocument,
+  fetchRole,
+  fetchSubCatag,
+  fetchtCommittee,
+} from "../services/api/fetchDataApi";
+import { editWorkflowTemplate, getWorkflowTemplate } from "../services/api/workflowApi";
 
+export const Route = createFileRoute("/EditWorkflowTemp/$workflowId")({
+  loader: async ({ params: { workflowId } }) => {
+    console.log(workflowId);
 
-export const Route = createFileRoute("/workflowadd")({
-  component: () => <WorkFlowAddTemp />,
+    const result = await getWorkflowTemplate(workflowId);
+    console.log(result);
+    const data = result.data;
+    return { data, workflowId };
+  },
+  notFoundComponent: () => {
+    return <p>step not found</p>;
+  },
+  component: EditWorkflowTemp,
 });
 
-function WorkFlowAddTemp() {
-  useEffect(() => {
-    
-    getDepartment();
-    getCommittees();
-  }, []);
+// const addSection= {
+//   "name":"some demo workflow",
+//   "depId":"6661c53bfc6f3eba0d27b7de",
+//   "categoryId":"6662896104b1482ab5876cb8",
+//   "subCategoryId":"6662896904b1482ab5876cf1",
+//   "additionalDoc":false,
+//   "requiredDocumentTemplates":[
+//      "6664db66d81f1ee5a55eb918",
+//      "6664dc59d81f1ee5a55eb987"
+//   ],
+//   "stages":[
+//      {
+//         "stageTitle":"inital",
+//         "hasCondition":false,
+//         "ListCondition":"Select Condition",
+//         "approverType":"Single Person",
+//         "single_permissions":{
+//            "role_id":"6661caaefc6f3eba0d27b7f9"
+//         }
+//      }
+//   ]
+// }
 
+function EditWorkflowTemp() {
+  // useEffect(() => {
+
+  //   getDepartment();
+  //   getCommittees();
+  // }, []);
+  const templateData: any = Route.useLoaderData();
+  console.log(templateData);
+  const addSection = templateData.data;
+  console.log(addSection);
+  let stageLength = addSection.stages.length ;
+  console.log(stageLength);
 
   const [category, setCategory] = useState([]);
   const [department, setDepartment] = useState([]);
   const [committee, setCommittee] = useState([]);
-  const [role, setRoles] = useState([]);
-  const [depId, setDepId] = useState('')
+  const [roles, setRoles] = useState([]);
+  const [depId, setDepId] = useState("");
   const [subCategory, setSubCategory] = useState([]);
   const [requiredDocuments, setRequiredDocuments] = useState<any[]>([]);
   const [chosenDocuments, setChosenDocument] = useState<any[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-      console.log(depId)
-    getCategory();
-    getRoles();
-  }, [depId]);
+  const [sectionEdited, setSectionEdited] = useState(false);
   
-  function getDepartment(){
-    fetchDepartment().then(result => {
-      if(!result.isError){
-        setDepartment(result.data)
-      }else{
-       toast.error("error fetching");
-      }
-      
-     })
- 
-  }
-
 
   function getCommittees() {
     fetchtCommittee().then(result => {
       if(!result.isError){
-    
+         console.log(result.data)
         setCommittee(result.data);
       }else{
        toast.error("error fetching");
       }
-      
+
      })
-    
+
   }
   function getRoles() {
-    fetchRole(depId).then(result => {
-      if(!result.isError){
-        console.log(result.data)
+    fetchRole(addSection.department._id).then((result) => {
+      if (!result.isError) {
+        console.log(result.data);
         setRoles(result.data);
-      }else{
-       console.log(result.data)
+      } else {
+        console.log(result.data);
       }
-      
-     })
-    
+    });
   }
 
-  function getSubCategory(value: any) {
-    fetchSubCatag(value).then(result => {
-     if(!result.isError){
-      setSubCategory(result.data);
-     }else{
-      toast.error("error fetching");
-     }
-     
-    })
-
-   
   
-  }
+  useEffect(() => {
+    requriedDocument();
+    if (addSection.requiredDocuments.length > 0) {
+      console.log('hey')
+let data: any = []
+      addSection.requiredDocuments.map((item, index)=>{
+         data.push(item._id)
+        
+      })
+      setRequiredDocument(
+        "workflowtemp.requiredDocumentTemplates",
+        data
+      );
+      
+    }
+
+    getRoles();
+    getCommittees()
+  }, []);
 
   function setRequiredDocument(title: any, value: any) {
     setValue(title, value);
   }
-  function requriedDocument(subCategoryId: any) {
-    fetchRequiredDocument(subCategoryId).then(result => {
-      if(!result.isError){
-        console.log(result.data.templates, 'docs')
-        setRequiredDocuments(result.data.templates)
-      }else{
-       toast.error("error fetching");
-      }
-      
-     })
- 
-  }
-  
 
-  function getCategory() {
-    fetchCatag(depId).then(result => {
-      if(!result.isError){
-       setCategory(result.data);
-      }else{
-        console.log(result)
-       
-      }
-    })
+  function setRoleValue(title: any, value: any) {
+    setValue(title, value);
+  }
+  function requriedDocument() {
+    if(addSection.subCategory != null){
+      fetchRequiredDocument(addSection.subCategory._id).then((result) => {
+        if (!result.isError) {
+          console.log(result.data.templates, "temp");
+          setRequiredDocuments(result.data.templates);
+        } else {
+          toast.error("error fetching");
+        }
+      });
+    }
     
   }
-  const handleDeleteDocument = (title: any) => {
-    setChosenDocument((prevDocuments) =>
-      prevDocuments.filter((doc) => doc.title !== title)
-    );
-  };
+
+
 
   const [stageCondition, setStageCondition] = useState([]);
   const [stageGroup, setStageGroup] = useState([]);
@@ -187,47 +210,20 @@ function WorkFlowAddTemp() {
     setStageGroup(newConditions);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(data.workflowtemp, "template data");
+    const result = await editWorkflowTemplate(templateData.workflowId, data.workflowtemp);
+    console.log(result)
+    if(!result.isError){
+     toast.success(result.data.message)
+     navigate({ to: `/workflowtemp` });
 
-    var config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "http://localhost:5000/admin/workflow-templates",
-      headers: {},
-      data: data.workflowtemp,
-    };
-
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        toast.success("Successfully toasted!");
-      
-                  navigate({ to: "/workflowtemp" });
-      })
-      .catch(function (error) {
-        console.log(error);
-        
-        toast.error("please try again");
-      });
-
-    // const dataSent={
-
-    // }
+    }else{
+      toast.error(result.data.message)
+    }
   };
 
-  // function handleDragEnd(event: any) {
-  //   const { active, over } = event;
-  //   console.log(active, over.id);
-  //   if (active.id !== over.id) {
-  //     setRequiredDocuments((items) => {
-  //       const oldIndex = items.indexOf(active.id);
-  //       const newIndex = items.indexOf(over.id);
-  //       console.log(oldIndex, newIndex);
-  //       return arrayMove(items, oldIndex, newIndex);
-  //     });
-  //   }
-  // }
+  
 
   return (
     <FormProvider {...methods}>
@@ -243,7 +239,7 @@ function WorkFlowAddTemp() {
                   <img src="/asset/icons/back-arrow.svg" />
                 </a>
                 <h2 className="text-[#4A176D] text-3xl font-bold">
-                  Add New Workflow Template
+                  Edit Workflow Template
                 </h2>
               </div>
               <form
@@ -271,11 +267,10 @@ function WorkFlowAddTemp() {
                         <input
                           type="text"
                           id="WorkflowName"
-                          {...register("workflowtemp.name", {
-                            required: true,
-                          })}
+                          placeholder={addSection.name}
+                          defaultValue={addSection.name}
+                          disabled
                           className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
-                          required
                         />
                       </div>
                       <div className="mt-4">
@@ -283,77 +278,19 @@ function WorkFlowAddTemp() {
                           htmlFor="workflow.department"
                           className="text-sm w-full"
                         >
-                          Choose department*
+                          Choose department
                         </label>
-                        <select
-                            
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.depId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              setDepId(e.target.value)
-                            }
-                            required
-                          >
-                            <option label="Select" value="" />
-                            {department?.map((option: any, index) => (
-                              <option
-                                key={option}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                        <p>{addSection.department.name}</p>
                       </div>
                       {/* Document Type */}
                       <div className="flex w-full gap-3">
                         <div className="w-full flex flex-col justify-center gap-2">
-                          <label className="text-sm w-full">
-                            Workflow Category*
-                          </label>
-                          <select
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.categoryId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              getSubCategory(e.target.value)
-                            }
-                          >
-                            <option value="">Select Category</option>
-                            {category?.map((option: any, index) => (
-                              <option
-                                key={index}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                          <label className="text-sm w-full">Catagory</label>
+                          <p>{addSection.category != null ?  addSection.category.name: ''}</p>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
-                          <label className="text-sm w-full">
-                            Workflow Subcategory*
-                          </label>
-                          <select
-                            className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
-                            {...register("workflowtemp.subCategoryId", {
-                              required: true,
-                            })}
-                            onChange={(e: { target: { value: any } }) =>
-                              requriedDocument(e.target.value)
-                            }
-                          >
-                            <option value="">Select SubCategory</option>
-
-                            {subCategory?.map((option: any, index) => (
-                              <option
-                                key={index}
-                                label={option.name}
-                                value={option._id}
-                              />
-                            ))}
-                          </select>
+                          <label className="text-sm w-full">SubCatagory</label>
+                          <p>{addSection.subCategory != null ?  addSection.subCategory.name: ''}</p>
                         </div>
                       </div>
                     </div>
@@ -389,6 +326,9 @@ function WorkFlowAddTemp() {
                                 // );
                                 // );
                                 // console.log({ chosenDocuments });
+                               
+                                  setSectionEdited(true);
+                              
                                 setChosenDocument((prevDocuments) => {
                                   const s = [...prevDocuments, e.target.value];
                                   console.log({ s });
@@ -398,14 +338,10 @@ function WorkFlowAddTemp() {
                                   );
                                   return s;
                                 });
-
-                                // setRequiredDocument(
-                                //   "workflowtemp.requiredDocumentTemplates",
-                                //   chosenDocuments
-                                // );
                               }}
                             >
                               <option>select a document</option>
+
                               {requiredDocuments?.map((option: any, index) => (
                                 <option
                                   className="border"
@@ -420,6 +356,10 @@ function WorkFlowAddTemp() {
                             <input
                               type="checkbox"
                               {...register("workflowtemp.additionalDoc")}
+                              defaultChecked={addSection.additionalDoc}
+                              onChange={() => {
+                                setSectionEdited(true);
+                              }}
                             />
                             <label
                               htmlFor="additionalInfo"
@@ -437,25 +377,32 @@ function WorkFlowAddTemp() {
                           >
                             Order of appearance
                           </label>
-                          {/* <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
-                          >
-                            <SortableContext
-                              items={chosenDocuments}
-                              strategy={verticalListSortingStrategy}
-                            >
-                              {chosenDocuments.map((item, index) => (
-                                <SortableItem
-                                  key={index}
-                                  title={item}
-                                  id={index + 1}
-                                />
-                              ))} */}
+                          {addSection.requiredDocuments.length > 0 &&
+                            addSection.requiredDocuments.map(
+                              (item, index) => (
+                                <div key={index} className="flex gap-2">
+                                  <img
+                                    src="/asset/icons/order.svg"
+                                    alt="Order Icon"
+                                  />
+                                  <p className="text-[#667085] text-sm">
+                                    {item.title}
+                                  </p>
+                                  <div>
+                                    <img
+                                      onClick={() => {
+                                        // Define the handleDeleteDocument function elsewhere and pass it as a prop or define it here.
+                                        // handleDeleteDocument(item);
+                                      }}
+                                      src="/asset/icons/delete.svg"
+                                      alt="Delete Icon"
+                                    />
+                                  </div>
+                                </div>
+                              )
+                            )}
 
-                          {/* {items.map(id => <SortableItem key={id} id={id} />)} */}
-                           {chosenDocuments.map((item, index) => (
+                          {chosenDocuments.map((item, index) => (
                             <div className="flex gap-2">
                               <img src="/asset/icons/order.svg" />
                               <p className="text-[#667085] text-sm">
@@ -467,17 +414,225 @@ function WorkFlowAddTemp() {
                               <div>
                                 <img
                                   onClick={() => {
-                                    handleDeleteDocument(item);
+                                    // handleDeleteDocument(item);
                                   }}
                                   src="/asset/icons/delete.svg"
                                 />
                               </div>
                             </div>
-                          ))} 
+                          ))}
                           {/* </SortableContext>
                           </DndContext> */}
                         </div>
                       </div>
+
+                      {addSection.stages.map((item, index) => (
+                        <div className="flex flex-col gap-5 mb-7">
+                          <div className="flex justify-between w-full">
+                            <h3
+                              className="text-[#00B0AD] text-xl font-bold"
+                              id="Stages"
+                            >
+                              Stages
+                            </h3>
+                            {/* <button
+                            type="button"
+                            onClick={() => remove(index)}
+                            className="max-w-10"
+                          >
+                            <img src="/asset/icons/delete.svg" />
+                          </button> */}
+                          </div>
+
+                          {/* stage */}
+                          <h2 className="text-[#667085] text-xl">
+                            Stage_{index + 1}
+                          </h2>
+                          <div className="flex flex-col gap-5 w-full items-center justify-center">
+                            <div className="flex flex-col gap-4 w-full">
+                              <label
+                                htmlFor="stageTitle"
+                                className="text-sm w-full"
+                              >
+                                Stage Title*
+                              </label>
+                              <input
+                                type="text"
+                                id="stagetitle"
+                                {...register(
+                                  `workflowtemp.stages.${index}.stageTitle`
+                                )}
+                                onChange={() => {
+                                  setSectionEdited(true);
+                                }}
+                                defaultValue={item.title}
+                                className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                                required
+                              />
+                            </div>
+                            <div className="flex gap-5 w-full">
+                              <div className="flex gap-4 justify-center items-center ">
+                                <input
+                                  type="checkbox"
+                                  {...register(
+                                    `workflowtemp.stages.${index}.hasCondition`
+                                  )}
+
+                                  onChange={(e) => {
+                                   
+                                      setSectionEdited(true);
+                                    
+                                    console.log(index, e.target.checked)
+                                    handleConditionChange(
+                                      index,
+                                      e.target.checked
+                                    );
+                                  }}
+                                  defaultChecked={item.hasCondition}
+                                />
+                                <label
+                                  htmlFor="hasCondition"
+                                  className="text-sm w-full"
+                                >
+                                  Stage has conditions?
+                                </label>
+                              </div>
+
+                              <div></div>
+                            </div>
+                          </div>
+                          <div>
+                       
+                            {stageCondition[index] ||item.hasCondition  &&  (
+                              <StageCondition
+                              conditionvariants={item.conditionVariants}
+                                conditionIndex={index}
+                                {...{ control, register }}
+                                departmentData={department}
+                                committeeData={committee}
+                                role={roles}
+                              />
+                            )}
+                            
+                          </div>
+
+                          <div>
+                            <label>Approver type</label>
+                            <select
+                              id="sectiontype"
+                              {...register(
+                                `document.sections.${0}.content.${index}.type`
+                              )}
+                              onChange={(e) => {
+                                handleGroupChange(
+                                 index ,
+                                  e.target.value
+                                );
+                              
+                                  setSectionEdited(true);
+                              
+                              }}
+                              defaultValue={item.approverType}
+                              className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
+                            >
+                              <option value="Single Person">
+                                Single Person
+                              </option>
+                              <option value="Committee">Committee</option>
+                            </select>
+                          </div>
+                          {("singlePermissions" in item && item.singlePermissions.role !=null) ||stageGroup[index ] =="Single Person" ? (
+                            <div>
+                              <label>Role</label>
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                            
+                              setSectionEdited(true);
+                           
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           defaultValue={item.singlePermissions.role._id}
+                         >
+                          
+                        <option>{item.singlePermissions.role.roleName}</option>
+                           {roles?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.roleName}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                          ) : ("committeePermissions" in item && item.committeePermissions.committee !=null) || stageGroup[stageLength ]=="Committee"  ? (
+                            <div>
+                              <label>Committee</label>
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                            
+                              setSectionEdited(true);
+                         
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           defaultValue={item.committeePermissions.committee._id}
+                         >
+                          
+                        <option>{item.committeePermissions.committee.name}</option>
+                           {committee?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.name}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                          ):(
+                             <div> 
+                                <div>
+                              <label>Role</label>
+                           <select
+                           className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
+                           onChange={(e: { target: { value: any } }) => {
+                            
+                              setSectionEdited(true);
+                            
+                            setRoleValue(
+                              "workflowtemp.stages.${index}.singlePermission.role",
+                              e.target.value
+                            );
+                             
+                           }}
+                           
+                         >
+                          
+                        <option>No role selected</option>
+                           {roles?.map((option: any, index) => (
+                             <option
+                               className="border"
+                               key={index}
+                               label={option.roleName}
+                               value={option._id}
+                             />
+                           ))}
+                         </select>
+                         </div>
+                             </div>
+                          ) }
+                        </div>
+                      ))}
                     </div>
 
                     {/* section 3 */}
@@ -495,7 +650,7 @@ function WorkFlowAddTemp() {
                                 </h3>
                                 <button
                                   type="button"
-                                  onClick={() => remove(index)}
+                                  onClick={() => remove( index)}
                                   className="max-w-10"
                                 >
                                   <img src="/asset/icons/delete.svg" />
@@ -504,7 +659,7 @@ function WorkFlowAddTemp() {
 
                               {/* stage */}
                               <h2 className="text-[#667085] text-xl">
-                                Stage_{index + 1}
+                                Stage_{stageLength + index + 1}
                               </h2>
                               <div className="flex flex-col gap-5 w-full items-center justify-center">
                                 <div className="flex flex-col gap-4 w-full">
@@ -518,9 +673,14 @@ function WorkFlowAddTemp() {
                                     type="text"
                                     id="stagetitle"
                                     {...register(
-                                      `workflowtemp.stages.${index}.stageTitle`,
+                                      `workflowtemp.stages.${
+                                        stageLength + index 
+                                      }.stageTitle`,
                                       { required: true }
                                     )}
+                                    onChange={() => {
+                                      setSectionEdited(true);
+                                    }}
                                     className="border rounded-md p-2 mt-1 w-full" // Set width to full and remove fixed width
                                     required
                                   />
@@ -530,11 +690,16 @@ function WorkFlowAddTemp() {
                                     <input
                                       type="checkbox"
                                       {...register(
-                                        `workflowtemp.stages.${index}.hasCondition`
+                                        `workflowtemp.stages.${
+                                          stageLength + index 
+                                        }.hasCondition`
                                       )}
                                       onChange={(e) => {
+                                       
+                                          setSectionEdited(true);
+                                       
                                         handleConditionChange(
-                                          index,
+                                          stageLength + index ,
                                           e.target.checked
                                         );
                                       }}
@@ -549,8 +714,13 @@ function WorkFlowAddTemp() {
                                   <div>
                                     <select
                                       {...register(
-                                        `workflowtemp.stages.${index}.ListCondition`
+                                        `workflowtemp.stages.${
+                                          stageLength + index 
+                                        }.ListCondition`
                                       )}
+                                      onChange={() => {
+                                        setSectionEdited(true);
+                                      }}
                                       className="text-[#667085] w-full text-sm border border-[#EFEFF4] rounded-lg p-3 "
                                     >
                                       <option>Select Condition</option>
@@ -560,16 +730,16 @@ function WorkFlowAddTemp() {
                               </div>
                             </div>
 
-                            {stageCondition[index] && (
+                            {stageCondition[stageLength + index ] && (
                               <StageCondition
-                                conditionIndex={index}
+                                conditionIndex={stageLength + index }
                                 {...{ control, register }}
                                 departmentData={department}
                                 committeeData={committee}
-                                role={role}
+                                role={roles}
                               />
                             )}
-                            {!stageCondition[index] && (
+                            {!stageCondition[stageLength + index ] && (
                               <div
                                 key={field.id}
                                 className="flex flex-col gap-5 w-full items-center justify-center mb-6"
@@ -587,14 +757,19 @@ function WorkFlowAddTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${index}.approverType`
+                                            `workflowtemp.stages.${
+                                              stageLength + index 
+                                            }.approverType`
                                           )}
                                           value="Single Person"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              index,
+                                              stageLength + index ,
                                               e.target.value
                                             );
+                                           
+                                              setSectionEdited(true);
+                                           
                                           }}
                                           defaultChecked
                                         />
@@ -604,14 +779,19 @@ function WorkFlowAddTemp() {
                                         <input
                                           type="radio"
                                           {...register(
-                                            `workflowtemp.stages.${index}.approverType`
+                                            `workflowtemp.stages.${
+                                              stageLength + index 
+                                            }.approverType`
                                           )}
                                           value="Committee"
                                           onChange={(e) => {
                                             handleGroupChange(
-                                              index,
+                                              stageLength + index ,
                                               e.target.value
                                             );
+                                           
+                                              setSectionEdited(true);
+                                            
                                           }}
                                         />
                                         <label>Committee</label>
@@ -620,7 +800,8 @@ function WorkFlowAddTemp() {
                                   </div>
                                 </div>
 
-                                {stageGroup[index] == "Committee" ? (
+                                {stageGroup[stageLength + index ] ==
+                                "Committee" ? (
                                   <div className="w-full flex flex-col gap-2">
                                     <div className="w-full flex flex-col gap-2">
                                       <label className="text-sm w-full">
@@ -628,8 +809,13 @@ function WorkFlowAddTemp() {
                                       </label>
                                       <select
                                         {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.role_ids`
+                                          `workflowtemp.stages.${
+                                            stageLength + index + 1
+                                          }.committee_permissions.role_ids`
                                         )}
+                                        onChange={() => {
+                                          setSectionEdited(true);
+                                        }}
                                         className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                       >
                                         <option>Select Committee</option>
@@ -643,67 +829,29 @@ function WorkFlowAddTemp() {
                                       </select>
                                     </div>
 
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        permission Type
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.committee_permissions.permission`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                      >
-                                         <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      </select>
-                                    </div> */}
+                                   
                                   </div>
                                 ) : (
                                   <div className="w-full flex flex-col gap-2">
-                                    {/* <div className="w-full flex flex-col gap-2">
-                                      <label className="text-sm w-full">
-                                        Select Department*
-                                      </label>
-                                      <select
-                                        {...register(
-                                          `workflowtemp.stages.${index}.single_permissions.department`
-                                        )}
-                                        className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        onChange={(e: {
-                                          target: { value: any };
-                                        }) => {
-                                          getRoles(e.target.value);
-                                        }}
-                                      >
-                                        <option>Select Department</option>
-                                        {department.map(
-                                          (option: any, index) => (
-                                            <option
-                                              key={index}
-                                              label={option.name}
-                                              value={option._id}
-                                            />
-                                          )
-                                        )}
-                                      </select>
-                                    </div> */}
+                                    
                                     <div className="w-full flex gap-6">
                                       <div className="w-full flex flex-col gap-2">
                                         <label className="text-sm w-full">
-                                          Select Role**
+                                          Select Role
                                         </label>
                                         <select
                                           {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.role_id`
+                                            `workflowtemp.stages.${
+                                              stageLength + index 
+                                            }.single_permissions.role._id`
                                           )}
+                                          onChange={() => {
+                                            setSectionEdited(true);
+                                          }}
                                           className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
                                         >
                                           <option>Select Role</option>
-                                          {role.map((option: any, index) => (
+                                          {roles.map((option: any, index) => (
                                             <option
                                               key={index}
                                               label={option.roleName}
@@ -712,25 +860,7 @@ function WorkFlowAddTemp() {
                                           ))}
                                         </select>
                                       </div>
-                                      {/* <div className="w-full flex flex-col gap-2">
-                                        <label className="text-sm w-full">
-                                          Permission Type*
-                                        </label>
-                                        <select
-                                          {...register(
-                                            `workflowtemp.stages.${index}.single_permissions.permission`
-                         S                 )}
-                                          className="text-[#667085] bg-white w-full text-sm border border-[#EFEFF4] rounded-lg p-3"
-                                        >
-                                           <option>
-                                          Select permission type
-                                        </option>
-                                        <option value="reviewer">
-                                          reviewer
-                                        </option>
-                                      
-                                        </select>
-                                      </div> */}
+                                     
                                     </div>
                                   </div>
                                 )}
@@ -740,7 +870,7 @@ function WorkFlowAddTemp() {
                         ))}
                         <button
                           type="button"
-                          onClick={() =>
+                          onClick={() =>{
                             append({
                               stageTitle: "",
                               hasCondition: "",
@@ -750,6 +880,9 @@ function WorkFlowAddTemp() {
                               role: "",
                               permissionType: "",
                             })
+                            setSectionEdited(true);
+
+                          }
                           }
                           className="mt-4 p-2 bg-blue-500 text-white rounded-lg"
                         >
@@ -757,12 +890,15 @@ function WorkFlowAddTemp() {
                         </button>{" "}
                         {/* section 4*/}
                       </div>
-                      <button
-                        type="submit"
-                        className=" w-full text-base px-6 py-2 text-[#00B0AD] bgt-white rounded-lg border border-[#00B0AD] flex items-center justify-center gap-3"
-                      >
-                        <img src="/asset/icons/plus-black.svg" /> Submit
-                      </button>
+                      {sectionEdited && (
+                         <button
+                         type="submit"
+                         className=" w-full text-base px-6 py-2 text-[#00B0AD] bgt-white rounded-lg border border-[#00B0AD] flex items-center justify-center gap-3"
+                       >
+                       Edit workflow
+                       </button>
+                      )}
+                     
                     </div>
                   </div>
                   <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
@@ -790,4 +926,4 @@ function WorkFlowAddTemp() {
   );
 }
 
-export default WorkFlowAddTemp;
+export default EditWorkflowTemp;

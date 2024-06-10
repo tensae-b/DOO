@@ -14,6 +14,8 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as FolderHierarchyRouteImport } from './routes/FolderHierarchyRoute'
+import { Route as EditWorkflowTempWorkflowIdImport } from './routes/EditWorkflowTemp.$workflowId'
+import { Route as EditDocumentTemplateWorkflowIdImport } from './routes/EditDocumentTemplate.$workflowId'
 import { Route as LoanDocumentWorkflowIdStepIdImport } from './routes/LoanDocument.$workflowId.$stepId'
 import { Route as EditDocumentWorkflowIdStepIdImport } from './routes/EditDocument.$workflowId.$stepId'
 
@@ -51,12 +53,6 @@ const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 const FulldocumentDocumntpathLazyImport = createFileRoute(
   '/fulldocument/$documntpath',
-)()
-const AssignedtomedetailsWorkflowIdLazyImport = createFileRoute(
-  '/assignedtomedetails/$workflowId',
-)()
-const AssignedbymedetailsWorkflowIdLazyImport = createFileRoute(
-  '/assignedbymedetails/$workflowId',
 )()
 const AssignedtomedetailsWorkflowIdUserIdLazyImport = createFileRoute(
   '/assignedtomedetails/$workflowId/$userId',
@@ -237,30 +233,23 @@ const FulldocumentDocumntpathLazyRoute =
     import('./routes/fulldocument.$documntpath.lazy').then((d) => d.Route),
   )
 
-const AssignedtomedetailsWorkflowIdLazyRoute =
-  AssignedtomedetailsWorkflowIdLazyImport.update({
-    path: '/assignedtomedetails/$workflowId',
+const EditWorkflowTempWorkflowIdRoute = EditWorkflowTempWorkflowIdImport.update(
+  {
+    path: '/EditWorkflowTemp/$workflowId',
     getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./routes/assignedtomedetails.$workflowId..lazy').then(
-      (d) => d.Route,
-    ),
-  )
+  } as any,
+)
 
-const AssignedbymedetailsWorkflowIdLazyRoute =
-  AssignedbymedetailsWorkflowIdLazyImport.update({
-    path: '/assignedbymedetails/$workflowId',
+const EditDocumentTemplateWorkflowIdRoute =
+  EditDocumentTemplateWorkflowIdImport.update({
+    path: '/EditDocumentTemplate/$workflowId',
     getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./routes/assignedbymedetails.$workflowId.lazy').then(
-      (d) => d.Route,
-    ),
-  )
+  } as any)
 
 const AssignedtomedetailsWorkflowIdUserIdLazyRoute =
   AssignedtomedetailsWorkflowIdUserIdLazyImport.update({
-    path: '/$userId',
-    getParentRoute: () => AssignedtomedetailsWorkflowIdLazyRoute,
+    path: '/assignedtomedetails/$workflowId/$userId',
+    getParentRoute: () => rootRoute,
   } as any).lazy(() =>
     import('./routes/assignedtomedetails.$workflowId.$userId.lazy').then(
       (d) => d.Route,
@@ -407,12 +396,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkflowtempLazyImport
       parentRoute: typeof rootRoute
     }
-    '/assignedbymedetails/$workflowId': {
-      preLoaderRoute: typeof AssignedbymedetailsWorkflowIdLazyImport
+    '/EditDocumentTemplate/$workflowId': {
+      preLoaderRoute: typeof EditDocumentTemplateWorkflowIdImport
       parentRoute: typeof rootRoute
     }
-    '/assignedtomedetails/$workflowId': {
-      preLoaderRoute: typeof AssignedtomedetailsWorkflowIdLazyImport
+    '/EditWorkflowTemp/$workflowId': {
+      preLoaderRoute: typeof EditWorkflowTempWorkflowIdImport
       parentRoute: typeof rootRoute
     }
     '/fulldocument/$documntpath': {
@@ -429,7 +418,7 @@ declare module '@tanstack/react-router' {
     }
     '/assignedtomedetails/$workflowId/$userId': {
       preLoaderRoute: typeof AssignedtomedetailsWorkflowIdUserIdLazyImport
-      parentRoute: typeof AssignedtomedetailsWorkflowIdLazyImport
+      parentRoute: typeof rootRoute
     }
   }
 }
@@ -468,13 +457,12 @@ export const routeTree = rootRoute.addChildren([
   UserDashboardLazyRoute,
   WorkflowaddLazyRoute,
   WorkflowtempLazyRoute,
-  AssignedbymedetailsWorkflowIdLazyRoute,
-  AssignedtomedetailsWorkflowIdLazyRoute.addChildren([
-    AssignedtomedetailsWorkflowIdUserIdLazyRoute,
-  ]),
+  EditDocumentTemplateWorkflowIdRoute,
+  EditWorkflowTempWorkflowIdRoute,
   FulldocumentDocumntpathLazyRoute,
   EditDocumentWorkflowIdStepIdRoute,
   LoanDocumentWorkflowIdStepIdRoute,
+  AssignedtomedetailsWorkflowIdUserIdLazyRoute,
 ])
 
 /* prettier-ignore-end */

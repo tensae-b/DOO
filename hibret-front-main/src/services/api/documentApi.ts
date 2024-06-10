@@ -7,37 +7,61 @@ export const fetchdoc = async (workId) => {
     const response = await axiosInst.get(`initiate/reqDoc/workflows/${workId}`);
     const { data } = response;
     console.log(data)
-    return { data, isLoading: false, isError: false }; 
+    return { data, isLoading: false, isError: false };
   } catch (error) {
     console.error('Error fetching detail:', error);
     return { data: null, isLoading: false, isError: true };
   }
 };
 
-export const initiateWorkflow = async (formData: any)=>{
+export const initiateWorkflow = async (formData: any) => {
   try {
     const response = await axiosInst.post('http://localhost:5000/initiate/workflows', formData);
     const { data } = response;
     console.log(data)
-    return { data, isLoading: false, isError: false }; 
+    return { data, isLoading: false, isError: false };
   } catch (error) {
     console.error('Error fetching detail:', error);
     return { data: null, isLoading: false, isError: true };
   }
-  // try {
-  //   const config = {
-  //     method: 'post',
-  //     maxBodyLength: Infinity,
-  //     url: 'http://localhost:5000/admin/workflows',
-  //     headers: {},
-  //     data: formData,
-  //   };
-    
-  //   const response = await axios(config);
-  //   console.log(response);
-  //   return response;
-  // } catch (error) {
-  //   console.error(error);
-  //   return 'error';
-  // }
+
+}
+
+export const getDocumentTemplate = async (workFlowId: any) => {
+  try {
+    const response = await axiosInst.get(`/admin/documentTemplate/get/${workFlowId}`);
+    const { data } = response;
+    console.log(data)
+    return { data, isLoading: false, isError: false };
+  } catch (error) {
+    console.error('Error fetching detail:', error);
+    return { data: null, isLoading: false, isError: true };
+  }
+
+}
+export const updateDocumentTemplate = async (workFlowId: any, documentData:any) => {
+  try {
+    const response = await axiosInst.put(`admin/documentTemplate/${workFlowId}`, documentData);
+    const { data } = response;
+    console.log(data)
+    return { data, isLoading: false, isError: false };
+  } catch (error) {
+    console.error('Error fetching detail:', error);
+    return { data: null, isLoading: false, isError: true };
+  }
+
+}
+
+export const deleteDocumentTemplate = async (workFlowId: any) => {
+  try {
+    const response = await axiosInst.delete(`http://localhost:5000/admin/documentTemplate/${workFlowId}`);
+    const { data } = response;
+    console.log(data)
+    return { data, isLoading: false, isError: false };
+  } catch (error) {
+    const {data}= error.response
+    console.error('Error fetching detail:', error);
+    return { data, isLoading: false, isError: true };
+  }
+
 }

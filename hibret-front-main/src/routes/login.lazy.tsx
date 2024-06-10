@@ -35,7 +35,7 @@ const Login = () => {
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((prevState) => !prevState);
-  };
+  }; 
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,6 +55,7 @@ const Login = () => {
         setSuccess(data.msg);
 
         localStorage.setItem('user', JSON.stringify({ _id, username, role }));
+        
 
         const user = localStorage.getItem("user");
         if (user) {

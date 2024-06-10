@@ -6,10 +6,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect } from "react";
 
 import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
+// import toast, { Toaster } from "react-hot-toast";
 
 export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     const res = await axios(config);
     console.log(res);
     const data = await res.data;
-
+  
     const addField = {
       _id: "",
       title: "Additional Data",
@@ -45,6 +46,7 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
     };
 
     console.log(data.document, "data");
+
     const formated = data.documents.flat();
 
     const additional = data.additional;
@@ -70,7 +72,9 @@ function LoanDocument() {
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-
+ 
+  
+  
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -96,6 +100,8 @@ function LoanDocument() {
       formdata.push(content);
       // alert(JSON.stringify(content, null, 2));
     });
+
+    console.log(formdata);
     // setForm(formdata);
     setStepData({
       stepId: step.stepId,
@@ -103,13 +109,19 @@ function LoanDocument() {
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
-    // setStepData(
-    //   ,)
-    // useStepFormStore.setState((state: any) => ({
+    const newData = {
+      stepId: step.stepId,
+      templateId: step.formated[step.stepId]._id,
+      title: step.formated[step.stepId].title,
+      sections: formdata,
+    };
+    
 
-    // }));
-    console.log(stepFormData, "stepformdata");
-
+    console.log({ stepFormData, newData, stepFormData });
+   
+    stepFormData.push(newData);
+    
+    console.log(stepFormData, "demon");
     if (!nextId) {
       const documentData = {
         workflowTemplateId: step.workflowId,
@@ -117,6 +129,8 @@ function LoanDocument() {
         reqDoc: stepFormData,
         addDoc: data.addDoc || [],
       };
+
+      console.log({ stepFormData });
 
       var config = {
         method: "post",
@@ -133,7 +147,7 @@ function LoanDocument() {
           toast.success("Successfully submited!");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedbyme" });
           }, 3000);
         })
         .catch(function (error) {
@@ -141,7 +155,7 @@ function LoanDocument() {
           toast.error("Please try again");
           clearStepData();
           setTimeout(function () {
-            navigate({ to: "/document" });
+            navigate({ to: "/assignedbyme" });
           }, 3000);
           console.log(error);
         });

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import NavBar from "../components/NavBar";
@@ -6,6 +5,7 @@ import UserName from "../components/UserName";
 import SideBar from "../components/SideBar";
 import { fetchUser, sendUser, resendUser, activateUser, deactivateUser } from "../services/api/usersApi";
 import { DataGrid, GridColDef, GridActionsCellParams } from "@mui/x-data-grid";
+import { toast , Toaster  } from "react-hot-toast";
 
 export const Route = createFileRoute("/invite-user")({
   component: () => <InviteNewUser />,
@@ -26,7 +26,7 @@ const getColumns = (view, handleStatusChange, handleAction) => {
   const commonColumns = [
     { field: "username", headerName: "Username", headerClassName: 'field-header', width: 150 },
     { field: "email", headerName: "Email", headerClassName: 'field-header', width: 300 },
-    { field: "role_id", headerName: "Role ID", headerClassName: 'field-header', width: 250 },
+    { field: "status", headerName: "Status", headerClassName: 'field-header', width: 150 },
   ];
 
   if (view === 'all') {
@@ -34,7 +34,7 @@ const getColumns = (view, handleStatusChange, handleAction) => {
       ...commonColumns,
       {
         field: 'activationStatus',
-        headerName: 'Status',
+        headerName: 'Activation Status',
         width: 150,
         renderCell: (params: GridActionsCellParams<any>) => {
           const { buttonText, buttonColor } = useActivationButton(params.row.activationStatus);
@@ -79,17 +79,18 @@ function InviteNewUser() {
   const [users, setUsers] = useState([]);
   const [view, setView] = useState('all'); // State to track the current view
   const [loading, setLoading] = useState(false); // State to track button loading status
+  const [page, setPage] = useState(0); // State for current page
+  const [pageSize, setPageSize] = useState(5); // State for page size
 
   const fetchData = useCallback(async () => {
     try {
       const { data, isError } = await fetchUser();
-      console.log(data)
       if (!isError && data && data.users) {
         const updatedData = data.users.map((user) => ({
           id: user.userId,
           username: user.username,
           email: user.email,
-          role_id: user.role_id,
+          status: user.status, // Add status field
           activationStatus: user.activationStatus,
           isSelected: false,
           accountCreationStatus: user.accountCreationStatus,
@@ -120,6 +121,7 @@ function InviteNewUser() {
     try {
       if (row.activationStatus === "Activated") {
         await deactivateUser(row.id);
+        toast.success(` ${row.username} is Deactivated.`);
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === row.id ? { ...user, activationStatus: "Deactivated", loading: false } : user
@@ -127,6 +129,7 @@ function InviteNewUser() {
         );
       } else {
         await activateUser(row.id);
+        toast.success(` ${row.username} is Activated.`);
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === row.id ? { ...user, activationStatus: "Activated", loading: false } : user
@@ -148,12 +151,15 @@ function InviteNewUser() {
     try {
       if (row.accountCreationStatus === "Sent") {
         await resendUser(row.username);
+        toast.success(`Invitation resent to ${row.username}.`);
       } else {
         await sendUser([row.username]);
+        toast.success(`Invitation sent to ${row.username}.`);
       }
       fetchData(); // Refresh data to get updated statuses
     } catch (error) {
       console.error('Error sending invitation:', error);
+      toast.error(`Failed to send invitation to ${row.username}.`);
     }
   };
 
@@ -163,41 +169,45 @@ function InviteNewUser() {
         .filter((row) => row.isSelected)
         .map((row) => row.username);
       await sendUser(selectedUsernames);
+      toast.success(`Invitations sent to selected users.`);
     } catch (error) {
       console.error('Error sending invitations:', error);
+      toast.error('Failed to send invitations to selected users.');
     }
   };
 
-  const filteredUsers = view === 'invitation' ? users.filter(user => user.activationStatus === "Activated") : users;
+  const filteredUsers = view === 'invitation'
+    ? users.filter(user => user.activationStatus === "Activated")
+    : users; // No filter for 'all' view
 
   return (
-    <div className="mx-3">
-      <div className="flex">
+    <div className="mx-3"> {/* Added top margin to avoid overlap */}
+      <div className="flex mr-30 ">
         <SideBar />
         <div className="w-full flex flex-col">
           <UserName />
-          <div className="mt-36"> {/* Adjusted margin to prevent overlay */}
+          <div className="ml-30 mt-24">
             <div className="flex justify-between">
               <div className="flex flex-col gap-3 my-5">
-                <h2 className="text-[#4A176D] text-3xl font-bold">User Management</h2>
+                <Toaster position="top-right" reverseOrder={false} toastOptions={{ duration: 5000 }} />
+                <h2 className="text-[#4A176D] text-3xl font-bold ml-30">User Management</h2>
                 <div className="flex gap-4">
                   <button onClick={() => setView('all')} className={`text-base ${view === 'all' ? 'font-bold' : ''}`}>All</button>
                   <button onClick={() => setView('invitation')} className={`text-base ${view === 'invitation' ? 'font-bold' : ''}`}>Invitation</button>
                 </div>
               </div>
-              <div className="flex gap-4 justify-center items-center">
-                <button className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white" onClick={sendCheckedUsers}>
-                  <img src="/asset/icons/export.svg" className="w-5" />
-                  invite
-                </button>
-              </div>
+              {view === 'invitation' && ( // Conditionally render the "Invite" button
+                <div className="flex gap-4 justify-center items-center">
+                  <button className="flex gap-2 bg-[#00B0AD] px-4 py-2 rounded-lg text-white" onClick={sendCheckedUsers}>
+                    <img src="/asset/icons/export.svg" className="w-5" />
+                    Invite
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="h-full w-full mt-3">
+            <div className="mt-5"> {/* Adjusted margin to create space for the content */}
               <DataGrid
                 rows={filteredUsers}
-
-                getRowId={(row) => row.email}
-
                 columns={getColumns(view, handleStatusChange, handleAction)}
                 initialState={{
                   pagination: {
@@ -206,6 +216,7 @@ function InviteNewUser() {
                 }}
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
+                getRowId={(row) => row.id} // Corrected getRowId function
                 onRowSelectionModelChange={(selectionModel) => {
                   const selectedIds = new Set(selectionModel);
                   setUsers((prevUsers) =>

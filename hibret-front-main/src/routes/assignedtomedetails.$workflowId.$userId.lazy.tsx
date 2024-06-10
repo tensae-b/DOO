@@ -1,14 +1,16 @@
+// AssignedToMeDetails.lazy.tsx
 import React, { useEffect, useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import backArrow from "/asset/icons/back-arrow.svg";
-import arrowdown from "/asset/icons/arrowDown.svg";
+import upArrow from "/asset/icons/uparrow.svg";
 import downArrow from "/asset/icons/down-arrow.svg";
 import DocumentDetailsCard from "../components/DocumentDetailsCard";
 import { Link } from "@tanstack/react-router";
 import axios from 'axios';
+import axiosInst from "../services/api//axiosInst";
 import Comments from "../components/Comments";
 import UserName from "../components/UserName";
-import SideBar2 from "../components/SideBar2";
+import SideBar from "../components/SideBar";
 
 export const Route = createLazyFileRoute("/assignedtomedetails/$workflowId/$userId")({
   component: AssignedToMeDetails
@@ -22,11 +24,13 @@ function AssignedToMeDetails() {
   const [buttons, setButtons] = useState<any>({});
   const [comment, setComment] = useState<string>("");
   const [approveStatus, setApproveStatus] = useState<string>("");
+  const [isWorkflowInfoExpanded, setIsWorkflowInfoExpanded] = useState<boolean>(true);
+  const [isDocumentsExpanded, setIsDocumentsExpanded] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        const { data } = await axiosInst.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
         const { workflow } = data;
         console.log(data)
 
@@ -60,10 +64,10 @@ function AssignedToMeDetails() {
   return (
     <div>
       <UserName />
-      <SideBar2 />
+      <SideBar />
       <div className="mt-24 ml-80 mr-8 w-full h-full">
         <div>
-          <div className="flex flex-row gap-6 text-bold items-center">
+          <div className="flex flex-row gap-6 font-bold items-center">
             <Link to="/assignedtome">
               <img src={backArrow} alt="Back Arrow" />
             </Link>
@@ -73,44 +77,46 @@ function AssignedToMeDetails() {
           </div>
         </div>
         <div className="flex gap-6">
-          <div className="flex flex-col w-6/12 my-9 h-12 gap-9 border border-gray-500 border-opacity-10">
-            <div className="flex flex-row justify-between py-3 px-6">
+          <div className="flex flex-col w-1/3 my-9 h-12 gap-14 border border-gray-500 border-opacity-10">
+            <div className="flex flex-row justify-between py-3 px-4 cursor-pointer" onClick={() => setIsWorkflowInfoExpanded(!isWorkflowInfoExpanded)}>
               <h3 className="text-teal-600">Workflow Information</h3>
-              <a href="#">
-                <img src={downArrow} alt="Arrow Down" />
-              </a>
+              <img src={isWorkflowInfoExpanded ? upArrow : downArrow} alt={isWorkflowInfoExpanded ? "Up Arrow" : "Down Arrow"} />
             </div>
-            <div className="py-3 px-6 grid grid-cols-1 gap-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <p className="text-teal-600">Status:</p>
-                  <p className="text-gray-600">{workflowDetail?.status}</p>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <p className="text-teal-600">Current Stage:</p>
-                  <p className="text-gray-600">{workflowDetail?.currentStageIndex}</p>
+            {isWorkflowInfoExpanded && (
+              <div className="py-3 px-4 grid grid-cols-1 gap-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <p className="text-teal-600">Status:</p>
+                    <p className="text-gray-600">{workflowDetail?.status}</p>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <p className="text-teal-600">Current Stage:</p>
+                    <p className="text-gray-600">{workflowDetail?.currentStageIndex}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col border border-gray-500 border-opacity-10 gap-12 py-3 px-6">
-              <div className="flex flex-row justify-between items-center w-full">
+            )}
+            <div className="flex flex-col border border-gray-500 border-opacity-10 gap-12 py-3 px-4">
+              <div className="flex flex-row justify-between items-center w-full cursor-pointer" onClick={() => setIsDocumentsExpanded(!isDocumentsExpanded)}>
                 <h4 className="text-teal-600">Documents</h4>
-                <img src={arrowdown} alt="Arrow Down" />
+                <img src={isDocumentsExpanded ? upArrow : downArrow} alt={isDocumentsExpanded ? "Up Arrow" : "Down Arrow"} />
               </div>
-              {workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((doc, index) => (
+              {isDocumentsExpanded && workflowDetail.requiredDocuments.concat(workflowDetail.additionalDocuments).map((doc, index) => (
                 <DocumentDetailsCard key={index} doc={doc} />
               ))}
             </div>
           </div>
-          <Comments
-            workflowDetail={workflowDetail}
-            setWorkflowDetail={setWorkflowDetail}
-            comment={comment}
-            setComment={setComment}
-            approveStatus={approveStatus}
-            setApproveStatus={setApproveStatus}
-            buttons={buttons}
-          />
+          <div className="ml-16">
+            <Comments
+              workflowDetail={workflowDetail}
+              setWorkflowDetail={setWorkflowDetail}
+              comment={comment}
+              setComment={setComment}
+              approveStatus={approveStatus}
+              setApproveStatus={setApproveStatus}
+              buttons={buttons}
+            />
+          </div>
         </div>
       </div>
     </div>
