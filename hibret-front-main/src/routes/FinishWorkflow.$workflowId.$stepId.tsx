@@ -6,33 +6,31 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormBuilder } from "../components/FormBuilder";
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
-import useStepFormStore,{ useNameStore } from "../store/formStore";
+import { useState } from "react";
+
+import useStepFormStore from "../store/formStore";
 import SideBar2 from "../components/SideBar2";
 import toast, { Toaster } from "react-hot-toast";
-// import toast, { Toaster } from "react-hot-toast";
+// EditDocument.$workflowId.$stepId.lazy
 
-export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
+export const Route = createFileRoute("/FinishWorkflow/$workflowId/$stepId")({
   loader: async ({ params: { workflowId, stepId } }) => {
     var config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `http://localhost:5000/admin/workflow-templates/requiredDoc/${workflowId}`,
-      withCredentials: true,
+      url: `http://localhost:5000/initiate/workflows/get/${workflowId}`,
       headers: {},
     };
 
     const res = await axios(config);
-    console.log(res);
+    console.log(res.data);
     const data = await res.data;
-
     const addField = {
-      _id: "",
+      stepId: "",
+      templateId: "",
       title: "Additional Data",
       sections: [
         {
-          multiple: false,
           title: "Additional info",
           content: [
             {
@@ -40,43 +38,43 @@ export const Route = createFileRoute("/LoanDocument/$workflowId/$stepId")({
               type: "add-data",
               isRequired: false,
               _id: "",
+              value: "",
             },
           ],
           _id: "",
+          multiple: false,
         },
       ],
     };
-
-    console.log(data.document, "data");
-
-    const formated = data.documents.flat();
-
-    const additional = data.additional;
-    if (additional) {
+    const formated = data.requiredDocuments.flat();
+    const comment = data.comments;
+    console.log(formated);
+    const additional = data.additionalDocuments;
+    if (additional != null) {
       formated.push(addField);
     }
-    return { workflowId, stepId, formated, additional };
+
+    return { workflowId, stepId, formated, additional, comment };
   },
   notFoundComponent: () => {
     return <p>step not found</p>;
   },
-  component: LoanDocument,
+  component: FinishWorkflow,
 });
 
-function LoanDocument() {
+function FinishWorkflow() {
   const navigate = useNavigate();
   const stepFormData = useStepFormStore((state: any) => state.stepFormData);
   const clearStepData = useStepFormStore((state: any) => state.clearFormData);
   const setStepData = useStepFormStore((state: any) => state.setStepFormData);
-  const { name, setName, clearName } = useNameStore();
-  const [draft, setDraft] = useState(false);
   const user: any = localStorage.getItem("user");
   const userId = JSON.parse(user);
   console.log(userId);
   // const setData = useStepFormStore((state:any) => state.setStepFormData)
   const formdata: any[] = [];
   const step: any = Route.useLoaderData();
-
+  console.log(step, "step.formated");
+  console.log(step.formated[step.stepId].sections);
   const defaultValues = { sections: step.formated[step.stepId].sections };
 
   const methods = useForm({
@@ -85,93 +83,16 @@ function LoanDocument() {
     defaultValues,
   });
   const { control, handleSubmit, reset } = methods;
-  const [workFlowName,setWorkFlowName]= useState('')
   const { append, fields, remove } = useFieldArray({
     control,
     name: "sections",
   });
-  const formRef = useRef(null);
-  
-  
 
   const onSubmit = (data: any) => {
-    console.log({ data });
-    
-    setName(workFlowName)
-    const names= workFlowName != '' ? workFlowName :name
-    if(draft){
-      data.sections.map((content: any, index: any) => {
-        formdata.push(content);
-        // alert(JSON.stringify(content, null, 2));
-      });
-  
-      console.log(formdata);
-      // setForm(formdata);
-      setStepData({
-        stepId: step.stepId,
-        templateId: step.formated[step.stepId]._id,
-        title: step.formated[step.stepId].title,
-        sections: formdata,
-      });
-      const newData = {
-        stepId: step.stepId,
-        templateId: step.formated[step.stepId]._id,
-        title: step.formated[step.stepId].title,
-        sections: formdata,
-      };
-  
-  
-      stepFormData.push(newData);
-      console.log(draft)
-      
-      console.log(stepFormData, "demon");
-      
-      const documentData = {
-        workflowTemplateId: step.workflowId,
-        workflowName: names,
-        userId: userId._id,
-        reqDoc: stepFormData,
-        addDoc: data.addDoc || [],
-      };
-     
-      var config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "http://localhost:5000/initiate/workflows/draft-workflows",
-        headers: {},
-        withCredentials: true,
-        data: documentData,
-      };
-      
-      console.log(name)
-
-      axios(config)
-        .then(function (response) {
-          console.log(documentData, "document");
-        
-          toast.success("Draft Saved!");
-          clearStepData();
-          clearName();
-          setTimeout(function () {
-            navigate({ to: "/assignedbyme" });
-          }, 3000);
-        })
-        .catch(function (error) {
-          console.log(documentData, "document");
-          toast.error("Draft saving Unsuccessful! Please try again");
-          clearStepData();
-          clearName();
-          setTimeout(function () {
-            navigate({ to: "/assignedbyme" });
-          }, 3000);
-          console.log(error);
-        });
-      
-    }else {
-      console.log('hi')
+    console.log({ nextId });
     if (nextId) {
       location.replace(
-        `/LoanDocument/${step.workflowId}/${Number(step.stepId) + 1}`
+        `/FinishWorkflow/${step.workflowId}/${Number(step.stepId) + 1}`
       );
     }
 
@@ -179,8 +100,7 @@ function LoanDocument() {
       formdata.push(content);
       // alert(JSON.stringify(content, null, 2));
     });
-
-    console.log(formdata);
+    console.log(formdata, "formdata");
     // setForm(formdata);
     setStepData({
       stepId: step.stepId,
@@ -188,36 +108,26 @@ function LoanDocument() {
       title: step.formated[step.stepId].title,
       sections: formdata,
     });
-    const newData = {
-      stepId: step.stepId,
-      templateId: step.formated[step.stepId]._id,
-      title: step.formated[step.stepId].title,
-      sections: formdata,
-    };
+    // setStepData(
+    //   ,)
+    // useStepFormStore.setState((state: any) => ({
 
+    // }));
+    console.log(stepFormData, "stepformdata");
 
-    stepFormData.push(newData);
-    console.log(draft)
-    
-    console.log(stepFormData, "demon");
     if (!nextId) {
-
       const documentData = {
         workflowTemplateId: step.workflowId,
-        workflowName: names,
         userId: userId._id,
         reqDoc: stepFormData,
         addDoc: data.addDoc || [],
       };
 
-      console.log({ stepFormData });
-
       var config = {
-        method: "post",
+        method: "put",
         maxBodyLength: Infinity,
-        url: "http://localhost:5000/initiate/workflows",
+        url: `http://localhost:5000/initiate/workflows/${step.workflowId}`,
         headers: {},
-        withCredentials: true,
         data: documentData,
       };
 
@@ -227,18 +137,16 @@ function LoanDocument() {
           console.log(JSON.stringify(response.data));
           toast.success("Successfully submited!");
           clearStepData();
-          clearName();
           setTimeout(function () {
-            navigate({ to: "/assignedbyme" });
+            navigate({ to: "/assignedtome" });
           }, 3000);
         })
         .catch(function (error) {
           console.log(documentData, "document");
           toast.error("Please try again");
           clearStepData();
-          clearName();
           setTimeout(function () {
-            navigate({ to: "/assignedbyme" });
+            navigate({ to: "/assignedtome" });
           }, 3000);
           console.log(error);
         });
@@ -246,7 +154,6 @@ function LoanDocument() {
       console.log(stepFormData, "persistent");
       // clearStepData();
     }
-  }
   };
 
   const done = "border border-[#4A176D] bg-[#4A176D]  border-double";
@@ -270,7 +177,6 @@ function LoanDocument() {
     nextId = false;
   }
 
-  
   return (
     <FormProvider {...methods}>
       <div className="mx-3 mb-10 ">
@@ -281,27 +187,16 @@ function LoanDocument() {
             <div className="mt-10">
               <div className="header flex justify-between">
                 <h2 className="text-[#00B0AD] text-3xl font-bold">
-                  Create Workflow
+                  Finish Workflow
                 </h2>
                 <div className="flex gap-4">
                   <button
-                    type="submit"
-                    className={` text-base px-6 py-2 border border-[#00B0AD] border-dotted text-[#00B0AD] font-semibold rounded-lg`}
-                    // onClick={() => {
-                    //   setDraft(true);
-                    //   handleExternalButtonClick()
-                    // }}
-                  >
-                    Save as Draft
-                  </button>
-                  <button
                     className={` text-base px-6 py-2 border border-[#DC251C] border-dotted text-[#DC251C] font-semibold rounded-lg`}
                     onClick={() => {
-                      toast.error("Intitation Cancelled");
+                      toast.error("Edit Cancelled");
                       clearStepData();
-                      clearName();
                       setTimeout(function () {
-                        navigate({ to: "/assignedbyme" });
+                        navigate({ to: "/assignedtome" });
                       }, 2000);
                     }}
                   >
@@ -316,7 +211,7 @@ function LoanDocument() {
                     <div className="flex gap-0 items-center justify-center">
                       <div className="flex flex-col">
                         <a
-                          href={`/LoanDocument/${step.workflowId}/${index}`}
+                          href={`/FinishWorkflow/${step.workflowId}/${index}`}
                           className={`flex p-5 w-12 h-12 justify-center items-center rounded-full max-w-20 max-h-20 ${
                             index == step.stepId
                               ? current
@@ -368,22 +263,6 @@ function LoanDocument() {
                         >
                           {item.title}
                         </h3>
-                        {step.stepId == 0 &&
-                        <div>
-                          <label> Workflow Name</label>
-                        <input
-                          onChange={(e)=>{
-                            setWorkFlowName( e.target.value)
-                          }}
-                          className="w-full border border-[#EFEFF4] p-3 rounded-lg text-base"
-                          required={true}
-                          placeholder=""
-                         
-                        />
-                          </div>
-                        }
-                     
-                      
                         <hr className="bg-[#EFEFF4]" />
                         {item?.content.map((content: any, idx: number) => {
                           return (
@@ -422,16 +301,7 @@ function LoanDocument() {
                       </div>
                     ))}
                   </div>
-                  <button
-                    type="submit"
-                    className={` text-base px-6 py-2 border border-[#00B0AD] border-dotted text-[#00B0AD] font-semibold rounded-lg`}
-                    onClick={() => {
-                      setDraft(true);
-                    
-                    }}
-                  >
-                    Save as Draft
-                  </button>
+
                   <button
                     type="submit"
                     className="text-base px-6 py-2 self-end bg-[#00B0AD] text-white"
@@ -443,17 +313,18 @@ function LoanDocument() {
                 </form>
 
                 <div className="quick-acess flex flex-col p-4 border border-[#EFEFF4] w-[25%] gap-2 rounded-lg">
-                  <p className="text-sm font-bold p-2">Quick Access</p>
-                  {step.formated[step.stepId].sections.map(
-                    (item: any, index: any) => (
-                      <a
-                        className="text-sm bg-[#E0F1F3] rounded-lg p-2 text-[#00B0AD]"
-                        href={`#${item.title}`}
-                      >
-                        {item.title}
-                      </a>
-                    )
-                  )}
+                  <p className="text-lg font-bold p-2">Comments</p>
+                  {step.comment.map((item: any, index: any) =>
+                    
+                   (
+                   
+                    <div
+                      className="bg-gray-500 p-2 rounded-md text-white capitalize"
+                      key={index}
+                    >
+                     {item.comment != "" && <p className="text-base">{item.comment}</p>} 
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

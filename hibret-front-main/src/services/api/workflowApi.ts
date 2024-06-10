@@ -15,7 +15,7 @@ export const getRequiredDocument = async (workflowId: any) => {
 
 export const fetchWorkflowName = async () => {
     try {
-        const response = await axiosInst.get(`http://localhost:5000/admin/workflow-templates/getAll`, {withCredentials: true})
+        const response = await axiosInst.get(`http://localhost:5000/admin/workflow-templates/getAll`,)
         const { data } = response;
         return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
     } catch (error) {
@@ -66,3 +66,32 @@ export const getWorkflowTemplate = async (workFlowId:any) => {
         return { data, isLoading: false, isError: true };
     }
 };
+
+export const fetchDraft = async (userId:any) => {
+    try {
+        const response = await axiosInst.get(`initiate/workflows/drafts/${userId}`)
+        const { data } = response;
+       console.log(data)
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        const {data}= error.response
+        
+        console.error('Error fetching catagory:', error);
+        return { data, isLoading: false, isError: true };
+    }
+};
+
+export const cancel = async (workflowId:any) => {
+    try {
+        const response = await axiosInst.put(`initiate/workflows/${workflowId}/cancel/`)
+        const { data } = response;
+       console.log(data)
+        return { data, isLoading: false, isError: false }; // assuming isLoading and isError are handled elsewhere
+    } catch (error) {
+        const {data}= error.response
+        
+        console.error('Error fetching catagory:', error);
+        return { data, isLoading: false, isError: true };
+    }
+};
+

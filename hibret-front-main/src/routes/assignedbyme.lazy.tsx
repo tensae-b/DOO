@@ -10,6 +10,7 @@ import SideBar2 from "../components/SideBar2";
 import {
   fetchWorkflowName,
   getRequiredDocument,
+  fetchDraft
 } from "../services/api/workflowApi";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -26,6 +27,7 @@ export const Route = createLazyFileRoute("/assignedbyme")({
     const [selectedTab, setSelectedTab] = useState("All"); // State to manage selected tab
     const [showPopUp, setShowPopUp] = useState(false);
     const [workflow, setWorkflow] = useState([]);
+    const [draftData, setDraftData] = useState([])
     const [selectedWorkflow, setSelectedWorkflow] = useState("");
 
     let opacity;
@@ -77,6 +79,7 @@ export const Route = createLazyFileRoute("/assignedbyme")({
       const fetchData = async () => {
         try {
           const result = await ownerWork(userId);
+          console.log(result)
           setWorkflowData(result.data || []);
           setIsLoading(false);
           setIsError(result.isError);
@@ -85,10 +88,22 @@ export const Route = createLazyFileRoute("/assignedbyme")({
           setIsLoading(false);
         }
       };
-
+      fetchDraftWorkflow()
       fetchData();
     }, [userId]);
 
+          function fetchDraftWorkflow(){
+            fetchDraft(userId).then((result) => {
+              if (!result.isError) {
+                console.log(result.data);
+                setDraftData(result.data);
+              } else {
+                toast.error("error fetching");
+              }
+            });
+          }
+ 
+    
     if (isLoading) {
       return (
         <div className="flex justify-center items-center h-screen bg-green-100">
@@ -128,6 +143,29 @@ export const Route = createLazyFileRoute("/assignedbyme")({
           </Link>
         ),
       },
+
+
+    ];
+
+    const draftColumns = [
+      {
+        field: "workflowName",
+        headerName: "Name",
+        width: 200,
+        renderCell: (params) => (
+          <Link
+            className="cursor-pointer text-blue-500 underline"
+            to={`/FinishWorkflow/${params.row.id}/0`}
+          >
+            {params.value}
+          </Link>
+        ),
+      },
+
+      { field: 'categoryName', headerName: 'Category', width: 200 },
+      { field: 'subCategoryName', headerName: 'Sub Category', width: 200 },
+      
+    
 
 
     ];
@@ -289,6 +327,50 @@ export const Route = createLazyFileRoute("/assignedbyme")({
                 />
               </div>
             )}
+          </div>
+
+          <div className="my-4">
+            <h2 className="text-[#00B0AD] text-3xl font-bold"> Drafts</h2>
+
+            <div className={opacity}>
+            {draftData.length === 0 ? (
+              <div className="mt-9 w-full h-96 flex flex-col items-center justify-center">
+                <img
+                  src="/asset/nodocument.svg"
+                  alt="No Workflow Available"
+                  className="w-48 h-48"
+                />
+                <p className="mt-4 text-gray-500">
+                  There is no Draft available
+                </p>
+              </div>
+            ) : (
+              <div className="mt-9 w-full h-96">
+                <DataGrid
+                  rows={draftData}
+                  columns={draftColumns}
+                  pageSize={10}
+                  disableSelectionOnClick // Disable row selection on click
+                  components={{
+                    NoRowsOverlay: () => (
+                      <div className="flex justify-center items-center h-full">
+                        <p className="text-gray-400">No rows</p>
+                      </div>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiDataGrid-cell": {
+                      fontSize: "0.875rem", // 14px
+                      color: "#9CA3AF", // Gray-400
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      fontSize: "0.875rem", // 14px
+                    },
+                  }}
+                />
+              </div>
+            )}
+          </div>
           </div>
         </div>
       </div>
