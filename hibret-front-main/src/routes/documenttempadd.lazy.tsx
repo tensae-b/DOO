@@ -115,6 +115,9 @@ function DocumentAddTemp() {
                   ...values.documentvalue,
                   depId: depId,
                   categoryId: catagoryId,
+                },
+                {
+                  withCredentials: true,  
                 })
                 .then(function (response) {
                   console.log(response);

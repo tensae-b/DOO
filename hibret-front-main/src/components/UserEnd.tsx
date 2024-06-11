@@ -162,16 +162,7 @@ const UserEnd: React.FC = () => {
               }`}
             />
           )}
-          {permissions.includes("get-assigned") && (
-            <Tab
-              label="Assigned to Me"
-              className={`text-sm ${
-                selectedTab === 1
-                  ? "border-b-2 border-purple-900"
-                  : "border-b-2 border-gray-700"
-              }`}
-            />
-          )}
+         
         </Tabs>
         {selectedTab === 0 && (
           <Box p={3}>
