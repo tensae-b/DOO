@@ -27,7 +27,7 @@ const Actions = (workflowId: any) => {
     <div className="h-96 w-80 border border-gray-500 border-opacity-10 my-9 flex flex-col p-4 gap-4 items-center">
       <Toaster position="top-center" reverseOrder={false} />
       <h5 className="text-purple-900 font-bold text-lg">Actions</h5>
-      {workflowId.detailcurrentStageIndex == -1 ?
+      {-1 == -1 ?
       ( <a
        href={`/EditDocument/${workflowId.workflowId}/0`}
              className="w-44 h-9 border flex justify-center items-center border-teal-500 rounded-md text-teal-500 text-sm px-5"

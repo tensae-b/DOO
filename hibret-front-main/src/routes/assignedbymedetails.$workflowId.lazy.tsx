@@ -106,13 +106,13 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
       }
     }, [activeTab]);
 
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-screen bg-green-100">
-          <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
-        </div>
-      );
-    }
+    // if (isLoading) {
+    //   return (
+    //     <div className="flex justify-center items-center h-screen bg-green-100">
+    //       <div className="rounded-full h-20 w-20 bg-teal-400 animate-ping"></div>
+    //     </div>
+    //   );
+    // }
 
     if (isError) {
       return <div>Error loading data. Please try again later.</div>;
@@ -253,7 +253,7 @@ export const Route = createLazyFileRoute("/assignedbymedetails/$workflowId")({
                         comments.map((comment, index) => (
                           <Comm
                             key={index}
-                            name={comment.fromUser._id}
+                            // name={comment.fromUser._id}
                             time={comment.createdAt}
                             details={comment.comment}
                           />

@@ -1,5 +1,5 @@
 import React, { useState, lazy, useEffect } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import UserName from "../components/UserName";
 
 import "react-dropdown/style.css";
@@ -43,29 +43,39 @@ function ArchiveList() {
   }, []);
 
   const columns: GridColDef[] = [
-    { field: "workflowname", headerName: "workflowname", width: 230 },
-    {
-      field: "actions",
-      headerName: "Action",
-      width: 150,
-      type: "actions",
-      renderCell: (params: GridActionsCellParams<any>) => {
-        const onEdit = () => {
+    { field: "name", headerName: "workflowname", width: 230,
+      renderCell: (params) => (
+        <Link
+          className="cursor-pointer text-blue-500 underline"
+          to={`/assignedbymedetails/${params.row.id}`}
+        >
+          {params.value}
+        </Link>
+      ),
+     },
+    { field: "status", headerName: "Status", width: 230 },
+    // {
+    //   field: "actions",
+    //   headerName: "Action",
+    //   width: 150,
+    //   type: "actions",
+    //   renderCell: (params: GridActionsCellParams<any>) => {
+    //     const onEdit = () => {
          
-        };
+    //     };
 
         
 
-        return (
-          <div className="flex justify-around">
-            <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
-              <img src="/asset/icons/edit.png" className="w-5" />
-            </button>
+    //     return (
+    //       <div className="flex justify-around">
+    //         <button onClick={onEdit} className="text-blue-500 hover:text-blue-700">
+    //           <img src="/asset/icons/edit.png" className="w-5" />
+    //         </button>
             
-          </div>
-        );
-      },
-    },
+    //       </div>
+    //     );
+    //   },
+    // },
     
   ];
 
@@ -96,6 +106,7 @@ function ArchiveList() {
             <DataGrid
               rows={list}
               columns={columns}
+              getRowId={(row) => row._id}
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 5 },

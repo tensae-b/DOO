@@ -149,21 +149,21 @@ export const Route = createLazyFileRoute("/assignedbyme")({
 
     const draftColumns = [
       {
-        field: "workflowName",
+        field: "name",
         headerName: "Name",
         width: 200,
         renderCell: (params) => (
           <Link
             className="cursor-pointer text-blue-500 underline"
-            to={`/FinishWorkflow/${params.row.id}/0`}
+            to={`/FinishWorkflow/${params.row._id}/0`}
           >
             {params.value}
           </Link>
         ),
       },
 
-      { field: 'categoryName', headerName: 'Category', width: 200 },
-      { field: 'subCategoryName', headerName: 'Sub Category', width: 200 },
+      // { field: 'categoryName', headerName: 'Category', width: 200 },
+      // { field: 'subCategoryName', headerName: 'Sub Category', width: 200 },
       
     
 
@@ -349,6 +349,7 @@ export const Route = createLazyFileRoute("/assignedbyme")({
                 <DataGrid
                   rows={draftData}
                   columns={draftColumns}
+                  getRowId={(row) => row._id}
                   pageSize={10}
                   disableSelectionOnClick // Disable row selection on click
                   components={{

@@ -16,8 +16,11 @@ export const ownerWork = async (userId) => {
 };
 
 export const workflowDetail = async (workflowId, userId) => {
+    console.log('hey')
     try {
+        
         const response = await axiosInst.get(`http://localhost:5000/initiate/workflows/${workflowId}/user/${userId}`);
+        console.log(response)
         const { data } = response;
         console.log(data)
         return { data, isLoading: false, isError: false }; 
