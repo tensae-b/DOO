@@ -55,16 +55,16 @@ export const Route = createLazyFileRoute('/commitee')({
   component: () => {
     const [isPopup, setIsPopup] = useState(false);
     const [selectedMembers, setSelectedMembers] = useState([]);
-    const [chairperson, setChairperson] = useState([]);
+    const [chairperson, setChairperson] = useState('');
     const [department, setDepartment] = useState([]);
-    const [roles, setRoles] = useState([]); // State to store roles
+    const [roles, setRoles] = useState([]);
     const { register, handleSubmit, formState: { errors }, setValue } = useForm();
     const [users, setUsers] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [shouldRefresh, setShouldRefresh] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
     const [selectedRoleId, setSelectedRoleId] = useState('');
+
     const handleSnackbarClose = () => {
       setSnackbarOpen(false);
     };
@@ -128,6 +128,7 @@ export const Route = createLazyFileRoute('/commitee')({
 
       getDepartment();
     }, []);
+
     const handleDepartmentChange = async (event) => {
       const departmentId = event.target.value;
       setValue('department', departmentId);
@@ -148,35 +149,27 @@ export const Route = createLazyFileRoute('/commitee')({
         setSelectedRoleId(''); // Clear the selected role_id
       }
     };
-    
+
     const onSubmit = async (data) => {
       try {
         // Extract member IDs
-        const memberIds = selectedMembers.map((memberName) => {
-          const member = users.find((user) => user.username === memberName);
-          return member ? member.id : null;
-        });
-
-        // Extract chairperson ID
-        const chairpersonUser = users.find((user) => user.username === data.chairperson);
-        const chairpersonId = chairpersonUser ? chairpersonUser.id : null;
+        const memberIds = selectedMembers;
 
         // Make a POST request to create the committee
         const response = await createCommite({
           name: data.committeeName,
           members: memberIds,
-          chairperson: chairpersonId, // Use chairperson ID
+          chairperson: chairperson // Use chairperson ID directly
         });
 
         // Handle the response accordingly
-        console.log("Committee created successfully:", response.data);
+        console.log("Committee created successfully:", response);
         setSnackbarMessage("Committee created successfully");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
 
         // Close the popup
         setIsPopup(false);
-        
 
         // Optionally, reset form fields or handle any other post-submit actions
       } catch (error) {
@@ -256,15 +249,15 @@ export const Route = createLazyFileRoute('/commitee')({
                           <label className="block mb-2 text-sm font-semibold text-gray-700">
                             Member Names <span className="text-red-500">*</span>
                             <select
-  name="memberNames"
-  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-  multiple
-  onChange={handleMemberSelect}
->
-  {users.map(user => (
-    <option key={user.userId} value={user.userId}>{user.username}</option>
-  ))}
-</select>
+                              name="memberNames"
+                              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                              multiple
+                              onChange={handleMemberSelect}
+                            >
+                              {users.map(user => (
+                                <option key={user.id} value={user.id}>{user.username}</option>
+                              ))}
+                            </select>
                             {errors.memberNames && <span className="text-red-500 text-sm">This field is required</span>}
                           </label>
                           <div className="mt-2">
@@ -274,21 +267,25 @@ export const Route = createLazyFileRoute('/commitee')({
                               </span>
                             ))}
                           </div>
+                        </div>
+                      </div>
+                      <div className='flex gap-8'>
+                        <div>
                           <label className="block mb-2 text-sm font-semibold text-gray-700">
                             Chairperson <span className="text-red-500">*</span>
                             <select
-  name="chairperson"
-  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-  onChange={(event) => setChairperson(event.target.value)}
-  value={chairperson}
->
-  <option value="">Select Chairperson</option>
-  {users.map((user) => (
-    <option key={user.userId} value={user.userId}>
-      {user.username}
-    </option>
-  ))}
-</select>
+                              name="chairperson"
+                              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                              onChange={(event) => setChairperson(event.target.value)}
+                              value={chairperson}
+                            >
+                              <option value="">Select Chairperson</option>
+                              {users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                  {user.username}
+                                </option>
+                              ))}
+                            </select>
                             {errors.chairperson && <span className="text-red-500 text-sm">This field is required</span>}
                           </label>
                         </div>
